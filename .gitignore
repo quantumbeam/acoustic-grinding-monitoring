@@ -1,1 +1,9 @@
 ae_data/
+ae_data_backup.zip
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
+.env
+.vscode/
