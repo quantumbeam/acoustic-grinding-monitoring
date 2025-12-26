@@ -1,5 +1,6 @@
 ae_data/
 ae_data_backup.zip
+ae_power_cache.json
 .venv/
 __pycache__/
 *.pyc
