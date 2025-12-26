@@ -4,13 +4,61 @@ import os
 import glob
 import re
 import argparse
-from fft_processing import calculate_fft_power
+import json
 from tqdm import tqdm
+from fft_processing import calculate_fft_power
 
 # For GPR
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 import matplotlib.pyplot as plt
+
+def update_ae_cache(cache_file_path, required_files):
+    """
+    Loads an existing cache, identifies missing files from the required list,
+    calculates their FFT power, and updates the cache file.
+    """
+    print("--- Checking AE Power Cache Integrity ---")
+    
+    # Load existing cache or initialize a new one
+    if os.path.exists(cache_file_path):
+        try:
+            with open(cache_file_path, 'r') as f:
+                ae_cache = json.load(f)
+        except (IOError, json.JSONDecodeError) as e:
+            print(f"Warning: Could not load cache file '{cache_file_path}'. Rebuilding. Error: {e}")
+            ae_cache = {}
+    else:
+        print("Cache file not found. A new one will be created.")
+        ae_cache = {}
+
+    # Identify files that are required but not in the cache
+    cached_files = set(ae_cache.keys())
+    missing_files = [f for f in required_files if os.path.relpath(f) not in cached_files]
+
+    if not missing_files:
+        print("Cache is up to date.")
+        return ae_cache # Return loaded cache if no updates needed
+
+    print(f"Cache is incomplete. Found {len(missing_files)} new or updated AE files to process.")
+    
+    # Calculate power for missing files and add them to the cache
+    for file_path in tqdm(missing_files, desc="Updating AE Cache"):
+        power = calculate_fft_power(file_path)
+        if power is not None:
+            relative_path = os.path.relpath(file_path)
+            ae_cache[relative_path] = power
+    
+    # Save the updated cache back to the file
+    try:
+        with open(cache_file_path, 'w') as f:
+            json.dump(ae_cache, f, indent=4)
+        print(f"Successfully updated cache file: '{cache_file_path}'")
+    except IOError as e:
+        print(f"\nError saving updated cache file: {e}")
+
+    return ae_cache
+
 
 def get_d50(file_path):
     """
@@ -43,40 +91,51 @@ if __name__ == '__main__':
                         choices=['1st', '2nd', '3rd', 'all'],
                         help="Specify the trial to process. Default is 'all'.")
     args = parser.parse_args()
-
+    
     # --- Configuration from Arguments ---
     TARGET_REAGENT = None if args.reagent == 'all' else args.reagent
     TARGET_TRIAL = None if args.trial == 'all' else args.trial
-    
     EXPERIMENT = 'exp2'
+    CACHE_FILE = 'ae_power_cache.json'
 
-    # --- Data Collection ---
-    print(f"--- Creating dataset for {EXPERIMENT} ---")
-    if TARGET_REAGENT or TARGET_TRIAL:
-        print(f"Filtering for Reagent: {TARGET_REAGENT or 'All'}, Trial: {TARGET_TRIAL or 'All'}")
-    
-    collected_data = []
-
-    # Base paths
+    # --- Step 1: Pre-scan for all required AE files based on filters ---
+    print("--- Scanning for required files ---")
     ae_base_path = os.path.join('ae_data', EXPERIMENT)
     psd_base_path = os.path.join('powder_size_distribution_data', EXPERIMENT)
-
-    # First, collect all files to be processed to use with tqdm
-    all_psd_files = []
+    
     reagent_pattern = TARGET_REAGENT if TARGET_REAGENT else '*'
     trial_pattern = TARGET_TRIAL if TARGET_TRIAL else '*'
     
+    all_psd_files = []
     psd_reagent_dirs = glob.glob(os.path.join(psd_base_path, reagent_pattern))
     for psd_reagent_dir in psd_reagent_dirs:
         psd_trial_dirs = glob.glob(os.path.join(psd_reagent_dir, trial_pattern))
         for psd_trial_dir in psd_trial_dirs:
             all_psd_files.extend(glob.glob(os.path.join(psd_trial_dir, '*.csv')))
 
-    print(f"Found {len(all_psd_files)} total files to process...")
+    required_ae_files = set()
+    for psd_file in all_psd_files:
+        path_parts = psd_file.split(os.sep)
+        reagent = path_parts[-3]
+        trial = path_parts[-2]
+        match = re.search(r'(grind\d+min)', os.path.basename(psd_file))
+        if match:
+            grind_duration_key = match.group(1)
+            ae_session_path = os.path.join(ae_base_path, reagent, trial)
+            ae_search_pattern = os.path.join(ae_session_path, f"*{grind_duration_key}*.csv")
+            required_ae_files.update(glob.glob(ae_search_pattern))
+    
+    print(f"Found {len(required_ae_files)} required AE files for this run.")
+
+    # --- Step 2: Load or Update AE Power Cache ---
+    ae_cache = update_ae_cache(CACHE_FILE, list(required_ae_files))
+
+    # --- Step 3: Data Collection using Cache ---
+    print(f"--- Creating dataset for {EXPERIMENT} ---")
+    collected_data = []
 
     # Process files with a progress bar
     for psd_file in tqdm(all_psd_files, desc="Matching data"):
-        # Parse reagent and trial from the file path
         path_parts = psd_file.split(os.sep)
         reagent = path_parts[-3]
         trial = path_parts[-2]
@@ -92,13 +151,13 @@ if __name__ == '__main__':
 
         ae_session_path = os.path.join(ae_base_path, reagent, trial)
         ae_search_pattern = os.path.join(ae_session_path, f"*{grind_duration_key}*.csv")
-        ae_files_for_session = glob.glob(ae_search_pattern)
-        ae_files_for_session.sort() 
+        ae_files_for_session = sorted(glob.glob(ae_search_pattern))
 
         if not ae_files_for_session:
             continue
 
-        ae_power_timeseries = [calculate_fft_power(f) for f in ae_files_for_session]
+        # Use the pre-computed cache for AE power
+        ae_power_timeseries = [ae_cache.get(os.path.relpath(f)) for f in ae_files_for_session]
         ae_power_timeseries = [p for p in ae_power_timeseries if p is not None]
 
         if len(ae_power_timeseries) < 4:
@@ -116,7 +175,6 @@ if __name__ == '__main__':
         print(f"\nSuccessfully collected {len(collected_data)} data points.")
         data_array = np.array(collected_data, dtype=object)
         
-        # Determine which reagents to process based on collected data
         unique_reagents_in_data = np.unique(data_array[:, 3])
         
         all_metrics = []
@@ -124,7 +182,6 @@ if __name__ == '__main__':
         for current_reagent in unique_reagents_in_data:
             print(f"\n--- Processing GPR for Reagent: {current_reagent} ---")
             
-            # Filter data for the current reagent
             reagent_mask = data_array[:, 3] == current_reagent
             reagent_data = data_array[reagent_mask]
 
@@ -134,7 +191,6 @@ if __name__ == '__main__':
 
             print(f"Dataset created with {len(X_data)} data points for {current_reagent}")
 
-            # --- Define and Train the GPR Model ---
             print("--- Training Gaussian Process Regressor ---")
             kernel = 1.0 * RBF(length_scale=np.std(X_data), length_scale_bounds=(1e-2, 1e5)) \
                 + WhiteKernel(noise_level=np.std(y_data)/2, noise_level_bounds=(1e-10, 1e5))
@@ -156,7 +212,6 @@ if __name__ == '__main__':
             print(f"R-squared (R2) for {current_reagent}: {r_squared:.4f}")
             print(f"Average variance for {current_reagent}: {average_variance_of_prediction:.4f}")
 
-            # --- Visualize the Results ---
             plt.figure(figsize=(8, 6))
             markers = {'1st': 'o', '2nd': 'x', '3rd': '^'}
             colors = {'1st': 'black', '2nd': 'red', '3rd': 'blue'}
@@ -178,7 +233,6 @@ if __name__ == '__main__':
             plt.xlim(left=max(0, X_data.min() * 0.8))
             plt.ylim(bottom=0)
 
-            # --- Save Artifacts ---
             output_dir = 'results'
             os.makedirs(output_dir, exist_ok=True)
             
@@ -186,16 +240,14 @@ if __name__ == '__main__':
             plot_filename = os.path.join(output_dir, f'gpr_plot_{current_reagent}_{trial_str}.png')
             plt.savefig(plot_filename)
             print(f"Plot saved to {plot_filename}")
-            plt.close() # Close the figure to free memory
+            plt.close()
 
-        # --- Save All Metrics to a Single CSV ---
         if all_metrics:
             output_dir = 'results'
             os.makedirs(output_dir, exist_ok=True)
             reagent_str = TARGET_REAGENT or 'all'
             trial_str = TARGET_TRIAL or 'all'
             
-            # Create a filename that reflects the content
             if reagent_str == 'all':
                 csv_filename = os.path.join(output_dir, f'gpr_metrics_by_reagent_{trial_str}.csv')
             else:
