@@ -4,12 +4,23 @@ This directory contains the particle size distribution data measured after the g
 
 ## Experiment Information
 
-| Experiment ID | Reagent    | Date       | Original Directory              |
-| :------------ | :--------- | :--------- | :------------------------------ |
-| exp2          | NaCl       | 20251216   | exp2/20251216/                  |
-| exp2          | NaCl       | 20251217   | exp2/20251216/                  |
-| exp2          | Citricacid | 20251218   | exp2/20251218/                  |
-| exp2          | Ajinomoto  | 20251219   | exp2/20251219/                  |
-| exp3          | NaCl       | 20251217   | exp3/20251216_ctrl/             |
-| exp3          | Citricacid | 20251218   | exp3/20251218_ctrl/             |
-| exp3          | Ajinomoto  | 20251219   | exp3/20251219_ctrl/             |
+| Experiment ID | Reagent    | Date       | Trial |
+| :------------ | :--------- | :--------- | :---- |
+| exp2          | Ajinomoto  | 20251219   | 1st   |
+| exp2          | Ajinomoto  | 20251219   | 2nd   |
+| exp2          | Ajinomoto  | 20251219   | 3rd   |
+| exp2          | Citricacid | 20251218   | 1st   |
+| exp2          | Citricacid | 20251218   | 2nd   |
+| exp2          | Citricacid | 20251218   | 3rd   |
+| exp2          | NaCl       | 20251216   | 1st   |
+| exp2          | NaCl       | 20251216   | 2nd   |
+| exp2          | NaCl       | 20251217   | 3rd   |
+| exp3          | Ajinomoto  | 20251219   | 1st   |
+| exp3          | Ajinomoto  | 20251219   | 2nd   |
+| exp3          | Ajinomoto  | 20251219   | 3rd   |
+| exp3          | Citricacid | 20251218   | 1st   |
+| exp3          | Citricacid | 20251218   | 2nd   |
+| exp3          | Citricacid | 20251218   | 3rd   |
+| exp3          | NaCl       | 20251217   | 1st   |
+| exp3          | NaCl       | 20251217   | 2nd   |
+| exp3          | NaCl       | 20251217   | 3rd   |
