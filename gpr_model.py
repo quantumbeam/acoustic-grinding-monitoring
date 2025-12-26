@@ -138,7 +138,7 @@ if __name__ == '__main__':
         kernel = 1.0 * RBF(length_scale=np.std(X_data), length_scale_bounds=(1e-2, 1e5)) \
             + WhiteKernel(noise_level=np.std(y_data)/2, noise_level_bounds=(1e-10, 1e5))
 
-        gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, random_state=0)
+        gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, random_state=0,normalize_y=True)
         gpr.fit(X_data, y_data)
         
         print("GPR model training complete.")
