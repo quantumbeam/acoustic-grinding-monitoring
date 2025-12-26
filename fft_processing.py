@@ -3,15 +3,21 @@ import numpy as np
 import os
 import glob
 
-def calculate_fft_power(file_path, sampling_rate=2e6, header_lines=12):
+def calculate_fft_power(file_path, sampling_rate=2e6, header_lines=12,
+                        start_sample_index=200013, end_sample_index=1200012): # Added parameters
     """
     Reads an AE data file, applies a Hamming window, performs FFT,
-    and calculates the total power in the 100 kHz to 1 MHz range.
+    and calculates the total power in the 100 kHz to 1 MHz range,
+    skipping initial noise.
 
     Args:
         file_path (str): Path to the AE data CSV file.
         sampling_rate (float): Sampling rate in Hz.
         header_lines (int): Number of header lines to skip in the CSV.
+        start_sample_index (int): The 0-based index to start reading the actual signal data.
+                                  Corresponds to ~0.1s to skip initial noise.
+        end_sample_index (int): The 0-based index to stop reading the actual signal data (exclusive).
+                                Corresponding to ~0.6s to define the 0.5s effective data.
 
     Returns:
         float: The total power in the specified frequency band, or None if an error occurs.
@@ -20,7 +26,7 @@ def calculate_fft_power(file_path, sampling_rate=2e6, header_lines=12):
         # 1. Read the signal data
         # The data is in a single column, so we'll read it as a Series.
         # We give it a name 'amplitude' for clarity.
-        signal = pd.read_csv(
+        full_signal = pd.read_csv(
             file_path,
             header=None,
             skiprows=header_lines,
@@ -28,8 +34,27 @@ def calculate_fft_power(file_path, sampling_rate=2e6, header_lines=12):
             dtype=np.float64
         )['amplitude'].values
 
-        if len(signal) == 0:
+        if len(full_signal) == 0:
             print(f"Warning: No data found in {file_path}")
+            return None
+
+        # Apply noise skipping based on provided indices
+        # Ensure the slice is valid
+        if start_sample_index >= len(full_signal) or start_sample_index < 0:
+            print(f"Warning: start_sample_index {start_sample_index} out of bounds for {file_path} (length {len(full_signal)})")
+            return None
+        # end_sample_index can be up to the length of the signal
+        effective_end_index = min(end_sample_index, len(full_signal))
+
+        if effective_end_index <= start_sample_index:
+             print(f"Warning: effective_end_index {effective_end_index} must be greater than start_sample_index {start_sample_index} for {file_path}")
+             return None
+        
+        # Take the slice of the signal that should be analyzed
+        signal = full_signal[start_sample_index:effective_end_index]
+
+        if len(signal) == 0:
+            print(f"Warning: No effective data after skipping noise for {file_path}")
             return None
 
         # 2. Apply Hamming window
@@ -68,10 +93,11 @@ def calculate_fft_power(file_path, sampling_rate=2e6, header_lines=12):
 if __name__ == '__main__':
     # --- Configuration ---
     # Path to a sample file to test the function
-    # Let's use the file we inspected.
     SAMPLE_FILE = 'ae_data/exp2/NaCl/1st/20251216_144933NaCl_grind25min.csv'
     SAMPLING_RATE = 2e6 # 2 MHz as specified in the paper
     HEADER_LINES = 12   # As we determined
+    START_SAMPLE_INDEX = 200013 # Corresponds to ~0.1s
+    END_SAMPLE_INDEX = 1200012 # Corresponds to ~0.6s
 
     # --- Execution ---
     print(f"Processing file: {SAMPLE_FILE}")
@@ -85,7 +111,9 @@ if __name__ == '__main__':
         total_ae_power = calculate_fft_power(
             SAMPLE_FILE,
             sampling_rate=SAMPLING_RATE,
-            header_lines=HEADER_LINES
+            header_lines=HEADER_LINES,
+            start_sample_index=START_SAMPLE_INDEX,
+            end_sample_index=END_SAMPLE_INDEX
         )
 
         if total_ae_power is not None:
@@ -93,13 +121,18 @@ if __name__ == '__main__':
 
     # --- Optional: Process a few files from a directory ---
     print("\n--- Processing a few more examples ---")
-    # Let's find a few files to process as a batch example
     example_files = glob.glob('ae_data/exp2/NaCl/1st/*.csv')[:3] # Get first 3 files
 
     if not example_files:
         print("No example files found to process.")
     else:
         for file in example_files:
-            power = calculate_fft_power(file, sampling_rate=SAMPLING_RATE, header_lines=HEADER_LINES)
+            power = calculate_fft_power(
+                file,
+                sampling_rate=SAMPLING_RATE,
+                header_lines=HEADER_LINES,
+                start_sample_index=START_SAMPLE_INDEX,
+                end_sample_index=END_SAMPLE_INDEX
+            )
             if power is not None:
                 print(f"File: {os.path.basename(file)}, Power: {power:.4f}")
