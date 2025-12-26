@@ -138,17 +138,43 @@ if __name__ == '__main__':
         kernel = 1.0 * RBF(length_scale=np.std(X_data), length_scale_bounds=(1e-2, 1e5)) \
             + WhiteKernel(noise_level=np.std(y_data)/2, noise_level_bounds=(1e-10, 1e5))
 
-        gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, random_state=0,normalize_y=True)
+        gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, random_state=0, normalize_y=True)
         gpr.fit(X_data, y_data)
         
         print("GPR model training complete.")
         print(f"Learned Kernel: {gpr.kernel_}")
         print(f"Log-Marginal-Likelihood: {gpr.log_marginal_likelihood(gpr.kernel_.theta)}")
 
-        # --- 3. Visualize the Results ---
-        print("--- Plotting results ---")
+        # Calculate R-squared (R2) score
+        r_squared = gpr.score(X_data, y_data)
+        print(f"R-squared (R2) score: {r_squared:.4f}")
+
+        # Predict with the model to get variance across the plot range
         X_plot = np.linspace(X_data.min() * 0.9, X_data.max() * 1.1, 500).reshape(-1, 1)
         y_mean, y_std = gpr.predict(X_plot, return_std=True)
+        average_variance_of_prediction = np.mean(y_std**2)
+        print(f"Average variance of predictions: {average_variance_of_prediction:.4f}")
+
+        # --- 3. Visualize the Results ---
+        print("--- Plotting results ---")
+
+        # Create a directory for the results
+        output_dir = 'results'
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Define the base filename for outputs based on reagent and trial
+        reagent_str = TARGET_REAGENT or 'all'
+        trial_str = TARGET_TRIAL or 'all'
+        output_base_filename = f"{reagent_str}_{trial_str}"
+
+        # --- 4. Save Metrics to CSV ---
+        metrics_df = pd.DataFrame({
+            'r_squared': [r_squared],
+            'average_variance': [average_variance_of_prediction]
+        })
+        csv_filename = os.path.join(output_dir, f'gpr_metrics_{output_base_filename}.csv')
+        metrics_df.to_csv(csv_filename, index=False)
+        print(f"Metrics saved to {csv_filename}")
 
         plt.figure(figsize=(8, 6))
         
@@ -177,7 +203,7 @@ if __name__ == '__main__':
         plt.xlim(left=max(0, X_data.min() * 0.8))
         plt.ylim(bottom=0)
 
-        plot_filename = f'gpr_{EXPERIMENT}_{title_reagent}_results.png'
+        plot_filename = os.path.join(output_dir, f'gpr_plot_{output_base_filename}.png')
         plt.savefig(plot_filename)
         print(f"Plot saved to {plot_filename}")
         
