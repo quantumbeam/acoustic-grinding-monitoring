@@ -37,7 +37,7 @@ uv venv
 source .venv/bin/activate
 
 # Install dependencies
-uv pip install pandas numpy scikit-learn matplotlib
+uv pip install pandas numpy scikit-learn matplotlib tqdm
 
 ```
 
@@ -66,26 +66,31 @@ This script builds a Gaussian Process Regression (GPR) model to predict D50 part
 *   **Combined Data for GPR:** When processing multiple reagents or trials (e.g., using `--reagent all` or `--trial all`), all selected data points are combined into a single dataset to train a more robust GPR model.
 *   **Trial-specific Visualization:** The resulting plot visually distinguishes data points from different trials using unique markers (e.g., circles, crosses, triangles) to provide clearer insights into experimental variations while still using all data for the global model.
 
-**Dependencies:** `pandas`, `numpy`, `scikit-learn`, `matplotlib`
-
+**Dependencies:** `pandas`, `numpy`, `scikit-learn`, `matplotlib`, `tqdm`
+ 
 **How to run:**
+
+The script automatically manages a cache for pre-calculated Acoustic Emission (AE) power values (`ae_power_cache.json`).
+
+- **First Run / Cache Update:** On the first run, or if the cache is missing or incomplete for the data required by your arguments, the script will automatically calculate the necessary AE power values and update `ae_power_cache.json`. This initial step might take some time (e.g., ~10 minutes for a full dataset), but subsequent runs will be significantly faster as they will load from the cache.
+- **Subsequent Runs:** For subsequent runs, the script will load the pre-computed values from `ae_power_cache.json`, significantly speeding up data loading and processing.
 
 You can specify the reagent and trial using command-line arguments:
 
 ```bash
-# Process only 'NaCl' for the '1st' trial
+# Process only 'NaCl' for the '1st' trial. Cache will be updated if needed.
 python gpr_model.py --reagent NaCl --trial 1st
 
-# Process all trials for 'Citricacid'
+# Process all trials for 'Citricacid'. Cache will be updated if needed.
 python gpr_model.py --reagent Citricacid --trial all
 
-# Process all reagents for the '2nd' trial
+# Process all reagents for the '2nd' trial. Cache will be updated if needed.
 python gpr_model.py --reagent all --trial 2nd
 
-# Process all reagents and all trials (default behavior)
+# Process all reagents and all trials (default behavior). Cache will be updated if needed.
 python gpr_model.py
 ```
 
-**Important Note:** The script requires access to files in the `ae_data` directory. If `ae_data/` is listed in your `.gitignore` file, the script will not be able to read the AE data. Please temporarily remove or comment out `ae_data/` from `.gitignore` before running this script.
-
-The script will save a plot of the GPR results (e.g., `gpr_exp2_results.png`) in the current directory.
+**Output Files:**
+- Plots are saved in the `results/` directory with dynamic filenames based on the reagent and trial (e.g., `results/gpr_plot_NaCl_1st.png`, `results/gpr_plot_all_all.png`).
+- A CSV file containing R-squared and average variance metrics is also saved in the `results/` directory. If `--reagent all` is used, the CSV will contain metrics for each reagent processed (e.g., `results/gpr_metrics_by_reagent_all.csv`). Otherwise, it will be specific to the chosen reagent (e.g., `results/gpr_metrics_NaCl_all.csv`).
