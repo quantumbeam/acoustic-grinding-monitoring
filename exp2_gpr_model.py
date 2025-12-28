@@ -6,6 +6,7 @@ import re
 import argparse
 import json
 from tqdm import tqdm
+import joblib  # <--- 追加: モデル保存用ライブラリ
 from fft_processing import calculate_fft_power
 
 # For GPR
@@ -20,7 +21,6 @@ def update_ae_cache(cache_file_path, required_files):
     """
     print("--- Checking AE Power Cache Integrity ---")
     
-    # Load existing cache or initialize a new one
     if os.path.exists(cache_file_path):
         try:
             with open(cache_file_path, 'r') as f:
@@ -32,24 +32,21 @@ def update_ae_cache(cache_file_path, required_files):
         print("Cache file not found. A new one will be created.")
         ae_cache = {}
 
-    # Identify files that are required but not in the cache
     cached_files = set(ae_cache.keys())
     missing_files = [f for f in required_files if os.path.relpath(f) not in cached_files]
 
     if not missing_files:
         print("Cache is up to date.")
-        return ae_cache # Return loaded cache if no updates needed
+        return ae_cache 
 
     print(f"Cache is incomplete. Found {len(missing_files)} new or updated AE files to process.")
     
-    # Calculate power for missing files and add them to the cache
     for file_path in tqdm(missing_files, desc="Updating AE Cache"):
         power = calculate_fft_power(file_path)
         if power is not None:
             relative_path = os.path.relpath(file_path)
             ae_cache[relative_path] = power
     
-    # Save the updated cache back to the file
     try:
         with open(cache_file_path, 'w') as f:
             json.dump(ae_cache, f, indent=4)
@@ -97,6 +94,7 @@ if __name__ == '__main__':
     TARGET_TRIAL = None if args.trial == 'all' else args.trial
     EXPERIMENT = 'exp2'
     CACHE_FILE = 'ae_power_cache.json'
+    MODEL_DIR = 'results'  # <--- 追加: モデル保存用ディレクトリ名
 
     # --- Step 1: Pre-scan for all required AE files based on filters ---
     print("--- Scanning for required files ---")
@@ -134,7 +132,6 @@ if __name__ == '__main__':
     print(f"--- Creating dataset for {EXPERIMENT} ---")
     collected_data = []
 
-    # Process files with a progress bar
     for psd_file in tqdm(all_psd_files, desc="Matching data"):
         path_parts = psd_file.split(os.sep)
         reagent = path_parts[-3]
@@ -156,7 +153,6 @@ if __name__ == '__main__':
         if not ae_files_for_session:
             continue
 
-        # Use the pre-computed cache for AE power
         ae_power_timeseries = [ae_cache.get(os.path.relpath(f)) for f in ae_files_for_session]
         ae_power_timeseries = [p for p in ae_power_timeseries if p is not None]
 
@@ -179,6 +175,9 @@ if __name__ == '__main__':
         
         all_metrics = []
 
+        # モデル保存用ディレクトリの作成
+        os.makedirs(MODEL_DIR, exist_ok=True) # <--- 追加
+
         for current_reagent in unique_reagents_in_data:
             print(f"\n--- Processing GPR for Reagent: {current_reagent} ---")
             
@@ -196,6 +195,13 @@ if __name__ == '__main__':
                 + WhiteKernel(noise_level=np.std(y_data)/2, noise_level_bounds=(1e-10, 1e5))
             gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, random_state=0, normalize_y=True)
             gpr.fit(X_data, y_data)
+            
+            # --- ここでモデルを保存 ---
+            model_filename = f"gpr_model_{current_reagent}_{EXPERIMENT}.joblib"
+            model_path = os.path.join(MODEL_DIR, model_filename)
+            joblib.dump(gpr, model_path) # <--- モデルをファイルにダンプ
+            print(f"Model saved to: {model_path}")
+            # ------------------------
             
             r_squared = gpr.score(X_data, y_data)
             
