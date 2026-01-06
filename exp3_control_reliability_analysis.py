@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 import os
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, WhiteKernel
+# 変更点1: ConstantKernel を追加
+from sklearn.gaussian_process.kernels import RBF, WhiteKernel, ConstantKernel
 
 # --- 1. あなたから提供された全生データ ---
 raw_data_map = {
@@ -48,11 +49,13 @@ for material, content in raw_data_map.items():
     X_train = np.array(content['ae_power']).flatten().reshape(-1, 1) # AE Power
     y_train = np.array(content['measured']).flatten()                # D50
     
-    # 小さなAEパワー値に最適化したカーネル
-    kernel = 1.0 * RBF(length_scale=np.std(X_train), length_scale_bounds=(1e-12, 1e2)) \
-             + WhiteKernel(noise_level=1.0, noise_level_bounds=(1e-5, 1e2))
+    # 変更点2: カーネル定義をGitHub実装 (..._gauss.py) に合わせる
+    # ConstantKernelを使用し、初期値は1.0、bounds指定を削除（デフォルトを使用）
+    kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) \
+             + WhiteKernel(noise_level=1.0)
     
-    gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, normalize_y=True, random_state=0)
+    # 変更点3: random_state=0 を削除
+    gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, normalize_y=True)
     gpr.fit(X_train, y_train)
     
     for i, target_val in enumerate(content['targets']):
