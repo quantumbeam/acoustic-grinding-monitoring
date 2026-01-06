@@ -1,66 +1,140 @@
 import pandas as pd
 import numpy as np
 import os
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, WhiteKernel, ConstantKernel
+import joblib
+import re
+import glob
+from natsort import natsorted
+from fft_processing import calculate_fft_power
 
-# --- 1. Raw Data ---
-raw_data_map = {
-    'NaCl': {
-        'targets': [250, 200, 150],
-        'measured': [[223.6, 252.1, 238.2], [196.1, 204.4, 189.5], [133.4, 123.8, 139.8]],
-        'ae_power': [[1.3e-5, 1.2e-5, 1.25e-5], [8.8e-6, 9.1e-6, 8.9e-6], [5.8e-6, 5.6e-6, 5.9e-6]]
-    },
-    'CitricAcid': {
-        'targets': [100, 50, 20],
-        'measured': [[83.2, 100.2, 111.6], [46.1, 31.4, 37.3], [21.3, 14.1, 16.9]],
-        'ae_power': [[2.5e-6, 2.7e-6, 2.4e-6], [1.1e-6, 1.0e-6, 1.2e-6], [4.5e-7, 4.8e-7, 4.4e-7]]
-    },
-    'Ajinomoto': {
-        'targets': [200, 100, 50],
-        'measured': [[179.6, 203.3, 189.0], [129.3, 124.9, 123.9], [53.1, 54.9, 50.1]],
-        'ae_power': [[3.4e-5, 3.6e-5, 3.3e-5], [1.8e-5, 1.7e-5, 1.9e-5], [7.8e-6, 8.0e-6, 7.6e-6]]
-    }
+
+# --- Copied from exp2_gpr_model.py ---
+def get_d50(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+            for line in f:
+                if line.strip().startswith('Dx (50)'):
+                    parts = line.split(',')
+                    if len(parts) > 1:
+                        return float(parts[1])
+    except (IOError, ValueError) as e:
+        print(f"Could not read or parse D50 from {file_path}: {e}")
+    return None
+
+# --- Settings consistent with training script ---
+RESULTS_DIR = 'results'
+EXPERIMENT = 'exp3'
+AE_SCALE_TO_MV2 = 1e6
+
+PSD_BASE_PATH = os.path.join('powder_size_distribution_data', EXPERIMENT)
+AE_BASE_PATH = os.path.join('ae_data', EXPERIMENT)
+
+os.makedirs(RESULTS_DIR, exist_ok=True)
+table_data_list = []
+
+# Map raw material naming to model naming used in training script
+MODEL_NAME_MAP = {
+    'NaCl': 'NaCl',
+    'Citricacid': 'Citricacid',
+    'Ajinomoto': 'Ajinomoto',
 }
 
-os.makedirs('results', exist_ok=True)
-table_data_list = [] # List to store combined data for the LaTeX table
+print("--- Starting Analysis for Table Generation (joblib-loaded GPR) ---")
 
-print("--- Starting Analysis for Table Generation ---")
+materials = natsorted([os.path.basename(d) for d in glob.glob(os.path.join(PSD_BASE_PATH, '*')) if os.path.isdir(d)])
 
-for material, content in raw_data_map.items():
-    # --- GPR Training ---
-    X_train = np.array(content['ae_power']).flatten().reshape(-1, 1)
-    y_train = np.array(content['measured']).flatten()
+for material in materials:
+    print(f"Processing material: {material}")
     
-    # Kernel configuration matching GitHub/Paper implementation
-    kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0)
-    gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, normalize_y=True)
-    gpr.fit(X_train, y_train)
+    model_key = MODEL_NAME_MAP.get(material, material)
+    model_path = os.path.join(RESULTS_DIR, f"gpr_model_{model_key}_exp2.joblib")
+
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(
+            f"Model file not found for material '{material}'. Expected: {model_path}. Check EXPERIMENT setting and model naming."
+        )
+
+    # --- Load trained estimator: AE -> D50 ---
+    gpr = joblib.load(model_path)
     
-    # --- Evaluation per Target ---
-    for i, target_val in enumerate(content['targets']):
-        # 1. Measured Statistics
-        measured_trials = np.array(content['measured'][i])
-        mu_trial = np.mean(measured_trials)
-        sigma_trial = np.std(measured_trials, ddof=1)
-        
-        # 2. GPR Prediction
-        test_powers = np.array(content['ae_power'][i]).reshape(-1, 1)
-        y_pred, y_sigma = gpr.predict(test_powers, return_std=True)
-        mu_gpr = np.mean(y_pred)
-        sigma_gpr = np.mean(y_sigma) # Average uncertainty for the trials
-        
-        # 3. Calculate Errors for Table
+    # --- Dynamically find targets ---
+    target_files_sample = glob.glob(os.path.join(PSD_BASE_PATH, material, '1st', '*.csv'))
+    targets = []
+    for f in target_files_sample:
+        match = re.search(r'for(\d+)um', os.path.basename(f))
+        if match:
+            targets.append(int(match.group(1)))
+    
+    targets = natsorted(list(set(targets)))
+    
+    for target_val in targets:
+        print(f"  Processing target: {target_val} um")
+        measured_trials = []
+        ae_power_trials = []
+
+        for trial in ['1st', '2nd', '3rd']:
+            # 1. Find PSD file and get D50
+            psd_dir = os.path.join(PSD_BASE_PATH, material, trial)
+            psd_files = glob.glob(os.path.join(psd_dir, f'*for{target_val}um*.csv'))
+            if not psd_files:
+                print(f"    [Warning] No PSD file for {material} {trial} target {target_val}um")
+                continue
+            
+            d50_value = get_d50(psd_files[0])
+            if d50_value:
+                measured_trials.append(d50_value)
+            
+            # 2. Find latest AE file and calculate power
+            ae_dir = os.path.join(AE_BASE_PATH, material, trial)
+            
+            # Find all files for the target, then find the latest one by timestamp in filename
+            ae_files_for_target = glob.glob(os.path.join(ae_dir, f'*for{target_val}um*.csv'))
+            
+            latest_ae_file = None
+            latest_timestamp = ''
+            
+            for f in ae_files_for_target:
+                match = re.search(r'(\d{8}_\d{6})', os.path.basename(f))
+                if match:
+                    timestamp = match.group(1)
+                    if timestamp > latest_timestamp:
+                        latest_timestamp = timestamp
+                        latest_ae_file = f
+            
+            if not latest_ae_file:
+                print(f"    [Warning] No AE file for {material} {trial} target {target_val}um")
+                continue
+            
+            ae_power = calculate_fft_power(latest_ae_file)
+            if ae_power:
+                ae_power_trials.append(ae_power)
+
+        if not measured_trials or not ae_power_trials:
+            print(f"    [Skipping] Incomplete data for target {target_val}um")
+            continue
+
+        # --- Evaluation per Target ---
+        # 1) Measured statistics (laser diffraction D50)
+        measured_trials = np.array(measured_trials, dtype=float)
+        mu_trial = float(np.mean(measured_trials))
+        sigma_trial = float(np.std(measured_trials, ddof=1))
+
+        # 2) GPR prediction from AE
+        test_powers_raw = np.array(ae_power_trials, dtype=float).reshape(-1, 1)
+        test_powers_mV2 = test_powers_raw * AE_SCALE_TO_MV2
+
+        y_pred, y_sigma = gpr.predict(test_powers_mV2, return_std=True)
+
+        mu_gpr = float(np.mean(y_pred))
+        sigma_gpr = float(np.mean(y_sigma))
+
+        # 3) Errors
         estimation_error = mu_gpr - mu_trial
         total_deviation = target_val - mu_trial
-        
-        # 4. Format for CSV/LaTeX
-        # Format: "Mean ± Sigma"
+
+        # 4) Formatting for CSV/LaTeX
         gpr_str = f"{mu_gpr:.2f} ± {sigma_gpr:.2f}"
         measured_str = f"{mu_trial:.2f} ± {sigma_trial:.2f}"
-        
-        # Add '+' sign for positive errors to match table style
         est_err_str = f"{estimation_error:+.2f}"
         dev_err_str = f"{total_deviation:+.2f}"
 
@@ -71,16 +145,21 @@ for material, content in raw_data_map.items():
             'Measured_Mean': measured_str,
             'Estimation_Error': est_err_str,
             'Total_Deviation': dev_err_str,
-            # Raw values for verification if needed
             'raw_mu_gpr': mu_gpr,
+            'raw_sigma_gpr_mean': sigma_gpr,
             'raw_mu_trial': mu_trial,
-            'raw_est_error': estimation_error
+            'raw_sigma_trial': sigma_trial,
+            'raw_est_error': estimation_error,
+            'model_path': model_path
         })
 
 # --- Save Combined Table Data ---
 df_table = pd.DataFrame(table_data_list)
-output_csv = 'results/exp3_table_for_latex.csv'
+output_csv = os.path.join(RESULTS_DIR, 'exp3_table_for_latex.csv')
 df_table.to_csv(output_csv, index=False)
 
-print(f"\n✅ Table Data Generated: {output_csv}")
-print(df_table[['Material', 'Target_D50', 'GPR_Prediction', 'Measured_Mean', 'Estimation_Error', 'Total_Deviation']])
+print(f"\nTable Data Generated: {output_csv}")
+if not df_table.empty:
+    print(df_table[['Material', 'Target_D50', 'GPR_Prediction', 'Measured_Mean', 'Estimation_Error', 'Total_Deviation']])
+else:
+    print("No data was processed.")
