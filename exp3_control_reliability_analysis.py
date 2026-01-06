@@ -2,10 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 from sklearn.gaussian_process import GaussianProcessRegressor
-# 変更点1: ConstantKernel を追加
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel, ConstantKernel
 
-# --- 1. あなたから提供された全生データ ---
+# --- 1. Raw Data ---
 raw_data_map = {
     'NaCl': {
         'targets': [250, 200, 150],
@@ -25,54 +24,63 @@ raw_data_map = {
 }
 
 os.makedirs('results', exist_ok=True)
-stats_list = []      # 実測統計用 (exp3_raw_stats.csv)
-uncertainty_list = [] # GPR推論用 (exp3_gpr_uncertainty.csv)
+table_data_list = [] # List to store combined data for the LaTeX table
 
-print("--- Starting Complete Analysis (Stats & GPR) ---")
+print("--- Starting Analysis for Table Generation ---")
 
 for material, content in raw_data_map.items():
-    # --- A. 実測統計の計算 (Trial-to-Trial) ---
-    for i, target_val in enumerate(content['targets']):
-        measured_trials = np.array(content['measured'][i])
-        mean_measured = np.mean(measured_trials)
-        sigma_trial = np.std(measured_trials, ddof=1)
-        
-        stats_list.append({
-            'Material': material,
-            'Target_um': target_val,
-            'Measured_Mean_um': round(mean_measured, 2),
-            'Sigma_Trial_um': round(sigma_trial, 2),
-            'Error_um': round(mean_measured - target_val, 2)
-        })
-
-    # --- B. 逆モデル(GPR)の学習と推論 ---
-    X_train = np.array(content['ae_power']).flatten().reshape(-1, 1) # AE Power
-    y_train = np.array(content['measured']).flatten()                # D50
+    # --- GPR Training ---
+    X_train = np.array(content['ae_power']).flatten().reshape(-1, 1)
+    y_train = np.array(content['measured']).flatten()
     
-    # 変更点2: カーネル定義をGitHub実装 (..._gauss.py) に合わせる
-    # ConstantKernelを使用し、初期値は1.0、bounds指定を削除（デフォルトを使用）
-    kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) \
-             + WhiteKernel(noise_level=1.0)
-    
-    # 変更点3: random_state=0 を削除
+    # Kernel configuration matching GitHub/Paper implementation
+    kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0)
     gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=10, normalize_y=True)
     gpr.fit(X_train, y_train)
     
+    # --- Evaluation per Target ---
     for i, target_val in enumerate(content['targets']):
+        # 1. Measured Statistics
+        measured_trials = np.array(content['measured'][i])
+        mu_trial = np.mean(measured_trials)
+        sigma_trial = np.std(measured_trials, ddof=1)
+        
+        # 2. GPR Prediction
         test_powers = np.array(content['ae_power'][i]).reshape(-1, 1)
         y_pred, y_sigma = gpr.predict(test_powers, return_std=True)
+        mu_gpr = np.mean(y_pred)
+        sigma_gpr = np.mean(y_sigma) # Average uncertainty for the trials
         
-        uncertainty_list.append({
+        # 3. Calculate Errors for Table
+        estimation_error = mu_gpr - mu_trial
+        total_deviation = target_val - mu_trial
+        
+        # 4. Format for CSV/LaTeX
+        # Format: "Mean ± Sigma"
+        gpr_str = f"{mu_gpr:.2f} ± {sigma_gpr:.2f}"
+        measured_str = f"{mu_trial:.2f} ± {sigma_trial:.2f}"
+        
+        # Add '+' sign for positive errors to match table style
+        est_err_str = f"{estimation_error:+.2f}"
+        dev_err_str = f"{total_deviation:+.2f}"
+
+        table_data_list.append({
             'Material': material,
-            'Target_um': target_val,
-            'GPR_Pred_Mean_um': round(np.mean(y_pred), 2),
-            'GPR_Sigma_Uncertainty_um': round(np.mean(y_sigma), 2)
+            'Target_D50': target_val,
+            'GPR_Prediction': gpr_str,
+            'Measured_Mean': measured_str,
+            'Estimation_Error': est_err_str,
+            'Total_Deviation': dev_err_str,
+            # Raw values for verification if needed
+            'raw_mu_gpr': mu_gpr,
+            'raw_mu_trial': mu_trial,
+            'raw_est_error': estimation_error
         })
 
-# --- 2. 2つのCSVに分けて保存 ---
-pd.DataFrame(stats_list).to_csv('results/exp3_raw_stats.csv', index=False)
-pd.DataFrame(uncertainty_list).to_csv('results/exp3_gpr_uncertainty.csv', index=False)
+# --- Save Combined Table Data ---
+df_table = pd.DataFrame(table_data_list)
+output_csv = 'results/exp3_table_for_latex.csv'
+df_table.to_csv(output_csv, index=False)
 
-print("\n✅ Analysis Finished Successfully.")
-print("1. 'results/exp3_raw_stats.csv'       <- 実測の再現性(Table用)")
-print("2. 'results/exp3_gpr_uncertainty.csv' <- モデルの確信度(Discussion用)")
+print(f"\n✅ Table Data Generated: {output_csv}")
+print(df_table[['Material', 'Target_D50', 'GPR_Prediction', 'Measured_Mean', 'Estimation_Error', 'Total_Deviation']])
