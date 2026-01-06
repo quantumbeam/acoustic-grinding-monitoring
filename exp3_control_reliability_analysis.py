@@ -61,7 +61,7 @@ for material in materials:
     target_files_sample = glob.glob(os.path.join(PSD_BASE_PATH, material, '1st', '*.csv'))
     targets = []
     for f in target_files_sample:
-        match = re.search(r'for(\d+)um', os.path.basename(f))
+        match = re.search(r'_for_?(\d+)um', os.path.basename(f))
         if match:
             targets.append(int(match.group(1)))
     
@@ -75,21 +75,30 @@ for material in materials:
         for trial in ['1st', '2nd', '3rd']:
             # 1. Find PSD file and get D50
             psd_dir = os.path.join(PSD_BASE_PATH, material, trial)
-            psd_files = glob.glob(os.path.join(psd_dir, f'*for{target_val}um*.csv'))
-            if not psd_files:
+            all_psd_files = glob.glob(os.path.join(psd_dir, '*.csv'))
+            psd_file = None
+            for f in all_psd_files:
+                if re.search(f'_for_?{target_val}um', os.path.basename(f)):
+                    psd_file = f
+                    break
+            
+            if not psd_file:
                 print(f"    [Warning] No PSD file for {material} {trial} target {target_val}um")
                 continue
             
-            d50_value = get_d50(psd_files[0])
+            d50_value = get_d50(psd_file)
             if d50_value:
                 measured_trials.append(d50_value)
             
             # 2. Find latest AE file and calculate power
             ae_dir = os.path.join(AE_BASE_PATH, material, trial)
             
-            # Find all files for the target, then find the latest one by timestamp in filename
-            ae_files_for_target = glob.glob(os.path.join(ae_dir, f'*for{target_val}um*.csv'))
-            
+            all_ae_files = glob.glob(os.path.join(ae_dir, '*.csv'))
+            ae_files_for_target = []
+            for f in all_ae_files:
+                if re.search(f'_for_?{target_val}um', os.path.basename(f)):
+                    ae_files_for_target.append(f)
+
             latest_ae_file = None
             latest_timestamp = ''
             
