@@ -103,11 +103,30 @@ def moving_average(data, window_size=4):
     return np.convolve(data, np.ones(window_size), 'valid') / window_size
 
 
+def fit_gpr_and_save(
+    X_data: np.ndarray,
+    y_data: np.ndarray,
+    model_path: str,
+    n_restarts: int = 10
+):
+    kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0)
+    gpr = GaussianProcessRegressor(
+        kernel=kernel,
+        alpha=1e-10,
+        n_restarts_optimizer=n_restarts,
+        normalize_y=True
+    )
+    gpr.fit(X_data, y_data)
+    joblib.dump(gpr, model_path)
+    r2 = gpr.score(X_data, y_data)
+    return gpr, float(r2)
+
+
 # ------------------------------------------------------------
 # Main
 # ------------------------------------------------------------
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Train a GPR model on AE and PSD data.')
+    parser = argparse.ArgumentParser(description='Train GPR models on AE and PSD data (both directions).')
     parser.add_argument('--reagent', type=str, default='all',
                         choices=['NaCl', 'Citricacid', 'Ajinomoto', 'all'])
     parser.add_argument('--trial', type=str, default='all',
@@ -117,6 +136,9 @@ if __name__ == '__main__':
     TARGET_REAGENT = None if args.reagent == 'all' else args.reagent
     TARGET_TRIAL = None if args.trial == 'all' else args.trial
     EXPERIMENT = 'exp2'
+
+    # Train both directions
+    DIRECTION_TAGS = ["particle2ae", "ae2particle"]
 
     # Cache file fixed to script location
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -177,7 +199,7 @@ if __name__ == '__main__':
     # ------------------------------------------------------------
     # Dataset construction
     # ------------------------------------------------------------
-    print(f"--- Creating dataset for {EXPERIMENT} ---")
+    print(f"--- Creating dataset for {EXPERIMENT} (shared for both directions) ---")
     collected_data = []
 
     for psd_file in tqdm(all_psd_files, desc="Matching data"):
@@ -202,20 +224,22 @@ if __name__ == '__main__':
         if not ae_files:
             continue
 
-        ae_power_timeseries = [
-            ae_cache.get(norm_path(f)) for f in ae_files
-        ]
+        ae_power_timeseries = [ae_cache.get(norm_path(f)) for f in ae_files]
         ae_power_timeseries = [p for p in ae_power_timeseries if p is not None]
 
         if len(ae_power_timeseries) < 4:
             continue
 
+        # Convert to mV^2
         ae_power_mV2 = np.array(ae_power_timeseries, dtype=float) * 1e6
+
         smoothed = moving_average(ae_power_mV2, window_size=4)
         if smoothed.size == 0:
             continue
 
         final_ae_power = float(smoothed[-1])
+
+        # Store (d50, ae, trial, reagent)
         collected_data.append((float(d50), final_ae_power, trial, reagent))
 
     if not collected_data:
@@ -226,45 +250,41 @@ if __name__ == '__main__':
     data_array = np.array(collected_data, dtype=object)
 
     # ------------------------------------------------------------
-    # GPR
+    # Train both directions per reagent
     # ------------------------------------------------------------
     os.makedirs(MODEL_DIR, exist_ok=True)
     all_metrics = []
 
     for current_reagent in np.unique(data_array[:, 3]):
-        print(f"\n--- GPR for Reagent: {current_reagent} ---")
+        print(f"\n=== Reagent: {current_reagent} ===")
 
         mask = data_array[:, 3] == current_reagent
         reagent_data = data_array[mask]
 
-        X_data = np.array(reagent_data[:, 1], dtype=float).reshape(-1, 1)
-        y_data = np.array(reagent_data[:, 0], dtype=float)
+        d50_vals = np.array(reagent_data[:, 0], dtype=float)
+        ae_vals = np.array(reagent_data[:, 1], dtype=float)
         trial_labels = reagent_data[:, 2]
 
-        kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0)
-        gpr = GaussianProcessRegressor(
-            kernel=kernel,
-            alpha=1e-10,
-            n_restarts_optimizer=10,
-            normalize_y=True
-        )
-        gpr.fit(X_data, y_data)
+        # -------------------------
+        # 1) particle2ae: D50 -> AE
+        # -------------------------
+        direction = "particle2ae"
+        X_data = d50_vals.reshape(-1, 1)
+        y_data = ae_vals
 
-        model_path = os.path.join(MODEL_DIR, f"gpr_model_{current_reagent}_{EXPERIMENT}.joblib")
-        joblib.dump(gpr, model_path)
-
-        r2 = gpr.score(X_data, y_data)
-        print(f"R2: {r2:.4f}")
-        print(f"Kernel: {gpr.kernel_}")
+        model_path = os.path.join(MODEL_DIR, f"gpr_model_{direction}_{current_reagent}_{EXPERIMENT}.joblib")
+        gpr, r2 = fit_gpr_and_save(X_data, y_data, model_path)
 
         X_plot = np.linspace(X_data.min()*0.9, X_data.max()*1.1, 500).reshape(-1, 1)
         y_mean, y_std = gpr.predict(X_plot, return_std=True)
 
         all_metrics.append({
+            "direction": direction,
             "reagent": current_reagent,
-            "r_squared": float(r2),
+            "r_squared": r2,
             "average_variance": float(np.mean(y_std**2)),
-            "kernel_optimized": str(gpr.kernel_)
+            "kernel_optimized": str(gpr.kernel_),
+            "model_path": model_path
         })
 
         plt.figure(figsize=(12, 8))
@@ -285,15 +305,61 @@ if __name__ == '__main__':
             y_mean + 1.96*y_std,
             alpha=0.2
         )
-
-        plt.xlabel(r'Total Power Spectrum ($\mathrm{mV}^2$)')
-        plt.ylabel(r'$D_{50}~(\mathrm{\mu m})$')
+        plt.xlabel(r'$D_{50}~(\mathrm{\mu m})$')
+        plt.ylabel(r'Total Power Spectrum ($\mathrm{mV}^2$)')
         plt.legend()
-
-        plot_path = os.path.join(MODEL_DIR, f"gpr_plot_{current_reagent}.png")
+        plot_path = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
         plt.savefig(plot_path, dpi=300)
         plt.close()
 
-    pd.DataFrame(all_metrics).to_csv(
-        os.path.join(MODEL_DIR, "gpr_metrics.csv"), index=False
-    )
+        print(f"[{direction}] R2: {r2:.4f} | Saved: {model_path}")
+
+        # -------------------------
+        # 2) ae2particle: AE -> D50
+        # -------------------------
+        direction = "ae2particle"
+        X_data = ae_vals.reshape(-1, 1)
+        y_data = d50_vals
+
+        model_path = os.path.join(MODEL_DIR, f"gpr_model_{direction}_{current_reagent}_{EXPERIMENT}.joblib")
+        gpr, r2 = fit_gpr_and_save(X_data, y_data, model_path)
+
+        X_plot = np.linspace(X_data.min()*0.9, X_data.max()*1.1, 500).reshape(-1, 1)
+        y_mean, y_std = gpr.predict(X_plot, return_std=True)
+
+        all_metrics.append({
+            "direction": direction,
+            "reagent": current_reagent,
+            "r_squared": r2,
+            "average_variance": float(np.mean(y_std**2)),
+            "kernel_optimized": str(gpr.kernel_),
+            "model_path": model_path
+        })
+
+        plt.figure(figsize=(12, 8))
+        for t in np.unique(trial_labels):
+            m = trial_labels == t
+            plt.scatter(X_data[m], y_data[m],
+                        marker=markers.get(t, 'o'),
+                        c=colors.get(t, 'black'),
+                        s=100, label=t)
+
+        plt.plot(X_plot, y_mean, 'k-')
+        plt.fill_between(
+            X_plot.ravel(),
+            y_mean - 1.96*y_std,
+            y_mean + 1.96*y_std,
+            alpha=0.2
+        )
+        plt.xlabel(r'Total Power Spectrum ($\mathrm{mV}^2$)')
+        plt.ylabel(r'$D_{50}~(\mathrm{\mu m})$')
+        plt.legend()
+        plot_path = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
+        plt.savefig(plot_path, dpi=300)
+        plt.close()
+
+        print(f"[{direction}] R2: {r2:.4f} | Saved: {model_path}")
+
+    metrics_path = os.path.join(MODEL_DIR, f"gpr_metrics_both_directions_{EXPERIMENT}.csv")
+    pd.DataFrame(all_metrics).to_csv(metrics_path, index=False)
+    print(f"\nSaved metrics: {metrics_path}")
