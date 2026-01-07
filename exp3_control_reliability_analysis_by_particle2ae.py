@@ -44,6 +44,48 @@ def get_d50(file_path):
     return None
 
 
+def safe_z(value, mu, sigma, eps=1e-12):
+    """Return z=(value-mu)/sigma with guard; None if not computable."""
+    v = safe_float(value)
+    m = safe_float(mu)
+    s = safe_float(sigma)
+    if v is None or m is None or s is None:
+        return None
+    if abs(s) < eps:
+        return None
+    return float((v - m) / s)
+
+
+def safe_k_equiv(value, mu, sigma, eps=1e-12):
+    """Return k=(mu-value)/sigma (positive means below mu), with guard."""
+    v = safe_float(value)
+    m = safe_float(mu)
+    s = safe_float(sigma)
+    if v is None or m is None or s is None:
+        return None
+    if abs(s) < eps:
+        return None
+    return float((m - v) / s)
+
+
+def safe_margin(th, value):
+    """Return margin = th - value; None if not computable."""
+    t = safe_float(th)
+    v = safe_float(value)
+    if t is None or v is None:
+        return None
+    return float(t - v)
+
+
+def safe_margin_sigma(th, value, sigma, eps=1e-12):
+    """Return (th - value)/sigma; None if not computable."""
+    mar = safe_margin(th, value)
+    s = safe_float(sigma)
+    if mar is None or s is None or abs(s) < eps:
+        return None
+    return float(mar / s)
+
+
 # ------------------------------------------------------------
 # Settings
 # ------------------------------------------------------------
@@ -65,7 +107,7 @@ MODEL_NAME_MAP = {
 
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
-print("--- Check last-2 crossing vs predicted threshold (particle2ae) ---")
+print("--- Check last-2 crossing vs predicted threshold (particle2ae) + z-scores ---")
 
 materials = natsorted([
     os.path.basename(d)
@@ -141,17 +183,10 @@ for material in materials:
             last_below = (last_ae_f is not None and last_ae_f < ae_th)
             second_below = (second_ae_f is not None and second_ae_f < ae_th)
 
-            # The "expected" behavior for threshold-stop:
-            # second_last >= th and last < th
             crossed_between_last2 = None
             if (second_ae_f is not None) and (last_ae_f is not None):
                 crossed_between_last2 = (second_ae_f >= ae_th) and (last_ae_f < ae_th)
 
-            # Case classification (useful for diagnostics)
-            # - "ExpectedCross": second >= th, last < th
-            # - "BothBelow": second < th, last < th (kept measuring after crossing / noise)
-            # - "BothAbove": second >= th, last >= th (did not reach threshold or threshold mismatch)
-            # - "Rebound": second < th, last >= th (unlikely; noise / ordering / labeling issue)
             case = "Missing"
             if (second_ae_f is not None) and (last_ae_f is not None):
                 if (second_ae_f >= ae_th) and (last_ae_f < ae_th):
@@ -162,6 +197,19 @@ for material in materials:
                     case = "BothAbove"
                 elif (second_ae_f < ae_th) and (last_ae_f >= ae_th):
                     case = "Rebound"
+
+            # --- z / margin features (standardized by sigma at target) ---
+            z_second = safe_z(second_ae_f, ae_mu, ae_std)
+            z_last = safe_z(last_ae_f, ae_mu, ae_std)
+
+            k_equiv_second = safe_k_equiv(second_ae_f, ae_mu, ae_std)  # (mu - obs)/sigma
+            k_equiv_last = safe_k_equiv(last_ae_f, ae_mu, ae_std)
+
+            margin_second = safe_margin(ae_th, second_ae_f)  # th - obs
+            margin_last = safe_margin(ae_th, last_ae_f)
+
+            margin_second_sigma = safe_margin_sigma(ae_th, second_ae_f, ae_std)
+            margin_last_sigma = safe_margin_sigma(ae_th, last_ae_f, ae_std)
 
             rows.append({
                 "Material": material,
@@ -188,18 +236,27 @@ for material in materials:
 
                 "Crossed_between_last2": crossed_between_last2,
                 "Case": case,
+
+                # --- New: standardized diagnostics ---
+                "z_second_last": z_second,
+                "z_last": z_last,
+                "k_equiv_second_last": k_equiv_second,
+                "k_equiv_last": k_equiv_last,
+                "margin_second_last_mV2": margin_second,
+                "margin_last_mV2": margin_last,
+                "margin_second_last_sigma": margin_second_sigma,
+                "margin_last_sigma": margin_last_sigma,
             })
 
 df = pd.DataFrame(rows)
 
 # Save detailed rows
-out_detail = os.path.join(RESULTS_DIR, "exp3_threshold_stop_check_last2_detail.csv")
+out_detail = os.path.join(RESULTS_DIR, "exp3_threshold_stop_check_last2_detail_with_z.csv")
 df.to_csv(out_detail, index=False)
 print(f"\nSaved detail: {out_detail}")
 
 # Aggregation: how often the expected pattern occurs
 if not df.empty:
-    # overall summary
     summary = (
         df.groupby(["Material", "Target_D50", "Case"])
           .size()
@@ -209,14 +266,23 @@ if not df.empty:
     summary.to_csv(out_summary, index=False)
     print(f"Saved summary: {out_summary}")
 
-    # Also: expected-cross rate per Material/Target
+    # Expected-cross rate per Material/Target
     rate_rows = []
     for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
         n = len(g)
         n_exp = int(np.sum(g["Case"] == "ExpectedCross"))
-        rate_rows.append({"Material": mat, "Target_D50": tgt, "N": n, "N_ExpectedCross": n_exp, "Rate_ExpectedCross": n_exp / n if n else np.nan})
+        rate_rows.append({
+            "Material": mat,
+            "Target_D50": tgt,
+            "N": n,
+            "N_ExpectedCross": n_exp,
+            "Rate_ExpectedCross": n_exp / n if n else np.nan,
+            # Optional: median z_last as a quick “how deep below” indicator
+            "median_z_last": float(np.nanmedian(pd.to_numeric(g["z_last"], errors="coerce"))),
+            "median_k_equiv_last": float(np.nanmedian(pd.to_numeric(g["k_equiv_last"], errors="coerce"))),
+        })
     rate_df = pd.DataFrame(rate_rows)
-    out_rate = os.path.join(RESULTS_DIR, "exp3_threshold_stop_check_last2_rate.csv")
+    out_rate = os.path.join(RESULTS_DIR, "exp3_threshold_stop_check_last2_rate_with_z.csv")
     rate_df.to_csv(out_rate, index=False)
     print(f"Saved rate: {out_rate}")
 

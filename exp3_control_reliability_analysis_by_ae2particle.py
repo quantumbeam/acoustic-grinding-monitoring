@@ -30,6 +30,18 @@ def parse_timestamp_key(filename: str):
     return ("", "", base)
 
 
+def safe_z(value, ref, sigma, eps=1e-12):
+    """z=(value-ref)/sigma; None if not computable."""
+    v = safe_float(value)
+    r = safe_float(ref)
+    s = safe_float(sigma)
+    if v is None or r is None or s is None:
+        return None
+    if abs(s) < eps:
+        return None
+    return float((v - r) / s)
+
+
 # --- Copied from exp2_gpr_model.py ---
 def get_d50(file_path):
     try:
@@ -64,9 +76,14 @@ MODEL_NAME_MAP = {
     'Ajinomoto': 'Ajinomoto',
 }
 
+# Achieved rule using uncertainty (optional, but recommended to export)
+# achieved_conservative: d50hat + K_SIGMA_D50*sigma <= target
+# achieved_optimistic:   d50hat - K_SIGMA_D50*sigma <= target
+K_SIGMA_D50 = 1.0  # set 0.0 if you want mean-only; keep 1.0 for analysis
+
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
-print("--- Check last-2 crossing for AE->D50 estimation (ae2particle) ---")
+print("--- Check last-2 crossing for AE->D50 estimation (ae2particle) + z-scores ---")
 
 materials = natsorted([
     os.path.basename(d)
@@ -148,21 +165,33 @@ for material in materials:
                 d50hat_second = float(y[0])
                 sigma_second = float(s[0])
 
-            # Define "achieved" as D50_hat <= target (smaller is better)
-            achieved_last = (d50hat_last is not None and d50hat_last <= target_val)
-            achieved_second = (d50hat_second is not None and d50hat_second <= target_val)
+            # --- Achieved definitions ---
+            # mean-only (your current)
+            achieved_last_mean = (d50hat_last is not None and d50hat_last <= target_val)
+            achieved_second_mean = (d50hat_second is not None and d50hat_second <= target_val)
 
-            # Expected pattern for "stop when achieved":
-            # second_last NOT achieved (>) and last achieved (<=)
+            # conservative (require upper confidence bound <= target)
+            achieved_last_cons = (
+                d50hat_last is not None and sigma_last is not None and (d50hat_last + K_SIGMA_D50 * sigma_last) <= target_val
+            )
+            achieved_second_cons = (
+                d50hat_second is not None and sigma_second is not None and (d50hat_second + K_SIGMA_D50 * sigma_second) <= target_val
+            )
+
+            # optimistic (require lower confidence bound <= target)
+            achieved_last_opt = (
+                d50hat_last is not None and sigma_last is not None and (d50hat_last - K_SIGMA_D50 * sigma_last) <= target_val
+            )
+            achieved_second_opt = (
+                d50hat_second is not None and sigma_second is not None and (d50hat_second - K_SIGMA_D50 * sigma_second) <= target_val
+            )
+
+            # Expected pattern for "stop when achieved" (mean-only) to match your prior summary
             crossed_between_last2 = None
             if (d50hat_second is not None) and (d50hat_last is not None):
                 crossed_between_last2 = (d50hat_second > target_val) and (d50hat_last <= target_val)
 
-            # Case classification (parallel to threshold check)
-            # - "ExpectedCross": second > target, last <= target
-            # - "BothAchieved": second <= target, last <= target
-            # - "BothNot": second > target, last > target
-            # - "Rebound": second <= target, last > target
+            # Case classification (mean-only; parallel to threshold check)
             case = "Missing"
             if (d50hat_second is not None) and (d50hat_last is not None):
                 if (d50hat_second > target_val) and (d50hat_last <= target_val):
@@ -174,6 +203,11 @@ for material in materials:
                 elif (d50hat_second <= target_val) and (d50hat_last > target_val):
                     case = "Rebound"
 
+            # --- New: z relative to TARGET (how many sigma above/below target) ---
+            # z>0 means predicted is above target (not achieved), z<0 achieved with margin
+            z_last = safe_z(d50hat_last, target_val, sigma_last)
+            z_second = safe_z(d50hat_second, target_val, sigma_second)
+
             rows.append({
                 "Material": material,
                 "Trial": trial,
@@ -181,6 +215,7 @@ for material in materials:
                 "Measured_D50": safe_float(measured_d50),
 
                 "Model_Path": model_path,
+                "K_SIGMA_D50": float(K_SIGMA_D50),
 
                 "N_AE_files_for_target": int(len(ae_files)),
 
@@ -188,26 +223,38 @@ for material in materials:
                 "AE_second_last_mV2": second_ae,
                 "D50hat_second_last": safe_float(d50hat_second),
                 "D50hat_second_last_sigma": safe_float(sigma_second),
-                "Achieved_second_last": achieved_second if d50hat_second is not None else None,
+
+                "Achieved_second_last_mean": achieved_second_mean if d50hat_second is not None else None,
+                "Achieved_second_last_conservative": achieved_second_cons if d50hat_second is not None else None,
+                "Achieved_second_last_optimistic": achieved_second_opt if d50hat_second is not None else None,
 
                 "AE_last_file": last_name,
                 "AE_last_mV2": last_ae,
                 "D50hat_last": safe_float(d50hat_last),
                 "D50hat_last_sigma": safe_float(sigma_last),
-                "Achieved_last": achieved_last if d50hat_last is not None else None,
+
+                "Achieved_last_mean": achieved_last_mean if d50hat_last is not None else None,
+                "Achieved_last_conservative": achieved_last_cons if d50hat_last is not None else None,
+                "Achieved_last_optimistic": achieved_last_opt if d50hat_last is not None else None,
 
                 "Crossed_between_last2": crossed_between_last2,
                 "Case": case,
+
+                # standardized diagnostics
+                "z_second_last": z_second,
+                "z_last": z_last,
+                "k_equiv_second_last": z_second,  # same quantity; kept for naming symmetry
+                "k_equiv_last": z_last,
             })
 
 df = pd.DataFrame(rows)
 
 # Save detail
-out_detail = os.path.join(RESULTS_DIR, "exp3_ae2particle_stop_check_last2_detail.csv")
+out_detail = os.path.join(RESULTS_DIR, "exp3_ae2particle_stop_check_last2_detail_with_z.csv")
 df.to_csv(out_detail, index=False)
 print(f"\nSaved detail: {out_detail}")
 
-# Save summary in the SAME format as your threshold summary
+# Save summary (same as threshold summary)
 # Material,Target_D50,Case,count
 if not df.empty:
     summary = (
@@ -219,7 +266,26 @@ if not df.empty:
     summary.to_csv(out_summary, index=False)
     print(f"Saved summary: {out_summary}")
 
-    print("\nSummary head:")
-    print(summary.sort_values(["Material", "Target_D50", "Case"]).head(50))
+    # Rate table with z medians (parallel to your threshold "rate_with_z")
+    rate_rows = []
+    for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
+        n = len(g)
+        n_exp = int(np.sum(g["Case"] == "ExpectedCross"))
+        rate_rows.append({
+            "Material": mat,
+            "Target_D50": tgt,
+            "N": n,
+            "N_ExpectedCross": n_exp,
+            "Rate_ExpectedCross": n_exp / n if n else np.nan,
+            "median_z_last": float(np.nanmedian(pd.to_numeric(g["z_last"], errors="coerce"))),
+            "median_k_equiv_last": float(np.nanmedian(pd.to_numeric(g["k_equiv_last"], errors="coerce"))),
+        })
+    rate_df = pd.DataFrame(rate_rows)
+    out_rate = os.path.join(RESULTS_DIR, "exp3_ae2particle_stop_check_last2_rate_with_z.csv")
+    rate_df.to_csv(out_rate, index=False)
+    print(f"Saved rate: {out_rate}")
+
+    print("\nTop of rate table:")
+    print(rate_df.sort_values(["Material", "Target_D50"]).head(30))
 else:
     print("No data was processed.")
