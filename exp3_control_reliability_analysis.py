@@ -184,7 +184,7 @@ for material in materials:
             # "Did the AE accurately reflect the particle size?"
             B_estimation_error = None
             if B_d50hat is not None and measured_d50_f is not None:
-                B_estimation_error = B_d50hat - measured_d50_f
+                B_estimation_error =  measured_d50_f - B_d50hat
 
             
             # --- Store Result ---

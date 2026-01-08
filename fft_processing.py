@@ -59,8 +59,8 @@ def calculate_fft_power(file_path, sampling_rate=2e6, header_lines=12,
         # Amplitude = abs(FFT) / N * 2 (for AC components)
         amplitude_spectrum = np.abs(fft_result[positive_freq_mask]) / N * 2
 
-        # 5. Calculate total power > 100 kHz
-        band_mask = freqs > 100e3 
+        # 5. Calculate total power > 100 kHz to 1 MHz
+        band_mask = (freqs >= 100000) & (freqs <= 1000000)
         target_amplitudes = amplitude_spectrum[band_mask]
         
         # Power in V^2 (Sum of squared amplitudes)
