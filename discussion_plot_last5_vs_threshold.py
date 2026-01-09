@@ -5,7 +5,7 @@
 Plot last-5 AE points before stopping vs A_AE_Threshold for all materials/targets/trials.
 
 - Uses scienceplots style (science, ieee, no-latex) for publication-ready figures.
-- Saves both .pdf and .png to results/discussion/plots_last5/
+- Saves both .pdf and .pdf to results/discussion/plots_last5/
 
 Assumptions:
 - fft_processing.py provides calculate_fft_power(path)->float
@@ -211,8 +211,10 @@ for _, r in group_keys.iterrows():
     if plotted_any:
         stem = f"last{LAST_N}_{sanitize(material)}_{target}um"
         out_png = OUT_DIR / f"{stem}.png"
+        out_pdf = OUT_DIR / f"{stem}.pdf"
         fig.savefig(out_png)
-        print(f"[OK] Saved: {out_png}")
+        fig.savefig(out_pdf)
+        print(f"[OK] Saved: {out_png} and {out_pdf}")
     else:
         print(f"[WARN] Nothing plotted for {material} target {target}")
 

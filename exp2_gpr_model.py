@@ -306,10 +306,12 @@ if __name__ == '__main__':
             alpha=0.2
         )
         plt.xlabel(r'$D_{50}~(\mathrm{\mu m})$')
-        plt.ylabel(r'Total Power Spectrum ($\mathrm{mV}^2$)')
+        plt.ylabel(r'Total spectral power ($\mathrm{mV}^2$)')
         plt.legend()
-        plot_path = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
-        plt.savefig(plot_path, dpi=300)
+        plot_path_pdf = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.pdf")
+        plot_path_png = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
+        plt.savefig(plot_path_pdf, dpi=300)
+        plt.savefig(plot_path_png, dpi=300)
         plt.close()
 
         print(f"[{direction}] R2: {r2:.4f} | Saved: {model_path}")
@@ -351,11 +353,13 @@ if __name__ == '__main__':
             y_mean + 1.96*y_std,
             alpha=0.2
         )
-        plt.xlabel(r'Total Power Spectrum ($\mathrm{mV}^2$)')
+        plt.xlabel(r'Total spectral power ($\mathrm{mV}^2$)')
         plt.ylabel(r'$D_{50}~(\mathrm{\mu m})$')
         plt.legend()
-        plot_path = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
-        plt.savefig(plot_path, dpi=300)
+        plot_path_pdf = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.pdf")
+        plot_path_png = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
+        plt.savefig(plot_path_pdf, dpi=300)
+        plt.savefig(plot_path_png, dpi=300)
         plt.close()
 
         print(f"[{direction}] R2: {r2:.4f} | Saved: {model_path}")

@@ -107,5 +107,5 @@ python gpr_model.py
 
 **Output Files:**
 
-* Plots are saved in the `results/` directory with dynamic filenames based on the reagent and trial (e.g., `results/gpr_plot_NaCl_1st.png`, `results/gpr_plot_all_all.png`).
+* Plots are saved in the `results/` directory with dynamic filenames based on the reagent and trial (e.g., `results/gpr_plot_NaCl_1st.pdf`, `results/gpr_plot_all_all.pdf`).
 * A CSV file containing R-squared and average variance metrics is also saved in the `results/` directory. If `--reagent all` is used, the CSV will contain metrics for each reagent processed (e.g., `results/gpr_metrics_by_reagent_all.csv`). Otherwise, it will be specific to the chosen reagent (e.g., `results/gpr_metrics_NaCl_all.csv`).
