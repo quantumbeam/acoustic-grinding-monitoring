@@ -122,6 +122,14 @@ def fit_gpr_and_save(
     return gpr, float(r2)
 
 
+def compute_nmpiw(y_std: np.ndarray, y_data: np.ndarray) -> tuple[float, float]:
+    mpiw = float(np.mean(2.0 * 1.96 * y_std))
+    std_y = float(np.std(y_data))
+    if std_y == 0.0:
+        return mpiw, float('nan')
+    return mpiw, mpiw / std_y
+
+
 # ------------------------------------------------------------
 # Main
 # ------------------------------------------------------------
@@ -277,12 +285,15 @@ if __name__ == '__main__':
 
         X_plot = np.linspace(X_data.min()*0.9, X_data.max()*1.1, 500).reshape(-1, 1)
         y_mean, y_std = gpr.predict(X_plot, return_std=True)
+        mpiw, nmpiw = compute_nmpiw(y_std, y_data)
 
         all_metrics.append({
             "direction": direction,
             "reagent": current_reagent,
             "r_squared": r2,
             "average_variance": float(np.mean(y_std**2)),
+            "mpiw": mpiw,
+            "nmpiw": nmpiw,
             "kernel_optimized": str(gpr.kernel_),
             "model_path": model_path
         })
@@ -328,12 +339,15 @@ if __name__ == '__main__':
 
         X_plot = np.linspace(X_data.min()*0.9, X_data.max()*1.1, 500).reshape(-1, 1)
         y_mean, y_std = gpr.predict(X_plot, return_std=True)
+        mpiw, nmpiw = compute_nmpiw(y_std, y_data)
 
         all_metrics.append({
             "direction": direction,
             "reagent": current_reagent,
             "r_squared": r2,
             "average_variance": float(np.mean(y_std**2)),
+            "mpiw": mpiw,
+            "nmpiw": nmpiw,
             "kernel_optimized": str(gpr.kernel_),
             "model_path": model_path
         })
