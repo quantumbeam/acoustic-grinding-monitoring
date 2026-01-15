@@ -67,9 +67,9 @@ AE_BASE_PATH = os.path.join('ae_data', EXPERIMENT)
 AE_SCALE_TO_MV2 = 1e6
 
 # Models
-# Method A uses Forward Model (Target -> AE)
+# Method P2AE uses Forward Model (Target -> AE)
 MODEL_A_TAG = "particle2ae" 
-# Method B uses Inverse Model (AE -> Estimated D50)
+# Method AE2P uses Inverse Model (AE -> Estimated D50)
 MODEL_B_TAG = "ae2particle" 
 
 MODEL_NAME_MAP = {
@@ -83,7 +83,7 @@ K_SIGMA_AE = 0.0  # Method A threshold parameter
 
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
-print("--- Unified Evaluation: Method A (Threshold) & Method B (Estimation) ---")
+print("--- Unified Evaluation: Method P2AE (Threshold) & Method AE2P (Estimation) ---")
 
 # Get materials and sort them naturally
 materials = [os.path.basename(d) for d in glob.glob(os.path.join(PSD_BASE_PATH, '*')) if os.path.isdir(d)]
@@ -94,17 +94,17 @@ rows = []
 for material in materials:
     model_key = MODEL_NAME_MAP.get(material, material)
     
-    # 1. Load Forward Model for Method A (Target -> AE Threshold)
+    # 1. Load Forward Model for Method P2AE (Target -> AE Threshold)
     model_a_path = os.path.join(RESULTS_DIR, f"gpr_model_{MODEL_A_TAG}_{model_key}_exp2.joblib")
     if not os.path.exists(model_a_path):
-        print(f"Warning: Method A model not found for {material}")
+        print(f"Warning: Method P2AE model not found for {material}")
         continue
     gpr_A = joblib.load(model_a_path)
 
-    # 2. Load Inverse Model for Method B (AE -> D50 Estimation)
+    # 2. Load Inverse Model for Method AE2P (AE -> D50 Estimation)
     model_b_path = os.path.join(RESULTS_DIR, f"gpr_model_{MODEL_B_TAG}_{model_key}_exp2.joblib")
     if not os.path.exists(model_b_path):
-        print(f"Warning: Method B model not found for {material}")
+        print(f"Warning: Method AE2P model not found for {material}")
         continue
     gpr_B = joblib.load(model_b_path)
 
@@ -119,7 +119,7 @@ for material in materials:
     targets.sort()
 
     for target_val in targets:
-        # --- Method A Preparation: Calculate AE Threshold ---
+        # --- Method P2AE Preparation: Calculate AE Threshold ---
         x_target = np.array([[float(target_val)]], dtype=float)
         ae_mu, ae_std = gpr_A.predict(x_target, return_std=True)
         A_ae_th = float(ae_mu[0]) - K_SIGMA_AE * float(ae_std[0])
@@ -157,7 +157,7 @@ for material in materials:
             name_last, ae_last = process_ae(last_file)
             name_second, ae_second = process_ae(second_last_file)
 
-            # --- Method A Evaluation (Threshold Control) ---
+            # --- Method P2AE Evaluation (Threshold Control) ---
             # Did AE cross the threshold?
             A_is_expected_cross = False
             if ae_last is not None and ae_second is not None:
@@ -167,11 +167,14 @@ for material in materials:
             # Metric A: Total Deviation (Target - Measured)
             # "How far is the result from the target?"
             A_total_deviation = None
+            A_total_deviation_percent = None
             if measured_d50_f is not None:
                 A_total_deviation = float(target_val) - measured_d50_f
+                if target_val != 0:
+                    A_total_deviation_percent = (A_total_deviation / float(target_val)) * 100.0
 
 
-            # --- Method B Evaluation (Estimation Control) ---
+            # --- Method AE2P Evaluation (Estimation Control) ---
             # What does the AE imply about D50?
             B_d50hat = None
             B_d50hat_sigma = None
@@ -197,19 +200,36 @@ for material in materials:
                 "Common_Measured_D50": measured_d50_f,
                 "Common_AE_Last_mV2": ae_last,
                 
-                # Method A Specifics
-                "A_AE_Threshold": A_ae_th,
-                "A_Is_ExpectedCross": A_is_expected_cross,
-                "A_Total_Deviation": A_total_deviation,
+                # Method P2AE Specifics
+                "P2AE_AE_Threshold": A_ae_th,
+                "P2AE_Is_ExpectedCross": A_is_expected_cross,
+                "P2AE_Total_Deviation": A_total_deviation,
+                "P2AE_Total_Deviation_Percent": A_total_deviation_percent,
                 
-                # Method B Specifics
-                "B_Predicted_D50": B_d50hat,
-                "B_Predicted_Sigma": B_d50hat_sigma,
-                "B_Estimation_Error": B_estimation_error
+                # Method AE2P Specifics
+                "AE2P_Predicted_D50": B_d50hat,
+                "AE2P_Predicted_Sigma": B_d50hat_sigma,
+                "AE2P_Estimation_Error": B_estimation_error
             })
 
 # Save Detailed Data
 df = pd.DataFrame(rows)
+detail_cols = [
+    "Material",
+    "Trial",
+    "Target_D50",
+    "Common_Measured_D50",
+    "Common_AE_Last_mV2",
+    "P2AE_AE_Threshold",
+    "P2AE_Is_ExpectedCross",
+    "P2AE_Total_Deviation",
+    "P2AE_Total_Deviation_Percent",
+    "AE2P_Predicted_D50",
+    "AE2P_Predicted_Sigma",
+    "AE2P_Estimation_Error",
+]
+detail_cols = [c for c in detail_cols if c in df.columns]
+df = df[detail_cols + [c for c in df.columns if c not in detail_cols]]
 out_detail = os.path.join(RESULTS_DIR, "exp3_evaluation_detail.csv")
 df.to_csv(out_detail, index=False)
 print(f"Saved detailed results to: {out_detail}")
@@ -228,13 +248,14 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
     mu_trial = g["Common_Measured_D50"].mean()
     sigma_trial = g["Common_Measured_D50"].std(ddof=1)
     
-    # 2. Method B Stats (Prediction)
-    mu_gpr = g["B_Predicted_D50"].mean()
-    mean_sigma_gpr = g["B_Predicted_Sigma"].mean()
-    mean_est_error = g["B_Estimation_Error"].mean()
+    # 2. Method AE2P Stats (Prediction)
+    mu_gpr = g["AE2P_Predicted_D50"].mean()
+    mean_sigma_gpr = g["AE2P_Predicted_Sigma"].mean()
+    mean_est_error = g["AE2P_Estimation_Error"].mean()
 
-    # 3. Method A Stats (Performance)
-    mean_total_dev = g["A_Total_Deviation"].mean()
+    # 3. Method P2AE Stats (Performance)
+    mean_total_dev = g["P2AE_Total_Deviation"].mean()
+    mean_total_dev_pct = g["P2AE_Total_Deviation_Percent"].mean()
     
     # Format strings for Table
     meas_str = f"{mu_trial:.2f} ± {sigma_trial:.2f}" if pd.notnull(mu_trial) else "N/A"
@@ -245,22 +266,38 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
         "Target_D50": tgt,
         
         # Columns matching your LaTeX table request
-        "B_GPR_Prediction": gpr_str,
+        "AE2P_GPR_Prediction": gpr_str,
         "Common_Measured_Mean": meas_str,
-        "B_Estimation_Error": mean_est_error,
-        "A_Total_Deviation": mean_total_dev,
+        "AE2P_Estimation_Error": mean_est_error,
+        "P2AE_Total_Deviation": mean_total_dev,
+        "P2AE_Total_Deviation_Percent": mean_total_dev_pct,
         
         # Raw numeric values for plotting if needed
-        "num_B_mu_GPR": mu_gpr,
-        "num_B_sigma_GPR": mean_sigma_gpr,
+        "num_AE2P_mu_GPR": mu_gpr,
+        "num_AE2P_sigma_GPR": mean_sigma_gpr,
         "num_Common_mu_trial": mu_trial,
         "num_Common_sigma_trial": sigma_trial
     })
 
 df_summary = pd.DataFrame(summary_rows)
+summary_cols = [
+    "Material",
+    "Target_D50",
+    "Common_Measured_Mean",
+    "P2AE_Total_Deviation",
+    "P2AE_Total_Deviation_Percent",
+    "AE2P_GPR_Prediction",
+    "AE2P_Estimation_Error",
+    "num_AE2P_mu_GPR",
+    "num_AE2P_sigma_GPR",
+    "num_Common_mu_trial",
+    "num_Common_sigma_trial",
+]
+summary_cols = [c for c in summary_cols if c in df_summary.columns]
+df_summary = df_summary[summary_cols + [c for c in df_summary.columns if c not in summary_cols]]
 out_summary = os.path.join(RESULTS_DIR, "exp3_evaluation_summary_for_table.csv")
 df_summary.to_csv(out_summary, index=False)
 
 print("\n--- Summary Table Preview (Top 10) ---")
-print(df_summary[["Material", "Target_D50", "B_GPR_Prediction", "Common_Measured_Mean", "B_Estimation_Error", "A_Total_Deviation"]].head(10).to_string(index=False))
+print(df_summary[["Material", "Target_D50", "AE2P_GPR_Prediction", "Common_Measured_Mean", "AE2P_Estimation_Error", "P2AE_Total_Deviation"]].head(10).to_string(index=False))
 print(f"\nSummary table saved to: {out_summary}")
