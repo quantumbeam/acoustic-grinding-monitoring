@@ -5,7 +5,6 @@ import glob
 import re
 import argparse
 import json
-from datetime import datetime
 from tqdm import tqdm
 import joblib
 from fft_processing import calculate_fft_power
@@ -131,45 +130,6 @@ def compute_nmpiw(y_std: np.ndarray, y_data: np.ndarray) -> tuple[float, float]:
     return mpiw, mpiw / std_y
 
 
-def parse_timestamp_from_filename(file_path: str) -> datetime | None:
-    match = re.search(r'(\d{8}_\d{6})', os.path.basename(file_path))
-    if not match:
-        return None
-    try:
-        return datetime.strptime(match.group(1), "%Y%m%d_%H%M%S")
-    except ValueError:
-        return None
-
-
-def cumulative_norm_variance(values: np.ndarray) -> np.ndarray:
-    result = np.full(values.shape, np.nan, dtype=float)
-    for i in range(len(values)):
-        segment = values[:i + 1]
-        mean_seg = float(np.mean(segment))
-        if mean_seg != 0.0:
-            result[i] = float(np.var(segment) / (mean_seg ** 2))
-    return result
-
-
-def log_detrended_variance(values: np.ndarray, time_min: np.ndarray) -> np.ndarray:
-    result = np.full(values.shape, np.nan, dtype=float)
-    valid_mask = values > 0.0
-    if np.count_nonzero(valid_mask) < 2:
-        return result
-    t_valid = time_min[valid_mask]
-    y_valid = np.log(values[valid_mask])
-    slope, intercept = np.polyfit(t_valid, y_valid, 1)
-    residuals = y_valid - (slope * t_valid + intercept)
-    res_full = np.full(values.shape, np.nan, dtype=float)
-    res_full[valid_mask] = residuals
-    for i in range(len(values)):
-        segment = res_full[:i + 1]
-        segment = segment[~np.isnan(segment)]
-        if segment.size >= 2:
-            result[i] = float(np.var(segment))
-    return result
-
-
 # ------------------------------------------------------------
 # Main
 # ------------------------------------------------------------
@@ -179,9 +139,6 @@ if __name__ == '__main__':
                         choices=['NaCl', 'Citricacid', 'Ajinomoto', 'all'])
     parser.add_argument('--trial', type=str, default='all',
                         choices=['1st', '2nd', '3rd', 'all'])
-    parser.add_argument('--variance-mode', type=str, default='log_detrended',
-                        choices=['cumulative', 'log_detrended'],
-                        help='Mode for variance over time.')
     args = parser.parse_args()
 
     TARGET_REAGENT = None if args.reagent == 'all' else args.reagent
@@ -240,8 +197,6 @@ if __name__ == '__main__':
             continue
 
         grind_key = match.group(1)
-        if grind_key != "grind25min":
-            continue
         grind_match = re.search(r'grind(\d+)min', grind_key)
         if not grind_match:
             continue
@@ -258,8 +213,6 @@ if __name__ == '__main__':
     # ------------------------------------------------------------
     print(f"--- Creating dataset for {EXPERIMENT} (shared for both directions) ---")
     collected_data = []
-    ae_series_by_trial = {}
-
     for psd_file in tqdm(all_psd_files, desc="Matching data"):
         path_parts = psd_file.split(os.sep)
         if len(path_parts) < 3:
@@ -277,8 +230,6 @@ if __name__ == '__main__':
             continue
 
         grind_key = match.group(1)
-        if grind_key != "grind25min":
-            continue
         grind_match = re.search(r'grind(\d+)min', grind_key)
         if not grind_match:
             continue
@@ -297,36 +248,14 @@ if __name__ == '__main__':
         # Convert to mV^2
         ae_power_mV2 = np.array(ae_power_timeseries, dtype=float) * 1e6
 
-        if (reagent, trial) not in ae_series_by_trial:
-            timestamps = [parse_timestamp_from_filename(f) for f in ae_files]
-            if all(ts is not None for ts in timestamps):
-                order = np.argsort(timestamps)
-                times_sorted = [timestamps[i] for i in order]
-                values_sorted = ae_power_mV2[order]
-                t0 = times_sorted[0]
-                time_min = np.array(
-                    [(ts - t0).total_seconds() / 60.0 for ts in times_sorted],
-                    dtype=float
-                )
-            else:
-                values_sorted = ae_power_mV2
-                time_min = np.arange(1, len(values_sorted) + 1, dtype=float)
-            ae_series_by_trial[(reagent, trial)] = (time_min, values_sorted)
-
-        mean_raw = float(np.mean(ae_power_mV2))
-        var_raw = float(np.var(ae_power_mV2))
-        raw_var_norm = float('nan')
-        if mean_raw != 0.0:
-            raw_var_norm = var_raw / (mean_raw ** 2)
-
         smoothed = moving_average(ae_power_mV2, window_size=4)
         if smoothed.size == 0:
             continue
 
         final_ae_power = float(smoothed[-1])
 
-        # Store (d50, ae, raw_var_norm, grind_min, trial, reagent)
-        collected_data.append((float(d50), final_ae_power, raw_var_norm, grind_min, trial, reagent))
+        # Store (d50, ae, grind_min, trial, reagent)
+        collected_data.append((float(d50), final_ae_power, grind_min, trial, reagent))
 
     if not collected_data:
         print("No matched data points found.")
@@ -344,129 +273,23 @@ if __name__ == '__main__':
     dataset_path = os.path.join(MODEL_DIR, f"{EXPERIMENT}_gpr_dataset_raw.csv")
     dataset_df = pd.DataFrame(
         data_array,
-        columns=["d50", "ae_power_mV2", "raw_var_norm", "grind_min", "trial", "reagent"]
+        columns=["d50", "ae_power_mV2", "grind_min", "trial", "reagent"]
     )
     dataset_df.to_csv(dataset_path, index=False)
-    trial_avg_path = os.path.join(
-        MODEL_DIR,
-        f"{EXPERIMENT}_gpr_dataset_raw_trial_avg.csv"
-    )
-    trial_rows = []
-    variance_mode = args.variance_mode
-    if variance_mode == 'log_detrended':
-        series_label = "log_resid_var"
-    else:
-        series_label = "raw_var_norm"
-    for (reagent, trial), group in dataset_df.groupby(["reagent", "trial"]):
-        time_min, values_sorted = ae_series_by_trial[(reagent, trial)]
-        if variance_mode == 'log_detrended':
-            series = log_detrended_variance(values_sorted, time_min)
-        else:
-            series = cumulative_norm_variance(values_sorted)
-        raw_var_norm_mean = float(np.nanmean(series))
-        n_points = int(len(values_sorted))
-        valid = series[~np.isnan(series)]
-        start_raw_var_norm = float(valid[0]) if valid.size else float('nan')
-        end_raw_var_norm = float(valid[-1]) if valid.size else float('nan')
-        trial_rows.append({
-            "reagent": reagent,
-            "trial": trial,
-            f"{series_label}_mean": raw_var_norm_mean,
-            f"start_{series_label}": start_raw_var_norm,
-            f"end_{series_label}": end_raw_var_norm,
-            "n_points": n_points
-        })
-    trial_avg_df = pd.DataFrame(trial_rows)
-    trial_avg_df.to_csv(trial_avg_path, index=False)
     print(f"Saved dataset: {dataset_path}")
-    print(f"Saved trial-avg dataset: {trial_avg_path}")
 
     markers = {'1st': 'o', '2nd': 'x', '3rd': '^'}
     colors = {'1st': 'black', '2nd': 'red', '3rd': 'blue'}
-    for current_reagent in dataset_df["reagent"].unique():
-        reagent_df = dataset_df[dataset_df["reagent"] == current_reagent]
 
-        plt.figure(figsize=(12, 8))
-        for t in reagent_df["trial"].unique():
-            time_min, values_sorted = ae_series_by_trial[(current_reagent, t)]
-            if variance_mode == 'log_detrended':
-                series = log_detrended_variance(values_sorted, time_min)
-            else:
-                series = cumulative_norm_variance(values_sorted)
-            plt.plot(
-                time_min,
-                series,
-                marker=markers.get(t, 'o'),
-                color=colors.get(t, 'black'),
-                label=t
-            )
-        plt.xlabel('Time (min)')
-        if variance_mode == 'log_detrended':
-            ylabel = 'Variance (log-detrended, cumulative)'
-        else:
-            ylabel = 'Normalized variance (raw, cumulative)'
-        plt.ylabel(ylabel)
-        plt.legend()
-        plot_path = os.path.join(
-            MODEL_DIR,
-            f"{EXPERIMENT}_raw_var_norm_timeseries_{current_reagent}.png"
-        )
-        plt.savefig(plot_path, dpi=300)
-        plt.close()
-
-        plt.figure(figsize=(12, 8))
-        for t in reagent_df["trial"].unique():
-            time_min, values_sorted = ae_series_by_trial[(current_reagent, t)]
-            plt.plot(
-                time_min,
-                values_sorted,
-                marker=markers.get(t, 'o'),
-                color=colors.get(t, 'black'),
-                label=t
-            )
-        plt.xlabel('Time (min)')
-        plt.ylabel(r'Total spectral power ($\mathrm{mV}^2$)')
-        plt.legend()
-        plot_path = os.path.join(
-            MODEL_DIR,
-            f"{EXPERIMENT}_ae_power_timeseries_{current_reagent}.png"
-        )
-        plt.savefig(plot_path, dpi=300)
-        plt.close()
-
-        if variance_mode == 'log_detrended':
-            for t in reagent_df["trial"].unique():
-                time_min, values_sorted = ae_series_by_trial[(current_reagent, t)]
-                valid_mask = values_sorted > 0.0
-                if np.count_nonzero(valid_mask) < 2:
-                    continue
-                t_valid = time_min[valid_mask]
-                y_valid = np.log(values_sorted[valid_mask])
-                slope, intercept = np.polyfit(t_valid, y_valid, 1)
-                fit = slope * t_valid + intercept
-
-                plt.figure(figsize=(12, 8))
-                plt.scatter(t_valid, y_valid, s=60, c='black', label='log(raw)')
-                plt.plot(t_valid, fit, 'r-', label='linear fit')
-                plt.xlabel('Time (min)')
-                plt.ylabel('log(Total spectral power)')
-                plt.legend()
-                plot_path = os.path.join(
-                    MODEL_DIR,
-                    f"{EXPERIMENT}_log_trend_fit_{current_reagent}_{t}.png"
-                )
-                plt.savefig(plot_path, dpi=300)
-                plt.close()
-
-    for current_reagent in np.unique(data_array[:, 5]):
+    for current_reagent in np.unique(data_array[:, 4]):
         print(f"\n=== Reagent: {current_reagent} ===")
 
-        mask = data_array[:, 5] == current_reagent
+        mask = data_array[:, 4] == current_reagent
         reagent_data = data_array[mask]
 
         d50_vals = np.array(reagent_data[:, 0], dtype=float)
         ae_vals = np.array(reagent_data[:, 1], dtype=float)
-        trial_labels = reagent_data[:, 4]
+        trial_labels = reagent_data[:, 3]
 
         # -------------------------
         # 1) particle2ae: D50 -> AE
@@ -512,8 +335,8 @@ if __name__ == '__main__':
         plt.xlabel(r'$D_{50}~(\mathrm{\mu m})$')
         plt.ylabel(r'Total spectral power ($\mathrm{mV}^2$)')
         plt.legend()
-        plot_path_pdf = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.pdf")
-        plot_path_png = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
+        plot_path_pdf = os.path.join(MODEL_DIR, f"{EXPERIMENT}_gpr_plot_{direction}_{current_reagent}.pdf")
+        plot_path_png = os.path.join(MODEL_DIR, f"{EXPERIMENT}_gpr_plot_{direction}_{current_reagent}.png")
         plt.savefig(plot_path_pdf, dpi=300)
         plt.savefig(plot_path_png, dpi=300)
         plt.close()
@@ -563,8 +386,8 @@ if __name__ == '__main__':
         plt.xlabel(r'Total spectral power ($\mathrm{mV}^2$)')
         plt.ylabel(r'$D_{50}~(\mathrm{\mu m})$')
         plt.legend()
-        plot_path_pdf = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.pdf")
-        plot_path_png = os.path.join(MODEL_DIR, f"gpr_plot_{direction}_{current_reagent}_{EXPERIMENT}.png")
+        plot_path_pdf = os.path.join(MODEL_DIR, f"{EXPERIMENT}_gpr_plot_{direction}_{current_reagent}.pdf")
+        plot_path_png = os.path.join(MODEL_DIR, f"{EXPERIMENT}_gpr_plot_{direction}_{current_reagent}.png")
         plt.savefig(plot_path_pdf, dpi=300)
         plt.savefig(plot_path_png, dpi=300)
         plt.close()
