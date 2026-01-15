@@ -141,18 +141,6 @@ def parse_timestamp_from_filename(file_path: str) -> datetime | None:
         return None
 
 
-def rolling_norm_variance(values: np.ndarray, window: int) -> np.ndarray:
-    if window <= 0:
-        return np.full(values.shape, np.nan, dtype=float)
-    result = np.full(values.shape, np.nan, dtype=float)
-    for i in range(window - 1, len(values)):
-        segment = values[i - window + 1:i + 1]
-        mean_seg = float(np.mean(segment))
-        if mean_seg != 0.0:
-            result[i] = float(np.var(segment) / (mean_seg ** 2))
-    return result
-
-
 def cumulative_norm_variance(values: np.ndarray) -> np.ndarray:
     result = np.full(values.shape, np.nan, dtype=float)
     for i in range(len(values)):
@@ -160,6 +148,25 @@ def cumulative_norm_variance(values: np.ndarray) -> np.ndarray:
         mean_seg = float(np.mean(segment))
         if mean_seg != 0.0:
             result[i] = float(np.var(segment) / (mean_seg ** 2))
+    return result
+
+
+def log_detrended_variance(values: np.ndarray, time_min: np.ndarray) -> np.ndarray:
+    result = np.full(values.shape, np.nan, dtype=float)
+    valid_mask = values > 0.0
+    if np.count_nonzero(valid_mask) < 2:
+        return result
+    t_valid = time_min[valid_mask]
+    y_valid = np.log(values[valid_mask])
+    slope, intercept = np.polyfit(t_valid, y_valid, 1)
+    residuals = y_valid - (slope * t_valid + intercept)
+    res_full = np.full(values.shape, np.nan, dtype=float)
+    res_full[valid_mask] = residuals
+    for i in range(len(values)):
+        segment = res_full[:i + 1]
+        segment = segment[~np.isnan(segment)]
+        if segment.size >= 2:
+            result[i] = float(np.var(segment))
     return result
 
 
@@ -172,11 +179,9 @@ if __name__ == '__main__':
                         choices=['NaCl', 'Citricacid', 'Ajinomoto', 'all'])
     parser.add_argument('--trial', type=str, default='all',
                         choices=['1st', '2nd', '3rd', 'all'])
-    parser.add_argument('--variance-mode', type=str, default='cumulative',
-                        choices=['cumulative', 'rolling'],
-                        help='Mode for normalized variance over time.')
-    parser.add_argument('--rolling-window', type=int, default=4,
-                        help='Window size for rolling normalized variance (raw).')
+    parser.add_argument('--variance-mode', type=str, default='log_detrended',
+                        choices=['cumulative', 'log_detrended'],
+                        help='Mode for variance over time.')
     args = parser.parse_args()
 
     TARGET_REAGENT = None if args.reagent == 'all' else args.reagent
@@ -348,11 +353,14 @@ if __name__ == '__main__':
     )
     trial_rows = []
     variance_mode = args.variance_mode
-    rolling_window = args.rolling_window
+    if variance_mode == 'log_detrended':
+        series_label = "log_resid_var"
+    else:
+        series_label = "raw_var_norm"
     for (reagent, trial), group in dataset_df.groupby(["reagent", "trial"]):
         time_min, values_sorted = ae_series_by_trial[(reagent, trial)]
-        if variance_mode == 'rolling':
-            series = rolling_norm_variance(values_sorted, window=rolling_window)
+        if variance_mode == 'log_detrended':
+            series = log_detrended_variance(values_sorted, time_min)
         else:
             series = cumulative_norm_variance(values_sorted)
         raw_var_norm_mean = float(np.nanmean(series))
@@ -363,9 +371,9 @@ if __name__ == '__main__':
         trial_rows.append({
             "reagent": reagent,
             "trial": trial,
-            "raw_var_norm_mean": raw_var_norm_mean,
-            "start_raw_var_norm": start_raw_var_norm,
-            "end_raw_var_norm": end_raw_var_norm,
+            f"{series_label}_mean": raw_var_norm_mean,
+            f"start_{series_label}": start_raw_var_norm,
+            f"end_{series_label}": end_raw_var_norm,
             "n_points": n_points
         })
     trial_avg_df = pd.DataFrame(trial_rows)
@@ -381,8 +389,8 @@ if __name__ == '__main__':
         plt.figure(figsize=(12, 8))
         for t in reagent_df["trial"].unique():
             time_min, values_sorted = ae_series_by_trial[(current_reagent, t)]
-            if variance_mode == 'rolling':
-                series = rolling_norm_variance(values_sorted, window=rolling_window)
+            if variance_mode == 'log_detrended':
+                series = log_detrended_variance(values_sorted, time_min)
             else:
                 series = cumulative_norm_variance(values_sorted)
             plt.plot(
@@ -393,8 +401,8 @@ if __name__ == '__main__':
                 label=t
             )
         plt.xlabel('Time (min)')
-        if variance_mode == 'rolling':
-            ylabel = f'Normalized variance (raw, rolling w={rolling_window})'
+        if variance_mode == 'log_detrended':
+            ylabel = 'Variance (log-detrended, cumulative)'
         else:
             ylabel = 'Normalized variance (raw, cumulative)'
         plt.ylabel(ylabel)
@@ -425,6 +433,30 @@ if __name__ == '__main__':
         )
         plt.savefig(plot_path, dpi=300)
         plt.close()
+
+        if variance_mode == 'log_detrended':
+            for t in reagent_df["trial"].unique():
+                time_min, values_sorted = ae_series_by_trial[(current_reagent, t)]
+                valid_mask = values_sorted > 0.0
+                if np.count_nonzero(valid_mask) < 2:
+                    continue
+                t_valid = time_min[valid_mask]
+                y_valid = np.log(values_sorted[valid_mask])
+                slope, intercept = np.polyfit(t_valid, y_valid, 1)
+                fit = slope * t_valid + intercept
+
+                plt.figure(figsize=(12, 8))
+                plt.scatter(t_valid, y_valid, s=60, c='black', label='log(raw)')
+                plt.plot(t_valid, fit, 'r-', label='linear fit')
+                plt.xlabel('Time (min)')
+                plt.ylabel('log(Total spectral power)')
+                plt.legend()
+                plot_path = os.path.join(
+                    MODEL_DIR,
+                    f"{EXPERIMENT}_log_trend_fit_{current_reagent}_{t}.png"
+                )
+                plt.savefig(plot_path, dpi=300)
+                plt.close()
 
     for current_reagent in np.unique(data_array[:, 5]):
         print(f"\n=== Reagent: {current_reagent} ===")
