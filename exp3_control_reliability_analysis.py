@@ -186,8 +186,11 @@ for material in materials:
             # Metric B: Estimation Error (Predicted - Measured)
             # "Did the AE accurately reflect the particle size?"
             B_estimation_error = None
+            B_estimation_error_percent = None
             if B_d50hat is not None and measured_d50_f is not None:
                 B_estimation_error =  measured_d50_f - B_d50hat
+                if measured_d50_f != 0:
+                    B_estimation_error_percent = (B_estimation_error / measured_d50_f) * 100.0
 
             
             # --- Store Result ---
@@ -209,7 +212,8 @@ for material in materials:
                 # Method AE2P Specifics
                 "AE2P_Predicted_D50": B_d50hat,
                 "AE2P_Predicted_Sigma": B_d50hat_sigma,
-                "AE2P_Estimation_Error": B_estimation_error
+                "AE2P_Estimation_Error": B_estimation_error,
+                "AE2P_Estimation_Error_Percent": B_estimation_error_percent
             })
 
 # Save Detailed Data
@@ -227,6 +231,7 @@ detail_cols = [
     "AE2P_Predicted_D50",
     "AE2P_Predicted_Sigma",
     "AE2P_Estimation_Error",
+    "AE2P_Estimation_Error_Percent",
 ]
 detail_cols = [c for c in detail_cols if c in df.columns]
 df = df[detail_cols + [c for c in df.columns if c not in detail_cols]]
@@ -252,6 +257,7 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
     mu_gpr = g["AE2P_Predicted_D50"].mean()
     mean_sigma_gpr = g["AE2P_Predicted_Sigma"].mean()
     mean_est_error = g["AE2P_Estimation_Error"].mean()
+    mean_est_error_pct = g["AE2P_Estimation_Error_Percent"].mean()
 
     # 3. Method P2AE Stats (Performance)
     mean_total_dev = g["P2AE_Total_Deviation"].mean()
@@ -269,6 +275,7 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
         "AE2P_GPR_Prediction": gpr_str,
         "Common_Measured_Mean": meas_str,
         "AE2P_Estimation_Error": mean_est_error,
+        "AE2P_Estimation_Error_Percent": mean_est_error_pct,
         "P2AE_Total_Deviation": mean_total_dev,
         "P2AE_Total_Deviation_Percent": mean_total_dev_pct,
         
@@ -288,6 +295,7 @@ summary_cols = [
     "P2AE_Total_Deviation_Percent",
     "AE2P_GPR_Prediction",
     "AE2P_Estimation_Error",
+    "AE2P_Estimation_Error_Percent",
     "num_AE2P_mu_GPR",
     "num_AE2P_sigma_GPR",
     "num_Common_mu_trial",
@@ -299,5 +307,5 @@ out_summary = os.path.join(RESULTS_DIR, "exp3_evaluation_summary_for_table.csv")
 df_summary.to_csv(out_summary, index=False)
 
 print("\n--- Summary Table Preview (Top 10) ---")
-print(df_summary[["Material", "Target_D50", "AE2P_GPR_Prediction", "Common_Measured_Mean", "AE2P_Estimation_Error", "P2AE_Total_Deviation"]].head(10).to_string(index=False))
+print(df_summary[["Material", "Target_D50", "AE2P_GPR_Prediction", "Common_Measured_Mean", "AE2P_Estimation_Error", "AE2P_Estimation_Error_Percent", "P2AE_Total_Deviation"]].head(10).to_string(index=False))
 print(f"\nSummary table saved to: {out_summary}")
