@@ -327,7 +327,9 @@ if not plot_df.empty:
         "label",
     ]
     export_cols = [c for c in export_cols if c in plot_df.columns]
-    export_path = os.path.join(RESULTS_DIR, "exp3_detail_ae2p_upper_error_points.csv")
+    discussion_dir = os.path.join(RESULTS_DIR, "discussion")
+    os.makedirs(discussion_dir, exist_ok=True)
+    export_path = os.path.join(discussion_dir, "exp3_detail_ae2p_upper_error_points.csv")
     plot_df[export_cols].to_csv(export_path, index=False)
     print(f"Saved detail plot data to: {export_path}")
     x_pos = np.arange(len(plot_df), dtype=float)
@@ -361,8 +363,10 @@ if not plot_df.empty:
     plt.title("AE2P Upper Error by Experiment")
     plt.legend()
     plt.tight_layout()
-    plot_path = os.path.join(RESULTS_DIR, "exp3_detail_ae2p_upper_error.png")
+    plot_path = os.path.join(discussion_dir, "exp3_detail_ae2p_upper_error.png")
+    plot_pdf_path = os.path.join(discussion_dir, "exp3_detail_ae2p_upper_error.pdf")
     plt.savefig(plot_path, dpi=300)
+    plt.savefig(plot_pdf_path)
     plt.close()
     print(f"Saved detail plot to: {plot_path}")
 
