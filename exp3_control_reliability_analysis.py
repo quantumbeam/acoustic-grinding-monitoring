@@ -258,6 +258,9 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
     mean_sigma_gpr = g["AE2P_Predicted_Sigma"].mean()
     mean_est_error = g["AE2P_Estimation_Error"].mean()
     mean_est_error_pct = g["AE2P_Estimation_Error_Percent"].mean()
+    ae2p_in_gpr_range = None
+    if pd.notnull(mean_est_error) and pd.notnull(mean_sigma_gpr):
+        ae2p_in_gpr_range = abs(mean_est_error) <= mean_sigma_gpr
 
     # 3. Method P2AE Stats (Performance)
     mean_total_dev = g["P2AE_Total_Deviation"].mean()
@@ -276,6 +279,7 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
         "Common_Measured_Mean": meas_str,
         "AE2P_Estimation_Error": mean_est_error,
         "AE2P_Estimation_Error_Percent": mean_est_error_pct,
+        "AE2P_Est_Error_In_GPR_Range": ae2p_in_gpr_range,
         "P2AE_Total_Deviation": mean_total_dev,
         "P2AE_Total_Deviation_Percent": mean_total_dev_pct,
         
@@ -296,6 +300,7 @@ summary_cols = [
     "AE2P_GPR_Prediction",
     "AE2P_Estimation_Error",
     "AE2P_Estimation_Error_Percent",
+    "AE2P_Est_Error_In_GPR_Range",
     "num_AE2P_mu_GPR",
     "num_AE2P_sigma_GPR",
     "num_Common_mu_trial",
@@ -307,5 +312,5 @@ out_summary = os.path.join(RESULTS_DIR, "exp3_evaluation_summary_for_table.csv")
 df_summary.to_csv(out_summary, index=False)
 
 print("\n--- Summary Table Preview (Top 10) ---")
-print(df_summary[["Material", "Target_D50", "AE2P_GPR_Prediction", "Common_Measured_Mean", "AE2P_Estimation_Error", "AE2P_Estimation_Error_Percent", "P2AE_Total_Deviation"]].head(10).to_string(index=False))
+print(df_summary[["Material", "Target_D50", "AE2P_GPR_Prediction", "Common_Measured_Mean", "AE2P_Estimation_Error", "AE2P_Estimation_Error_Percent", "AE2P_Est_Error_In_GPR_Range", "P2AE_Total_Deviation"]].head(10).to_string(index=False))
 print(f"\nSummary table saved to: {out_summary}")
