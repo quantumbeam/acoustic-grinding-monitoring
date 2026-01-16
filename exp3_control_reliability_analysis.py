@@ -5,6 +5,7 @@ import joblib
 import re
 import glob
 from fft_processing import calculate_fft_power
+import matplotlib.pyplot as plt
 
 # ============================================================
 # Helper Functions
@@ -45,6 +46,11 @@ def safe_z(value, mu, sigma, eps=1e-12):
         return None
     return float((v - m) / s)
 
+def moving_average(data, window_size=4):
+    if len(data) < window_size:
+        return np.array([])
+    return np.convolve(data, np.ones(window_size), 'valid') / window_size
+
 def get_d50(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
@@ -76,6 +82,9 @@ MODEL_NAME_MAP = {
     'NaCl': 'NaCl',
     'Citricacid': 'Citricacid',
     'Ajinomoto': 'Ajinomoto',
+}
+PLOT_LABEL_MAP = {
+    'Ajinomoto': 'MSG'
 }
 
 # Control Parameters
@@ -156,6 +165,16 @@ for material in materials:
 
             name_last, ae_last = process_ae(last_file)
             name_second, ae_second = process_ae(second_last_file)
+            ae_series = []
+            for f in ae_files:
+                _, v = process_ae(f)
+                if v is not None and np.isfinite(v):
+                    ae_series.append(v)
+            ae_smoothed_last = None
+            if len(ae_series) >= 4:
+                smoothed = moving_average(np.array(ae_series, dtype=float), window_size=4)
+                if smoothed.size > 0 and np.isfinite(smoothed[-1]):
+                    ae_smoothed_last = float(smoothed[-1])
 
             # --- Method P2AE Evaluation (Threshold Control) ---
             # Did AE cross the threshold?
@@ -178,8 +197,9 @@ for material in materials:
             # What does the AE imply about D50?
             B_d50hat = None
             B_d50hat_sigma = None
-            if ae_last is not None:
-                y, s = gpr_B.predict(np.array([[ae_last]], dtype=float), return_std=True)
+            ae_for_estimation = ae_smoothed_last if ae_smoothed_last is not None else ae_last
+            if ae_for_estimation is not None:
+                y, s = gpr_B.predict(np.array([[ae_for_estimation]], dtype=float), return_std=True)
                 B_d50hat = float(y[0])
                 B_d50hat_sigma = float(s[0])
             
@@ -187,10 +207,13 @@ for material in materials:
             # "Did the AE accurately reflect the particle size?"
             B_estimation_error = None
             B_estimation_error_percent = None
+            B_estimation_error_in_range = None
             if B_d50hat is not None and measured_d50_f is not None:
                 B_estimation_error =  measured_d50_f - B_d50hat
                 if measured_d50_f != 0:
                     B_estimation_error_percent = (B_estimation_error / measured_d50_f) * 100.0
+                if B_d50hat_sigma is not None:
+                    B_estimation_error_in_range = abs(B_estimation_error) <= B_d50hat_sigma
 
             
             # --- Store Result ---
@@ -213,28 +236,52 @@ for material in materials:
                 "AE2P_Predicted_D50": B_d50hat,
                 "AE2P_Predicted_Sigma": B_d50hat_sigma,
                 "AE2P_Estimation_Error": B_estimation_error,
-                "AE2P_Estimation_Error_Percent": B_estimation_error_percent
+                "AE2P_Estimation_Error_Percent": B_estimation_error_percent,
+                "AE2P_Est_Error_In_GPR_Range": B_estimation_error_in_range
             })
 
 # Save Detailed Data
 df = pd.DataFrame(rows)
+summary_cols = [
+    "Material",
+    "Target_D50",
+    "Common_Measured_Mean",
+    "P2AE_Total_Deviation",
+    "P2AE_Total_Deviation_Percent",
+    "AE2P_GPR_Prediction",
+    "AE2P_Estimation_Error",
+    "AE2P_Estimation_Error_Percent",
+    "AE2P_Est_Error_In_GPR_Range",
+    "num_AE2P_mu_GPR",
+    "num_AE2P_sigma_GPR",
+    "num_Common_mu_trial",
+    "num_Common_sigma_trial",
+]
+if not df.empty:
+    df["Common_Measured_Mean"] = df["Common_Measured_D50"]
+    df["AE2P_GPR_Prediction"] = df.apply(
+        lambda row: (
+            f"{row['AE2P_Predicted_D50']:.2f} ± {row['AE2P_Predicted_Sigma']:.2f}"
+            if pd.notnull(row["AE2P_Predicted_D50"]) and pd.notnull(row["AE2P_Predicted_Sigma"])
+            else "N/A"
+        ),
+        axis=1,
+    )
+    df["num_AE2P_mu_GPR"] = df["AE2P_Predicted_D50"]
+    df["num_AE2P_sigma_GPR"] = df["AE2P_Predicted_Sigma"]
+    df["num_Common_mu_trial"] = df["Common_Measured_D50"]
+    df["num_Common_sigma_trial"] = np.nan
+
 detail_cols = [
     "Material",
     "Trial",
     "Target_D50",
-    "Common_Measured_D50",
-    "Common_AE_Last_mV2",
-    "P2AE_AE_Threshold",
-    "P2AE_Is_ExpectedCross",
-    "P2AE_Total_Deviation",
-    "P2AE_Total_Deviation_Percent",
-    "AE2P_Predicted_D50",
-    "AE2P_Predicted_Sigma",
-    "AE2P_Estimation_Error",
-    "AE2P_Estimation_Error_Percent",
 ]
 detail_cols = [c for c in detail_cols if c in df.columns]
-df = df[detail_cols + [c for c in df.columns if c not in detail_cols]]
+ordered_cols = detail_cols + [c for c in summary_cols if c in df.columns]
+seen = set()
+ordered_cols = [c for c in ordered_cols if not (c in seen or seen.add(c))]
+df = df[ordered_cols + [c for c in df.columns if c not in ordered_cols]]
 out_detail = os.path.join(RESULTS_DIR, "exp3_evaluation_detail.csv")
 df.to_csv(out_detail, index=False)
 print(f"Saved detailed results to: {out_detail}")
@@ -242,6 +289,82 @@ print(f"Saved detailed results to: {out_detail}")
 if df.empty:
     print("No data processed.")
     exit()
+
+# ------------------------------------------------------------
+# Detail Plot: Measured - (Predicted + Sigma)
+# ------------------------------------------------------------
+plot_df = df.copy()
+plot_df["AE2P_Abs_Error"] = (
+    plot_df["Common_Measured_D50"] - plot_df["AE2P_Predicted_D50"]
+).abs()
+plot_df["AE2P_Upper_Error"] = (
+    plot_df["Common_Measured_D50"]
+    - (plot_df["AE2P_Predicted_D50"] + plot_df["AE2P_Predicted_Sigma"])
+)
+plot_df["AE2P_Est_Error_In_GPR_Range"] = (
+    plot_df["AE2P_Abs_Error"]
+    <= plot_df["AE2P_Predicted_Sigma"]
+)
+plot_df = plot_df.dropna(subset=["AE2P_Upper_Error", "Material", "Trial", "Target_D50"])
+if not plot_df.empty:
+    plot_df["label"] = plot_df.apply(
+        lambda row: (
+            f"{PLOT_LABEL_MAP.get(row['Material'], row['Material'])} "
+            f"{row['Trial']} {row['Target_D50']}"
+        ),
+        axis=1,
+    )
+    export_cols = [
+        "Material",
+        "Trial",
+        "Target_D50",
+        "Common_Measured_D50",
+        "AE2P_Predicted_D50",
+        "AE2P_Predicted_Sigma",
+        "AE2P_Abs_Error",
+        "AE2P_Est_Error_In_GPR_Range",
+        "AE2P_Upper_Error",
+        "label",
+    ]
+    export_cols = [c for c in export_cols if c in plot_df.columns]
+    export_path = os.path.join(RESULTS_DIR, "exp3_detail_ae2p_upper_error_points.csv")
+    plot_df[export_cols].to_csv(export_path, index=False)
+    print(f"Saved detail plot data to: {export_path}")
+    x_pos = np.arange(len(plot_df), dtype=float)
+
+    plt.figure(figsize=(14, 8))
+    mask_true = plot_df["AE2P_Est_Error_In_GPR_Range"] == True
+    mask_false = plot_df["AE2P_Est_Error_In_GPR_Range"] == False
+    plt.scatter(
+        x_pos[mask_true],
+        plot_df.loc[mask_true, "AE2P_Upper_Error"].values,
+        s=80,
+        c="black",
+        marker="o",
+        label="True"
+    )
+    plt.scatter(
+        x_pos[mask_false],
+        plot_df.loc[mask_false, "AE2P_Upper_Error"].values,
+        s=80,
+        c="black",
+        marker="^",
+        label="False"
+    )
+    plt.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
+    max_abs = float(np.nanmax(np.abs(plot_df["AE2P_Upper_Error"].values)))
+    if np.isfinite(max_abs) and max_abs > 0.0:
+        plt.ylim(-max_abs * 1.1, max_abs * 1.1)
+    plt.xticks(x_pos, plot_df["label"].tolist(), rotation=45, ha="right")
+    plt.xlabel("Material / Trial / Target_D50")
+    plt.ylabel("Measured D50 - (Predicted D50 + Sigma)")
+    plt.title("AE2P Upper Error by Experiment")
+    plt.legend()
+    plt.tight_layout()
+    plot_path = os.path.join(RESULTS_DIR, "exp3_detail_ae2p_upper_error.png")
+    plt.savefig(plot_path, dpi=300)
+    plt.close()
+    print(f"Saved detail plot to: {plot_path}")
 
 # ============================================================
 # Summary Aggregation (For Paper Table)
@@ -291,21 +414,6 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
     })
 
 df_summary = pd.DataFrame(summary_rows)
-summary_cols = [
-    "Material",
-    "Target_D50",
-    "Common_Measured_Mean",
-    "P2AE_Total_Deviation",
-    "P2AE_Total_Deviation_Percent",
-    "AE2P_GPR_Prediction",
-    "AE2P_Estimation_Error",
-    "AE2P_Estimation_Error_Percent",
-    "AE2P_Est_Error_In_GPR_Range",
-    "num_AE2P_mu_GPR",
-    "num_AE2P_sigma_GPR",
-    "num_Common_mu_trial",
-    "num_Common_sigma_trial",
-]
 summary_cols = [c for c in summary_cols if c in df_summary.columns]
 df_summary = df_summary[summary_cols + [c for c in df_summary.columns if c not in summary_cols]]
 out_summary = os.path.join(RESULTS_DIR, "exp3_evaluation_summary_for_table.csv")
