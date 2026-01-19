@@ -208,6 +208,7 @@ if __name__ == '__main__':
         'font.family': 'sans-serif',
         'mathtext.fontset': 'dejavusans'
     })
+    axes_label_size = plt.rcParams['axes.labelsize']
 
     # ------------------------------------------------------------
     # Scan files
@@ -407,8 +408,8 @@ if __name__ == '__main__':
                     color=colors.get(t, 'black'),
                     label=t
                 )
-            plt.xlabel('Time (min)')
-            plt.ylabel(r'Total spectral power ($\mathrm{mV}^2$)')
+            plt.xlabel('Time (min)', fontsize=axes_label_size)
+            plt.ylabel(r'Total spectral power ($\mathrm{mV}^2$)', fontsize=axes_label_size)
             plt.legend()
             plot_path = os.path.join(
                 VARIANCE_OUTPUT_DIR,
@@ -428,8 +429,8 @@ if __name__ == '__main__':
                     plt.figure(figsize=(12, 8))
                     plt.scatter(t_valid, y_valid, s=60, c='black', label='log(raw)')
                     plt.plot(t_valid, fit, 'r-', label='linear fit')
-                    plt.xlabel('Time (min)')
-                    plt.ylabel('log(Total spectral power)')
+                    plt.xlabel('Time (min)', fontsize=axes_label_size)
+                    plt.ylabel('log(Total spectral power)', fontsize=axes_label_size)
                     plt.title(f'log-trend fit r={trend_corr:.3f}')
                     plt.legend()
                     plot_path = os.path.join(
@@ -444,8 +445,8 @@ if __name__ == '__main__':
                     plt.figure(figsize=(12, 8))
                     plt.scatter(t_valid, values_valid, s=60, c='black', label='raw')
                     plt.plot(t_valid, exp_fit, 'r-', label='exp fit (linear log)')
-                    plt.xlabel('Time (min)')
-                    plt.ylabel(r'Total spectral power ($\mathrm{mV}^2$)')
+                    plt.xlabel('Time (min)', fontsize=axes_label_size)
+                    plt.ylabel(r'Total spectral power ($\mathrm{mV}^2$)', fontsize=axes_label_size)
                     plt.title(f'exp-trend fit r={trend_corr:.3f}')
                     plt.legend()
                     plot_path = os.path.join(
@@ -483,8 +484,8 @@ if __name__ == '__main__':
                     label=t
                 )
             plt.plot(x_plot, y_plot, 'k--', label='linear fit')
-            plt.xlabel('D50')
-            plt.ylabel(r'AE power ($\mathrm{mV}^2$)')
+            plt.xlabel('D50', fontsize=axes_label_size)
+            plt.ylabel(r'AE power ($\mathrm{mV}^2$)', fontsize=axes_label_size)
             plt.title(f'AE vs D50 (r^2={r2:.3f})')
             plt.legend()
             plot_path = os.path.join(

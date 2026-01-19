@@ -4,6 +4,7 @@ import os
 import joblib
 import re
 import glob
+import json
 from fft_processing import calculate_fft_power
 import matplotlib.pyplot as plt
 
@@ -71,6 +72,8 @@ EXPERIMENT = 'exp3'
 PSD_BASE_PATH = os.path.join('powder_size_distribution_data', EXPERIMENT)
 AE_BASE_PATH = os.path.join('ae_data', EXPERIMENT)
 AE_SCALE_TO_MV2 = 1e6
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CACHE_FILE = os.path.join(SCRIPT_DIR, 'ae_power_cache.json')
 
 # Models
 # Method P2AE uses Forward Model (Target -> AE)
@@ -93,6 +96,46 @@ K_SIGMA_AE = 0.0  # Method A threshold parameter
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 print("--- Unified Evaluation: Method P2AE (Threshold) & Method AE2P (Estimation) ---")
+
+def load_ae_power_cache(cache_path):
+    if not os.path.exists(cache_path):
+        return {}
+    try:
+        with open(cache_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+def save_ae_power_cache(cache_path, cache_data):
+    try:
+        with open(cache_path, 'w', encoding='utf-8') as f:
+            json.dump(cache_data, f, indent=2, sort_keys=True)
+    except OSError:
+        pass
+
+AE_POWER_CACHE = load_ae_power_cache(CACHE_FILE)
+CACHE_DIRTY = False
+
+def get_cached_ae_power(file_path):
+    global CACHE_DIRTY
+    if file_path is None:
+        return None
+    try:
+        mtime = os.path.getmtime(file_path)
+    except OSError:
+        return None
+    cached = AE_POWER_CACHE.get(file_path)
+    if isinstance(cached, dict) and cached.get("mtime") == mtime:
+        cached_power = cached.get("power")
+        if cached_power is not None and np.isfinite(cached_power):
+            return float(cached_power)
+    p = calculate_fft_power(file_path)
+    if p is None or not np.isfinite(p):
+        return None
+    AE_POWER_CACHE[file_path] = {"mtime": mtime, "power": float(p)}
+    CACHE_DIRTY = True
+    return float(p)
 
 # Get materials and sort them naturally
 materials = [os.path.basename(d) for d in glob.glob(os.path.join(PSD_BASE_PATH, '*')) if os.path.isdir(d)]
@@ -155,21 +198,19 @@ for material in materials:
             last_file = ae_files[-1] if len(ae_files) >= 1 else None
             second_last_file = ae_files[-2] if len(ae_files) >= 2 else None
 
-            def process_ae(file_path):
-                if file_path is None:
-                    return None, None
-                p = calculate_fft_power(file_path)
-                if p is None or not np.isfinite(p):
-                    return None, None
-                return os.path.basename(file_path), float(p) * AE_SCALE_TO_MV2
-
-            name_last, ae_last = process_ae(last_file)
-            name_second, ae_second = process_ae(second_last_file)
+            ae_values = {}
             ae_series = []
             for f in ae_files:
-                _, v = process_ae(f)
-                if v is not None and np.isfinite(v):
-                    ae_series.append(v)
+                p = get_cached_ae_power(f)
+                if p is None or not np.isfinite(p):
+                    continue
+                v = float(p) * AE_SCALE_TO_MV2
+                ae_values[f] = v
+                ae_series.append(v)
+            name_last = os.path.basename(last_file) if last_file else None
+            name_second = os.path.basename(second_last_file) if second_last_file else None
+            ae_last = ae_values.get(last_file)
+            ae_second = ae_values.get(second_last_file)
             ae_smoothed_last = None
             if len(ae_series) >= 4:
                 smoothed = moving_average(np.array(ae_series, dtype=float), window_size=4)
@@ -286,20 +327,22 @@ out_detail = os.path.join(RESULTS_DIR, "exp3_evaluation_detail.csv")
 df.to_csv(out_detail, index=False)
 print(f"Saved detailed results to: {out_detail}")
 
+if CACHE_DIRTY:
+    save_ae_power_cache(CACHE_FILE, AE_POWER_CACHE)
+
 if df.empty:
     print("No data processed.")
     exit()
 
 # ------------------------------------------------------------
-# Detail Plot: Measured - (Predicted + Sigma)
+# Detail Plot: Measured - Predicted
 # ------------------------------------------------------------
 plot_df = df.copy()
 plot_df["AE2P_Abs_Error"] = (
     plot_df["Common_Measured_D50"] - plot_df["AE2P_Predicted_D50"]
 ).abs()
 plot_df["AE2P_Upper_Error"] = (
-    plot_df["Common_Measured_D50"]
-    - (plot_df["AE2P_Predicted_D50"] + plot_df["AE2P_Predicted_Sigma"])
+    plot_df["Common_Measured_D50"] - plot_df["AE2P_Predicted_D50"]
 )
 plot_df["AE2P_Est_Error_In_GPR_Range"] = (
     plot_df["AE2P_Abs_Error"]
@@ -329,46 +372,49 @@ if not plot_df.empty:
     export_cols = [c for c in export_cols if c in plot_df.columns]
     discussion_dir = os.path.join(RESULTS_DIR, "discussion")
     os.makedirs(discussion_dir, exist_ok=True)
-    export_path = os.path.join(discussion_dir, "exp3_detail_ae2p_upper_error_points.csv")
+    export_path = os.path.join(discussion_dir, "ae2p_upper_error_points.csv")
     plot_df[export_cols].to_csv(export_path, index=False)
     print(f"Saved detail plot data to: {export_path}")
-    x_pos = np.arange(len(plot_df), dtype=float)
+    for material_name, material_df in plot_df.groupby("Material"):
+        material_df = material_df.reset_index(drop=True)
+        x_pos = np.arange(len(material_df), dtype=float)
 
-    plt.figure(figsize=(14, 8))
-    mask_true = plot_df["AE2P_Est_Error_In_GPR_Range"] == True
-    mask_false = plot_df["AE2P_Est_Error_In_GPR_Range"] == False
-    plt.scatter(
-        x_pos[mask_true],
-        plot_df.loc[mask_true, "AE2P_Upper_Error"].values,
-        s=80,
-        c="black",
-        marker="o",
-        label="True"
-    )
-    plt.scatter(
-        x_pos[mask_false],
-        plot_df.loc[mask_false, "AE2P_Upper_Error"].values,
-        s=80,
-        c="black",
-        marker="^",
-        label="False"
-    )
-    plt.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
-    max_abs = float(np.nanmax(np.abs(plot_df["AE2P_Upper_Error"].values)))
-    if np.isfinite(max_abs) and max_abs > 0.0:
-        plt.ylim(-max_abs * 1.1, max_abs * 1.1)
-    plt.xticks(x_pos, plot_df["label"].tolist(), rotation=45, ha="right")
-    plt.xlabel("Material / Trial / Target_D50")
-    plt.ylabel("Measured D50 - (Predicted D50 + Sigma)")
-    plt.title("AE2P Upper Error by Experiment")
-    plt.legend()
-    plt.tight_layout()
-    plot_path = os.path.join(discussion_dir, "exp3_detail_ae2p_upper_error.png")
-    plot_pdf_path = os.path.join(discussion_dir, "exp3_detail_ae2p_upper_error.pdf")
-    plt.savefig(plot_path, dpi=300)
-    plt.savefig(plot_pdf_path)
-    plt.close()
-    print(f"Saved detail plot to: {plot_path}")
+        plt.figure(figsize=(14, 8))
+        mask_true = material_df["AE2P_Est_Error_In_GPR_Range"] == True
+        mask_false = material_df["AE2P_Est_Error_In_GPR_Range"] == False
+        plt.scatter(
+            x_pos[mask_true],
+            material_df.loc[mask_true, "AE2P_Upper_Error"].values,
+            s=80,
+            c="black",
+            marker="o",
+            label="True"
+        )
+        plt.scatter(
+            x_pos[mask_false],
+            material_df.loc[mask_false, "AE2P_Upper_Error"].values,
+            s=80,
+            c="black",
+            marker="^",
+            label="False"
+        )
+        plt.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
+        max_abs = float(np.nanmax(np.abs(material_df["AE2P_Upper_Error"].values)))
+        if np.isfinite(max_abs) and max_abs > 0.0:
+            plt.ylim(-max_abs * 1.1, max_abs * 1.1)
+        plt.xticks(x_pos, material_df["label"].tolist(), rotation=45, ha="right")
+        plt.xlabel("Material / Trial / Target_D50")
+        plt.ylabel("Measured D50 - Predicted D50")
+        plt.title(f"AE2P Error by Experiment ({material_name})")
+        plt.legend()
+        plt.tight_layout()
+        safe_material = re.sub(r"[^A-Za-z0-9_-]+", "_", str(material_name))
+        plot_path = os.path.join(discussion_dir, f"ae2p_error_{safe_material}.png")
+        plot_pdf_path = os.path.join(discussion_dir, f"ae2p_error_{safe_material}.pdf")
+        plt.savefig(plot_path, dpi=300)
+        plt.savefig(plot_pdf_path)
+        plt.close()
+        print(f"Saved detail plot to: {plot_path}")
 
 # ============================================================
 # Summary Aggregation (For Paper Table)
