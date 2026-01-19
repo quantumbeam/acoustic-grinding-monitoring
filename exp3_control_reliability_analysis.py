@@ -5,8 +5,20 @@ import joblib
 import re
 import glob
 import json
+from math import erf, sqrt
 from fft_processing import calculate_fft_power
 import matplotlib.pyplot as plt
+
+# Match figure typography to other discussion plots
+plt.rcParams.update({
+    'font.size': 24,
+    'axes.labelsize': 32,
+    'xtick.labelsize': 24,
+    'ytick.labelsize': 24,
+    'legend.fontsize': 18,
+    'font.family': 'sans-serif',
+    'mathtext.fontset': 'dejavusans'
+})
 
 # ============================================================
 # Helper Functions
@@ -335,20 +347,22 @@ if df.empty:
     exit()
 
 # ------------------------------------------------------------
-# Detail Plot: Measured - Predicted
+# Detail Plot: Target-based z-score and probability
 # ------------------------------------------------------------
 plot_df = df.copy()
-plot_df["AE2P_Abs_Error"] = (
-    plot_df["Common_Measured_D50"] - plot_df["AE2P_Predicted_D50"]
-).abs()
-plot_df["AE2P_Upper_Error"] = (
+
+def normal_cdf(x: float) -> float:
+    return 0.5 * (1.0 + erf(x / sqrt(2.0)))
+
+
+plot_df["AE2P_Measured_Error"] = (
     plot_df["Common_Measured_D50"] - plot_df["AE2P_Predicted_D50"]
 )
-plot_df["AE2P_Est_Error_In_GPR_Range"] = (
-    plot_df["AE2P_Abs_Error"]
-    <= plot_df["AE2P_Predicted_Sigma"]
-)
-plot_df = plot_df.dropna(subset=["AE2P_Upper_Error", "Material", "Trial", "Target_D50"])
+plot_df["AE2P_m"] = plot_df["AE2P_Measured_Error"] / plot_df["AE2P_Predicted_Sigma"]
+plot_df["AE2P_p"] = plot_df["AE2P_m"].apply(lambda v: normal_cdf(v) if np.isfinite(v) else np.nan)
+plot_df = plot_df.dropna(subset=["AE2P_m", "AE2P_p", "Material", "Trial", "Target_D50"])
+M_BOUNDARY = 1.0
+plot_df["AE2P_p_ge_threshold"] = plot_df["AE2P_m"].abs() <= M_BOUNDARY
 if not plot_df.empty:
     plot_df["label"] = plot_df.apply(
         lambda row: (
@@ -364,9 +378,10 @@ if not plot_df.empty:
         "Common_Measured_D50",
         "AE2P_Predicted_D50",
         "AE2P_Predicted_Sigma",
-        "AE2P_Abs_Error",
-        "AE2P_Est_Error_In_GPR_Range",
-        "AE2P_Upper_Error",
+        "AE2P_Measured_Error",
+        "AE2P_m",
+        "AE2P_p",
+        "AE2P_p_ge_threshold",
         "label",
     ]
     export_cols = [c for c in export_cols if c in plot_df.columns]
@@ -375,46 +390,57 @@ if not plot_df.empty:
     export_path = os.path.join(discussion_dir, "ae2p_upper_error_points.csv")
     plot_df[export_cols].to_csv(export_path, index=False)
     print(f"Saved detail plot data to: {export_path}")
-    for material_name, material_df in plot_df.groupby("Material"):
-        material_df = material_df.reset_index(drop=True)
-        x_pos = np.arange(len(material_df), dtype=float)
+    plot_df = plot_df.reset_index(drop=True)
+    plot_df["x_label"] = plot_df.apply(
+        lambda row: f"{PLOT_LABEL_MAP.get(row['Material'], row['Material'])} {row['Target_D50']}",
+        axis=1,
+    )
+    unique_labels = list(dict.fromkeys(plot_df["x_label"].tolist()))
+    x_lookup = {label: idx for idx, label in enumerate(unique_labels)}
+    x_vals = plot_df["x_label"].map(x_lookup).astype(float).values
 
-        plt.figure(figsize=(14, 8))
-        mask_true = material_df["AE2P_Est_Error_In_GPR_Range"] == True
-        mask_false = material_df["AE2P_Est_Error_In_GPR_Range"] == False
-        plt.scatter(
-            x_pos[mask_true],
-            material_df.loc[mask_true, "AE2P_Upper_Error"].values,
-            s=80,
-            c="black",
-            marker="o",
-            label="True"
-        )
-        plt.scatter(
-            x_pos[mask_false],
-            material_df.loc[mask_false, "AE2P_Upper_Error"].values,
-            s=80,
-            c="black",
-            marker="^",
-            label="False"
-        )
-        plt.axhline(0.0, color="black", linewidth=1.0, alpha=0.6)
-        max_abs = float(np.nanmax(np.abs(material_df["AE2P_Upper_Error"].values)))
-        if np.isfinite(max_abs) and max_abs > 0.0:
-            plt.ylim(-max_abs * 1.1, max_abs * 1.1)
-        plt.xticks(x_pos, material_df["label"].tolist(), rotation=45, ha="right")
-        plt.xlabel("Material / Trial / Target_D50")
-        plt.ylabel("Measured D50 - Predicted D50")
-        plt.title(f"AE2P Error by Experiment ({material_name})")
-        plt.legend()
-        plt.tight_layout()
-        safe_material = re.sub(r"[^A-Za-z0-9_-]+", "_", str(material_name))
-        plot_path = os.path.join(discussion_dir, f"ae2p_error_{safe_material}.png")
-        plot_pdf_path = os.path.join(discussion_dir, f"ae2p_error_{safe_material}.pdf")
-        plt.savefig(plot_path, dpi=300)
-        plt.savefig(plot_pdf_path)
-        plt.close()
-        print(f"Saved detail plot to: {plot_path}")
+    plt.figure(figsize=(14, 8))
+    mask_true = plot_df["AE2P_p_ge_threshold"] == True
+    mask_false = plot_df["AE2P_p_ge_threshold"] == False
+    plt.scatter(
+        x_vals[mask_true],
+        plot_df.loc[mask_true, "AE2P_m"].values,
+        s=80,
+        c="black",
+        marker="o",
+        label="True"
+    )
+    plt.scatter(
+        x_vals[mask_false],
+        plot_df.loc[mask_false, "AE2P_m"].values,
+        s=80,
+        c="black",
+        marker="^",
+        label="False"
+    )
+    plt.axhline(M_BOUNDARY, color="black", linewidth=1.0, alpha=0.6, linestyle="--")
+    plt.axhline(-M_BOUNDARY, color="black", linewidth=1.0, alpha=0.6, linestyle="--")
+    max_abs = float(np.nanmax(np.abs(plot_df["AE2P_m"].values)))
+    max_abs = max(max_abs, M_BOUNDARY)
+    if np.isfinite(max_abs) and max_abs > 0.0:
+        plt.ylim(-max_abs * 1.1, max_abs * 1.1)
+    plt.xticks(
+        np.arange(len(unique_labels), dtype=float),
+        unique_labels,
+        rotation=45,
+        ha="right",
+        fontsize=plt.rcParams['xtick.labelsize']
+    )
+    plt.xlabel("")
+    plt.ylabel("Normalized Error")
+    plt.legend()
+    plt.tight_layout()
+    plot_path = os.path.join(discussion_dir, "ae2p_error.png")
+    plot_pdf_path = os.path.join(discussion_dir, "ae2p_error.pdf")
+    plt.savefig(plot_path, dpi=300)
+    plt.savefig(plot_pdf_path)
+    plt.close()
+    print(f"Saved detail plot to: {plot_path}")
 
 # ============================================================
 # Summary Aggregation (For Paper Table)
