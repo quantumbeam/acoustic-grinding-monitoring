@@ -361,7 +361,7 @@ plot_df["AE2P_Measured_Error"] = (
 plot_df["AE2P_m"] = plot_df["AE2P_Measured_Error"] / plot_df["AE2P_Predicted_Sigma"]
 plot_df["AE2P_p"] = plot_df["AE2P_m"].apply(lambda v: normal_cdf(v) if np.isfinite(v) else np.nan)
 plot_df = plot_df.dropna(subset=["AE2P_m", "AE2P_p", "Material", "Trial", "Target_D50"])
-M_BOUNDARY = 1.0
+M_BOUNDARY = 1.96
 plot_df["AE2P_p_ge_threshold"] = plot_df["AE2P_m"].abs() <= M_BOUNDARY
 if not plot_df.empty:
     plot_df["label"] = plot_df.apply(
@@ -388,7 +388,10 @@ if not plot_df.empty:
     discussion_dir = os.path.join(RESULTS_DIR, "discussion")
     os.makedirs(discussion_dir, exist_ok=True)
     export_path = os.path.join(discussion_dir, "ae2p_upper_error_points.csv")
-    plot_df[export_cols].to_csv(export_path, index=False)
+    export_df = plot_df[export_cols].copy()
+    export_df["AE2P_Predicted_95PI"] = export_df["AE2P_Predicted_Sigma"] * 1.96
+    export_df = export_df.drop(columns=["AE2P_Predicted_Sigma"])
+    export_df.to_csv(export_path, index=False)
     print(f"Saved detail plot data to: {export_path}")
     plot_df = plot_df.reset_index(drop=True)
     plot_df["x_label"] = plot_df.apply(
