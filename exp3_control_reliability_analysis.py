@@ -411,7 +411,7 @@ if not plot_df.empty:
         s=80,
         c="black",
         marker="o",
-        label="True"
+        label="Within prediction range"
     )
     plt.scatter(
         x_vals[mask_false],
@@ -419,7 +419,7 @@ if not plot_df.empty:
         s=80,
         c="black",
         marker="^",
-        label="False"
+        label="Outside prediction range"
     )
     plt.axhline(M_BOUNDARY, color="black", linewidth=1.0, alpha=0.6, linestyle="--")
     plt.axhline(-M_BOUNDARY, color="black", linewidth=1.0, alpha=0.6, linestyle="--")
