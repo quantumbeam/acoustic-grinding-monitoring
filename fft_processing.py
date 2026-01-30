@@ -77,7 +77,7 @@ def calculate_fft_power(file_path, sampling_rate=2e6, header_lines=12,
 if __name__ == '__main__':
     # --- Configuration ---
     # テスト用にあなたがアップロードしたファイルパスに合わせています
-    SAMPLE_FILE = '20251219_110041Ajinomoto_grind5min.csv' 
+    SAMPLE_FILE = '20251219_110041MSG_grind5min.csv' 
     SAMPLING_RATE = 2e6 
     HEADER_LINES = 12   
     START_SAMPLE_INDEX = 200013 

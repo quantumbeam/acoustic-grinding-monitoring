@@ -136,7 +136,7 @@ def compute_nmpiw(y_std: np.ndarray, y_data: np.ndarray) -> tuple[float, float]:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train GPR models on AE and PSD data (both directions).')
     parser.add_argument('--reagent', type=str, default='all',
-                        choices=['NaCl', 'Citricacid', 'Ajinomoto', 'all'])
+                        choices=['NaCl', 'Citricacid', 'MSG', 'all'])
     parser.add_argument('--trial', type=str, default='all',
                         choices=['1st', '2nd', '3rd', 'all'])
     args = parser.parse_args()

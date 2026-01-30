@@ -178,7 +178,7 @@ def linear_fit_r2(x_vals: np.ndarray, y_vals: np.ndarray) -> tuple[float, float,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyze AE variance trends for discussion plots.')
     parser.add_argument('--reagent', type=str, default='all',
-                        choices=['NaCl', 'Citricacid', 'Ajinomoto', 'all'])
+                        choices=['NaCl', 'Citricacid', 'MSG', 'all'])
     parser.add_argument('--trial', type=str, default='all',
                         choices=['1st', '2nd', '3rd', 'all'])
     parser.add_argument('--variance-mode', type=str, default='log_detrended',

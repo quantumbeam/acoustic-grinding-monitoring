@@ -41,71 +41,82 @@ uv pip install pandas numpy scikit-learn matplotlib tqdm
 
 ```
 
-## Usage
+## Usage (Paper-Aligned)
 
-### 1. `fft_processing.py`
+This README is organized to reflect the paper structure. The core scripts for the paper are **exp2**, **exp3**, and **discussion**. Plotting and evaluation scripts are treated as **supplementary**.
 
-This script calculates the total Acoustic Emission (AE) power within the 100 kHz - 1 MHz frequency band for individual AE data files. It applies a Hamming window and performs a Fast Fourier Transform (FFT) as described in the paper.
+### Core Scripts (exp2 / exp3 / discussion)
 
-**Dependencies:** `pandas`, `numpy`
-
-**How to run:**
-
-```bash
-python fft_processing.py
-
-```
-
-The script includes a `SAMPLE_FILE` variable that can be modified to process different files. It also demonstrates processing a few example files.
-
-### 2. `gpr_model.py`
-
-This script builds a Gaussian Process Regression (GPR) model to predict D50 particle size from the 4-point moving average of AE power. It creates a dataset by matching time-series AE data (processed by `fft_processing.py`) with corresponding D50 values from `powder_size_distribution_data` files.
-
-**Key Features:**
-
-* **Time-series Matching:** Accurately matches final D50 values with the smoothed AE power at the end of each grinding duration.
-* **Combined Data for GPR:** When processing multiple reagents or trials (e.g., using `--reagent all` or `--trial all`), all selected data points are combined into a single dataset to train a more robust GPR model.
-* **Trial-specific Visualization:** The resulting plot visually distinguishes data points from different trials using unique markers (e.g., circles, crosses, triangles) to provide clearer insights into experimental variations while still using all data for the global model.
-
-**Model Implementation Details:**
-The Gaussian Process Regression model is implemented using `scikit-learn` with a configuration designed to optimize hyperparameters automatically based on the data:
-
-* **Kernel Configuration:** A combination of Constant, RBF (Radial Basis Function), and White Noise kernels is used to capture both the signal trend and noise.
-* `kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0)`
-
-
-* **Optimization:** The hyperparameters (length scale, noise level) are initialized at 1.0 and optimized without strict bounds to find the maximum likelihood estimate.
-* **Robustness:** `n_restarts_optimizer=10` is used to run the optimizer multiple times with different initializations, preventing the model from getting stuck in local optima.
-* **Normalization:** Target values (D50) are normalized (`normalize_y=True`) during training to improve convergence.
-
-**Dependencies:** `pandas`, `numpy`, `scikit-learn`, `matplotlib`, `tqdm`
-
-**How to run:**
-
-The script automatically manages a cache for pre-calculated Acoustic Emission (AE) power values (`ae_power_cache.json`).
-
-* **First Run / Cache Update:** On the first run, or if the cache is missing or incomplete for the data required by your arguments, the script will automatically calculate the necessary AE power values and update `ae_power_cache.json`. This initial step might take some time (e.g., ~10 minutes for a full dataset), but subsequent runs will be significantly faster as they will load from the cache.
-* **Subsequent Runs:** For subsequent runs, the script will load the pre-computed values from `ae_power_cache.json`, significantly speeding up data loading and processing.
-
-You can specify the reagent and trial using command-line arguments:
+#### 1) `exp2_gpr_model.py` (EXP2 main analysis)
+Builds the GPR models that map AE-derived features to D50 (and the inverse), using EXP2 data. It manages the AE power cache (`ae_power_cache.json`) and outputs model files, plots, and metrics under `results/`.
 
 ```bash
-# Process only 'NaCl' for the '1st' trial. Cache will be updated if needed.
-python gpr_model.py --reagent NaCl --trial 1st
-
-# Process all trials for 'Citricacid'. Cache will be updated if needed.
-python gpr_model.py --reagent Citricacid --trial all
-
-# Process all reagents for the '2nd' trial. Cache will be updated if needed.
-python gpr_model.py --reagent all --trial 2nd
-
-# Process all reagents and all trials (default behavior). Cache will be updated if needed.
-python gpr_model.py
-
+uv run python exp2_gpr_model.py
 ```
 
-**Output Files:**
+Common options:
+```bash
+uv run python exp2_gpr_model.py --reagent MSG --trial 1st
+uv run python exp2_gpr_model.py --reagent NaCl --trial all
+uv run python exp2_gpr_model.py --reagent all --trial all
+```
 
-* Plots are saved in the `results/` directory with dynamic filenames based on the reagent and trial (e.g., `results/gpr_plot_NaCl_1st.pdf`, `results/gpr_plot_all_all.pdf`).
-* A CSV file containing R-squared and average variance metrics is also saved in the `results/` directory. If `--reagent all` is used, the CSV will contain metrics for each reagent processed (e.g., `results/gpr_metrics_by_reagent_all.csv`). Otherwise, it will be specific to the chosen reagent (e.g., `results/gpr_metrics_NaCl_all.csv`).
+#### 2) `exp3_control_reliability_analysis.py` (EXP3 reliability / control)
+Analyzes EXP3 control reliability using AE power and PSD measurements, producing EXP3-focused outputs in `results/`.
+
+```bash
+uv run python exp3_control_reliability_analysis.py
+```
+
+#### 3) `discussion_AE_bias_and_variance.py` (DISCUSSION analysis)
+Quantifies AE bias/variance behavior across trials and materials for the discussion section, and writes plots/CSVs under `results/discussion/`.
+
+```bash
+uv run python discussion_AE_bias_and_variance.py
+```
+
+#### 4) `discussion_force_and_speed_dependene.py` (DISCUSSION auxiliary)
+Additional discussion analysis related to force/speed dependence.
+
+```bash
+uv run python discussion_force_and_speed_dependene.py
+```
+
+### Supplementary Scripts (plots / evaluation)
+
+#### 5) `evaluate_moving_average_window_gpr.py` (evaluation)
+Evaluates GPR performance across moving-average window sizes. Writes CSVs and plots under `results/` and `results/moving_average/`.
+
+```bash
+uv run python evaluate_moving_average_window_gpr.py
+```
+
+#### 6) `plot_moving_average_timeseries.py` (supplementary plot)
+Plots time-series AE power with moving averages for each material/trial.
+
+```bash
+uv run python plot_moving_average_timeseries.py
+```
+
+#### 7) `plot_d50_ratio_timeseries.py` (supplementary plot)
+Plots D50 ratio trends across grinding time.
+
+```bash
+uv run python plot_d50_ratio_timeseries.py
+```
+
+#### 8) `fig1_schematic_psd.py` (figure)
+Generates the schematic PSD figure used in the paper.
+
+```bash
+uv run python fig1_schematic_psd.py
+```
+
+### Shared Utility (FFT)
+
+#### `fft_processing.py`
+Utility module for computing AE power (FFT in the 100 kHz–1 MHz band). This is used by other scripts; typically you do not run it directly unless you are inspecting a single file.
+
+```bash
+uv run python fft_processing.py
+```

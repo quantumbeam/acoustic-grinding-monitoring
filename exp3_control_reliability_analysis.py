@@ -96,10 +96,10 @@ MODEL_B_TAG = "ae2particle"
 MODEL_NAME_MAP = {
     'NaCl': 'NaCl',
     'Citricacid': 'Citricacid',
-    'Ajinomoto': 'Ajinomoto',
+    'MSG': 'MSG',
 }
 PLOT_LABEL_MAP = {
-    'Ajinomoto': 'MSG'
+    'MSG': 'MSG'
 }
 
 # Control Parameters

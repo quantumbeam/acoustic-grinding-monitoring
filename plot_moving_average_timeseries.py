@@ -104,7 +104,7 @@ def main():
     base_dir = os.path.join("ae_data", args.experiment)
     if args.reagent == "all":
         candidate_dirs = sorted(glob.glob(os.path.join(base_dir, "*")))
-        preferred = ["Ajinomoto", "Citricacid", "NaCl"]
+        preferred = ["MSG", "Citricacid", "NaCl"]
         preferred_dirs = [os.path.join(base_dir, name) for name in preferred]
         reagent_dirs = [d for d in preferred_dirs if d in candidate_dirs]
         if not reagent_dirs:
