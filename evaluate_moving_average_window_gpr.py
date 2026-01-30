@@ -200,20 +200,36 @@ def configure_plot_style():
     )
 
 
-def select_representative_sample(samples, reagent, trial_pref, grind_pref):
+def select_representative_samples(samples, reagent, trial_pref, grind_pref):
     candidates = [s for s in samples if s.reagent == reagent]
     if not candidates:
-        return None
+        return []
+    if trial_pref == "all":
+        trials = sorted({s.trial for s in candidates})
+        selected = []
+        for t in trials:
+            matches = [
+                s for s in candidates
+                if s.trial == t and int(s.grind_min) == int(grind_pref)
+            ]
+            if matches:
+                selected.append(matches[0])
+                continue
+            fallback = [s for s in candidates if s.trial == t]
+            if fallback:
+                selected.append(fallback[0])
+        return selected
+
     preferred = [
         s for s in candidates
         if s.trial == trial_pref and int(s.grind_min) == int(grind_pref)
     ]
     if preferred:
-        return preferred[0]
+        return [preferred[0]]
     preferred_trial = [s for s in candidates if s.trial == trial_pref]
     if preferred_trial:
-        return preferred_trial[0]
-    return candidates[0]
+        return [preferred_trial[0]]
+    return [candidates[0]]
 
 
 def plot_recommended_timeseries(sample, window_size, out_dir, base_name):
@@ -339,7 +355,7 @@ def main():
         default=True,
         help="Plot time series with recommended moving average.",
     )
-    parser.add_argument("--timeseries-trial", type=str, default="1st")
+    parser.add_argument("--timeseries-trial", type=str, default="all")
     parser.add_argument("--timeseries-grind-min", type=float, default=25)
     args = parser.parse_args()
 
@@ -431,25 +447,26 @@ def main():
                 print(f"Saved CV plot: {out_pdf}")
 
             if args.plot_timeseries and reagent != "all":
-                sample = select_representative_sample(
+                selected_samples = select_representative_samples(
                     samples,
                     reagent,
                     args.timeseries_trial,
                     args.timeseries_grind_min,
                 )
-                base = (
-                    f"moving_average_recommended_{args.experiment}_{cv_method}_"
-                    f"{reagent}_{args.timeseries_trial}_{int(args.timeseries_grind_min)}min"
-                )
-                out_png, out_pdf = plot_recommended_timeseries(
-                    sample,
-                    best["window_size"],
-                    args.out_dir,
-                    base,
-                )
-                if out_png and out_pdf:
-                    print(f"Saved timeseries plot: {out_png}")
-                    print(f"Saved timeseries plot: {out_pdf}")
+                for sample in selected_samples:
+                    base = (
+                        f"moving_average_recommended_{args.experiment}_{cv_method}_"
+                        f"{reagent}_{sample.trial}_{int(args.timeseries_grind_min)}min"
+                    )
+                    out_png, out_pdf = plot_recommended_timeseries(
+                        sample,
+                        best["window_size"],
+                        args.out_dir,
+                        base,
+                    )
+                    if out_png and out_pdf:
+                        print(f"Saved timeseries plot: {out_png}")
+                        print(f"Saved timeseries plot: {out_pdf}")
 
     summary_path = os.path.join(
         args.out_dir, f"moving_average_gpr_cv_{args.experiment}_{args.cv}.csv"
