@@ -94,10 +94,10 @@ def main():
     )
     parser.add_argument("--experiment", type=str, default="exp2")
     parser.add_argument("--reagent", type=str, default="all")
-    parser.add_argument("--trial", type=str, default="1st")
+    parser.add_argument("--trial", type=str, default="all")
     parser.add_argument("--grind-min", type=int, default=25)
     parser.add_argument("--window", type=int, default=4)
-    parser.add_argument("--out-dir", type=str, default="results")
+    parser.add_argument("--out-dir", type=str, default=os.path.join("results", "moving_average"))
     parser.add_argument("--dpi", type=int, default=300)
     args = parser.parse_args()
 
@@ -122,13 +122,19 @@ def main():
         if not os.path.isdir(reagent_dir):
             continue
         reagent = os.path.basename(reagent_dir)
-        trial_dir = os.path.join(reagent_dir, args.trial)
-        if not os.path.isdir(trial_dir):
-            continue
-        pattern = os.path.join(trial_dir, f"*grind{args.grind_min}min*.csv")
-        files = sorted(glob.glob(pattern))
-        if files:
-            reagent_to_files[reagent] = files
+        if args.trial == "all":
+            trial_dirs = sorted(glob.glob(os.path.join(reagent_dir, "*")))
+        else:
+            trial_dirs = [os.path.join(reagent_dir, args.trial)]
+
+        for trial_dir in trial_dirs:
+            if not os.path.isdir(trial_dir):
+                continue
+            trial_name = os.path.basename(trial_dir)
+            pattern = os.path.join(trial_dir, f"*grind{args.grind_min}min*.csv")
+            files = sorted(glob.glob(pattern))
+            if files:
+                reagent_to_files[(reagent, trial_name)] = files
 
     if not reagent_to_files:
         print("No matching files found.")
@@ -139,7 +145,7 @@ def main():
 
     configure_plot_style()
 
-    for reagent, files in reagent_to_files.items():
+    for (reagent, trial_name), files in reagent_to_files.items():
         files_sorted = sorted(
             files,
             key=lambda p: (
@@ -190,7 +196,7 @@ def main():
         plt.tight_layout()
 
         base_name = (
-            f"moving_average_{args.experiment}_{reagent}_{args.trial}_"
+            f"moving_average_{args.experiment}_{reagent}_{trial_name}_"
             f"{args.grind_min}min"
         )
         out_png = os.path.join(args.out_dir, f"{base_name}.png")
