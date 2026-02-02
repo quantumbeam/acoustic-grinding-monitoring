@@ -5,14 +5,12 @@ import numpy as np
 import re
 import sys
 from fft_processing import calculate_fft_power
-import datetime
 import scienceplots
 plt.style.use(['science', 'ieee', 'no-latex'])
 
 
 # ================== 設定 ==================
-experiment_name_list=["force","spr","Other"]
-experiment_name="spr"
+experiment_name_list = ["force", "spr"]
 png_output_dir = "results/discussion/force_and_speed_dependene"
 # 移動平均の点数
 moving_average_window = 4
@@ -28,29 +26,26 @@ dir_path2="csv_data/ae_data_csv/20251219_2nd/grind25min"
 dir_paths=[dir_path1,dir_path2]
 labels=["Data 1","Data 2"]
 
-# region ディレクトリのパスをリストで指定
-# --- フォース違い ---
-if experiment_name=="force":
-    dir_path1="ae_data/discussion/force/10N"
-    dir_path2="ae_data/discussion/force/20N"
-    dir_paths=[dir_path1,dir_path2]
-    labels=["10 N","20 N"]
-# --- spr違い ---
-elif experiment_name=="spr":
-    dir_path1="ae_data/discussion/speed/spr0_5"
-    dir_path2="ae_data/discussion/speed/spr1"
-    dir_path3="ae_data/discussion/speed/spr1_5"
-    dir_paths=[dir_path1,dir_path2,dir_path3]
-    labels=["0.5 s per cycle","1.0 s per cycle","1.5 s per cycle"]
-
-# --- その他 ---
-elif experiment_name=="Other":
-    pass
-
-else:
-    print("experiment_nameを正しく設定してください。")
-    sys.exit(1)
-# endregion ==================================
+def get_experiment_config(name):
+    # region ディレクトリのパスをリストで指定
+    # --- フォース違い ---
+    if name == "force":
+        dir_path1 = "ae_data/discussion/force/10N"
+        dir_path2 = "ae_data/discussion/force/20N"
+        dir_paths = [dir_path1, dir_path2]
+        labels = ["10 N", "20 N"]
+    # --- spr違い ---
+    elif name == "spr":
+        dir_path1 = "ae_data/discussion/speed/spr0_5"
+        dir_path2 = "ae_data/discussion/speed/spr1"
+        dir_path3 = "ae_data/discussion/speed/spr1_5"
+        dir_paths = [dir_path1, dir_path2, dir_path3]
+        labels = ["0.5 s per cycle", "1.0 s per cycle", "1.5 s per cycle"]
+    else:
+        print("experiment_nameを正しく設定してください。")
+        sys.exit(1)
+    # endregion ==================================
+    return dir_paths, labels
 
 
 # --- グラフの体裁 ---
@@ -138,11 +133,10 @@ def plot_fft_power_for_multiple_dirs(directory_paths, output_plot_path, x_label,
     print(f"プロットを '{output_plot_path}' に保存しました。")
 
 if __name__ == "__main__":
-    # 日付から保存パスを作成
-    now = datetime.datetime.now()
-    
-    output_file =png_output_dir +"/"+  f"{now.strftime('%Y%m%d_%H%M%S')}_fft_power_trend.pdf"
-    target_directories = dir_paths
-    
-    if target_directories:
-        plot_fft_power_for_multiple_dirs(target_directories, output_file, x_label, y_label,labels=labels)
+    for experiment_name in experiment_name_list:
+        dir_paths, labels = get_experiment_config(experiment_name)
+        name_for_file = "speed" if experiment_name == "spr" else experiment_name
+        output_file = png_output_dir + f"/fft_power_trend_{name_for_file}.pdf"
+
+        if dir_paths:
+            plot_fft_power_for_multiple_dirs(dir_paths, output_file, x_label, y_label, labels=labels)
