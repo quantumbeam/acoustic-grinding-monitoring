@@ -271,10 +271,9 @@ def plot_psd_timeseries_exp2(output_root, reagent_filter, trial_filter):
 
     for psd_reagent_dir in glob.glob(os.path.join(psd_base_path, reagent_pattern)):
         reagent = os.path.basename(psd_reagent_dir)
+        by_time = {}
         for psd_trial_dir in glob.glob(os.path.join(psd_reagent_dir, trial_pattern)):
-            trial = os.path.basename(psd_trial_dir)
             psd_files = glob.glob(os.path.join(psd_trial_dir, "*.csv"))
-            series = []
             for psd_file in psd_files:
                 m = re.search(r"grind(\d+)min", os.path.basename(psd_file))
                 if not m:
@@ -286,52 +285,71 @@ def plot_psd_timeseries_exp2(output_root, reagent_filter, trial_filter):
                 d50 = compute_metric_from_distribution(50, sizes, volumes)
                 dmean = compute_metric_from_distribution("Dmean", sizes, volumes)
                 dmode = compute_metric_from_distribution("Dmode", sizes, volumes)
-                series.append((grind_min, d50, dmean, dmode))
+                by_time.setdefault(grind_min, []).append((d50, dmean, dmode))
 
-            if not series:
-                continue
+        if not by_time:
+            continue
 
-            series.sort(key=lambda row: row[0])
-            times = [row[0] for row in series]
-            d50_vals = [row[1] for row in series]
-            dmean_vals = [row[2] for row in series]
-            dmode_vals = [row[3] for row in series]
+        times = sorted(by_time.keys())
+        d50_vals = []
+        d50_err = []
+        dmean_vals = []
+        dmean_err = []
+        dmode_vals = []
+        dmode_err = []
+        for t in times:
+            vals = np.array(by_time[t], dtype=float)
+            d50_vals.append(float(np.mean(vals[:, 0])))
+            d50_err.append(float(np.std(vals[:, 0], ddof=1)) if len(vals) > 1 else 0.0)
+            dmean_vals.append(float(np.mean(vals[:, 1])))
+            dmean_err.append(float(np.std(vals[:, 1], ddof=1)) if len(vals) > 1 else 0.0)
+            dmode_vals.append(float(np.mean(vals[:, 2])))
+            dmode_err.append(float(np.std(vals[:, 2], ddof=1)) if len(vals) > 1 else 0.0)
 
-            plt.figure(figsize=(12, 7))
-            plt.plot(
-                times,
-                d50_vals,
-                color="red",
-                marker="o",
-                linestyle=(0, (1, 1)),
-                label="D50",
-            )
-            plt.plot(
-                times,
-                dmean_vals,
-                color="blue",
-                marker="s",
-                linestyle=(0, (5, 3)),
-                label="Dmean",
-            )
-            plt.plot(
-                times,
-                dmode_vals,
-                color="green",
-                marker="^",
-                linestyle=(0, (3, 2, 1, 2)),
-                label="Dmode",
-            )
-            plt.xlabel("Grind time (min)")
-            plt.ylabel("Diameter (μm)")
-            plt.legend()
-            plt.tight_layout()
+        plt.figure(figsize=(12, 7))
+        plt.errorbar(
+            times,
+            d50_vals,
+            yerr=d50_err,
+            color="red",
+            marker="o",
+            linestyle=(0, (1, 1)),
+            capsize=4,
+            label=f"{dx_label('D50')} (mean±SD)",
+        )
+        plt.errorbar(
+            times,
+            dmean_vals,
+            yerr=dmean_err,
+            color="blue",
+            marker="s",
+            linestyle=(0, (5, 3)),
+            capsize=4,
+            label=f"{dx_label('Dmean')} (mean±SD)",
+        )
+        plt.errorbar(
+            times,
+            dmode_vals,
+            yerr=dmode_err,
+            color="green",
+            marker="^",
+            linestyle=(0, (3, 2, 1, 2)),
+            capsize=4,
+            label=f"{dx_label('Dmode')} (mean±SD)",
+        )
+        plt.xlabel("Grind time (min)")
+        plt.ylabel("Diameter (μm)")
+        plt.legend()
+        plt.tight_layout()
 
-            base_name = f"psd_timeseries_{reagent}_{trial}"
-            out_pdf = os.path.join(output_dir, f"{base_name}.pdf")
-            plt.savefig(out_pdf, dpi=300)
-            plt.close()
-            print(f"Saved PSD timeseries plot: {out_pdf}")
+        base_name = f"psd_timeseries_{reagent}_error_bar"
+        out_pdf = os.path.join(output_dir, f"{base_name}.pdf")
+        out_png = os.path.join(output_dir, f"{base_name}.png")
+        plt.savefig(out_pdf, dpi=300)
+        plt.savefig(out_png, dpi=300)
+        plt.close()
+        print(f"Saved PSD timeseries plot: {out_pdf}")
+        print(f"Saved PSD timeseries plot: {out_png}")
 
 
 def fit_gpr_and_save(X_data, y_data, model_path, n_restarts=10):
