@@ -484,7 +484,7 @@ if __name__ == '__main__':
                     label=t
                 )
             plt.plot(x_plot, y_plot, 'k--', label='linear fit')
-            plt.xlabel('D50', fontsize=axes_label_size)
+            plt.xlabel(r'D50 ($\mu$m)', fontsize=axes_label_size)
             plt.ylabel(r'AE power ($\mathrm{mV}^2$)', fontsize=axes_label_size)
             plt.title(f'AE vs D50 (r^2={r2:.3f})')
             plt.legend()

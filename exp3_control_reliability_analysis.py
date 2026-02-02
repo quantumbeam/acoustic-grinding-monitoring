@@ -367,7 +367,7 @@ if not plot_df.empty:
     plot_df["label"] = plot_df.apply(
         lambda row: (
             f"{PLOT_LABEL_MAP.get(row['Material'], row['Material'])} "
-            f"{row['Trial']} {row['Target_D50']}"
+            f"{row['Trial']} {row['Target_D50']} $\\mu$m"
         ),
         axis=1,
     )
@@ -395,7 +395,10 @@ if not plot_df.empty:
     print(f"Saved detail plot data to: {export_path}")
     plot_df = plot_df.reset_index(drop=True)
     plot_df["x_label"] = plot_df.apply(
-        lambda row: f"{PLOT_LABEL_MAP.get(row['Material'], row['Material'])} {row['Target_D50']}",
+        lambda row: (
+            f"{PLOT_LABEL_MAP.get(row['Material'], row['Material'])} "
+            f"{row['Target_D50']} $\\mu$m"
+        ),
         axis=1,
     )
     unique_labels = list(dict.fromkeys(plot_df["x_label"].tolist()))
