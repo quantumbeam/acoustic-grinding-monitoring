@@ -342,7 +342,7 @@ def main():
         help="Evaluate a combined (all reagents) model in addition to per-reagent.",
     )
     parser.add_argument("--rmse-tol", type=float, default=0.0)
-    parser.add_argument("--out-dir", type=str, default=os.path.join("results", "moving_average"))
+    parser.add_argument("--out-dir", type=str, default=os.path.join("results", "SI", "moving_average"))
     parser.add_argument(
         "--plot-metrics",
         action=argparse.BooleanOptionalAction,
