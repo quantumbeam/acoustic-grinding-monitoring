@@ -191,7 +191,7 @@ def main():
             )
 
         plt.xlabel("Number of motions")
-        plt.ylabel(r"Total Power Spectrum($\mathrm{mV}^2$)")
+        plt.ylabel(r"Total spectral power($\mathrm{mV}^2$)")
         plt.legend(loc="upper right")
         plt.tight_layout()
 

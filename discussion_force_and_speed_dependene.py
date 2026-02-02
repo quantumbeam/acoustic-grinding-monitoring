@@ -56,7 +56,7 @@ else:
 # --- グラフの体裁 ---
 # ラベル
 x_label = "Number of motions"
-y_label = r"Total Power Spectrum($\mathrm{mV}^2$)"
+y_label = r"Total spectral power($\mathrm{mV}^2$)"
 
 # フォントサイズ
 font_size = 24
