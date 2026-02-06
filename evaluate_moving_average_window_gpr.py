@@ -82,8 +82,8 @@ def update_cache_policy_a(cache, cache_file, file_paths):
 
 
 def build_samples(experiment, reagent, trial):
-    ae_base_path = os.path.join("ae_data", experiment)
-    psd_base_path = os.path.join("powder_size_distribution_data", experiment)
+    ae_base_path = os.path.join("data/ae", experiment)
+    psd_base_path = os.path.join("data/powder_size_distribution", experiment)
 
     reagent_pattern = "*" if reagent == "all" else reagent
     trial_pattern = "*" if trial == "all" else trial

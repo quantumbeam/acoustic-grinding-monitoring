@@ -81,8 +81,8 @@ def get_d50(file_path):
 # ============================================================
 RESULTS_DIR = 'results'
 EXPERIMENT = 'exp3'
-PSD_BASE_PATH = os.path.join('powder_size_distribution_data', EXPERIMENT)
-AE_BASE_PATH = os.path.join('ae_data', EXPERIMENT)
+PSD_BASE_PATH = os.path.join('data/powder_size_distribution', EXPERIMENT)
+AE_BASE_PATH = os.path.join('data/ae', EXPERIMENT)
 AE_SCALE_TO_MV2 = 1e6
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_FILE = os.path.join(SCRIPT_DIR, 'ae_power_cache.json')

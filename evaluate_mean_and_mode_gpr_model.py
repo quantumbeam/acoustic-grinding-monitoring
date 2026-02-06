@@ -135,7 +135,7 @@ def get_metric_y_value(metric_value, sizes, volumes):
 
 
 def select_psd_files_exp2(reagent_filter, trial_filter):
-    psd_base_path = os.path.join("powder_size_distribution_data", "exp2")
+    psd_base_path = os.path.join("data/powder_size_distribution", "exp2")
     reagent_pattern = reagent_filter if reagent_filter else "*"
     trial_pattern = trial_filter if trial_filter else "*"
 
@@ -262,7 +262,7 @@ def parse_timestamp(file_path):
 
 
 def plot_psd_timeseries_exp2(output_root, reagent_filter, trial_filter):
-    psd_base_path = os.path.join("powder_size_distribution_data", "exp2")
+    psd_base_path = os.path.join("data/powder_size_distribution", "exp2")
     reagent_pattern = reagent_filter if reagent_filter else "*"
     trial_pattern = trial_filter if trial_filter else "*"
 
@@ -400,8 +400,8 @@ def dx_label(dx_name, for_axis=True):
 
 def build_exp2_dataset(dx_value, reagent_filter, trial_filter, cache_file):
     experiment = "exp2"
-    ae_base_path = os.path.join("ae_data", experiment)
-    psd_base_path = os.path.join("powder_size_distribution_data", experiment)
+    ae_base_path = os.path.join("data/ae", experiment)
+    psd_base_path = os.path.join("data/powder_size_distribution", experiment)
 
     reagent_pattern = reagent_filter if reagent_filter else "*"
     trial_pattern = trial_filter if trial_filter else "*"
@@ -674,8 +674,8 @@ def normal_cdf(x: float) -> float:
 def evaluate_exp3_control(dx_name, dx_value, output_dir, cache_file):
     print(f"--- Evaluating exp3 control for {dx_name} ---")
     experiment = "exp3"
-    psd_base_path = os.path.join("powder_size_distribution_data", experiment)
-    ae_base_path = os.path.join("ae_data", experiment)
+    psd_base_path = os.path.join("data/powder_size_distribution", experiment)
+    ae_base_path = os.path.join("data/ae", experiment)
     ae_scale_to_mV2 = 1e6
 
     if not os.path.isdir(psd_base_path):

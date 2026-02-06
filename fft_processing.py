@@ -89,7 +89,7 @@ if __name__ == '__main__':
     if not os.path.exists(SAMPLE_FILE):
         print(f"Error: Sample file not found at '{SAMPLE_FILE}'")
         # 既存のパスがあればそちらで試行
-        alt_files = glob.glob('ae_data/exp2/NaCl/1st/*.csv')
+        alt_files = glob.glob('data/ae/exp2/NaCl/1st/*.csv')
         if alt_files:
             SAMPLE_FILE = alt_files[0]
             print(f"Using alternative file: {SAMPLE_FILE}")

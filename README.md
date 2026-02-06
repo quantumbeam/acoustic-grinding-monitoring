@@ -4,8 +4,8 @@ This repository contains data and analysis scripts for a study on predicting par
 
 ## Data Structure
 
-* `ae_data/`: Contains the raw acoustic emission data.
-* `powder_size_distribution_data/`: Contains the particle size distribution data measured after grinding.
+* `data/ae/`: Contains the raw acoustic emission data.
+* `data/powder_size_distribution/`: Contains the particle size distribution data measured after grinding.
 
 Details about the experiments and data organization can be found in the `README.md` files within each directory.
 

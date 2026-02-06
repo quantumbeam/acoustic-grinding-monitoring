@@ -30,15 +30,15 @@ def get_experiment_config(name):
     # region ディレクトリのパスをリストで指定
     # --- フォース違い ---
     if name == "force":
-        dir_path1 = "ae_data/discussion/force/10N"
-        dir_path2 = "ae_data/discussion/force/20N"
+        dir_path1 = "data/ae/discussion/force/10N"
+        dir_path2 = "data/ae/discussion/force/20N"
         dir_paths = [dir_path1, dir_path2]
         labels = ["10 N", "20 N"]
     # --- spr違い ---
     elif name == "spr":
-        dir_path1 = "ae_data/discussion/speed/spr0_5"
-        dir_path2 = "ae_data/discussion/speed/spr1"
-        dir_path3 = "ae_data/discussion/speed/spr1_5"
+        dir_path1 = "data/ae/discussion/speed/spr0_5"
+        dir_path2 = "data/ae/discussion/speed/spr1"
+        dir_path3 = "data/ae/discussion/speed/spr1_5"
         dir_paths = [dir_path1, dir_path2, dir_path3]
         labels = ["0.5 s per cycle", "1.0 s per cycle", "1.5 s per cycle"]
     else:

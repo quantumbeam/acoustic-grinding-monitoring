@@ -67,7 +67,7 @@ def main():
     )
     args = parser.parse_args()
 
-    base_dir = os.path.join("powder_size_distribution_data", args.experiment)
+    base_dir = os.path.join("data/powder_size_distribution", args.experiment)
     reagent_dirs = (
         sorted(glob.glob(os.path.join(base_dir, "*")))
         if args.reagent == "all"

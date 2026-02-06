@@ -172,8 +172,8 @@ if __name__ == '__main__':
     # ------------------------------------------------------------
     print("--- Scanning for required files ---")
 
-    ae_base_path = os.path.join('ae_data', EXPERIMENT)
-    psd_base_path = os.path.join('powder_size_distribution_data', EXPERIMENT)
+    ae_base_path = os.path.join('data/ae', EXPERIMENT)
+    psd_base_path = os.path.join('data/powder_size_distribution', EXPERIMENT)
 
     reagent_pattern = TARGET_REAGENT if TARGET_REAGENT else '*'
     trial_pattern = TARGET_TRIAL if TARGET_TRIAL else '*'

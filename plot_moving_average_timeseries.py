@@ -101,7 +101,7 @@ def main():
     parser.add_argument("--dpi", type=int, default=300)
     args = parser.parse_args()
 
-    base_dir = os.path.join("ae_data", args.experiment)
+    base_dir = os.path.join("data/ae", args.experiment)
     if args.reagent == "all":
         candidate_dirs = sorted(glob.glob(os.path.join(base_dir, "*")))
         preferred = ["MSG", "Citricacid", "NaCl"]
