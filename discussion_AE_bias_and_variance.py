@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import scienceplots
 
 # Style setting (LaTeX-less environment)
-plt.style.use(['science', 'ieee', 'no-latex'])
+plt.style.use(['science', 'ieee'])
 
 
 # ------------------------------------------------------------
@@ -486,7 +486,7 @@ if __name__ == '__main__':
             plt.plot(x_plot, y_plot, 'k--', label='linear fit')
             plt.xlabel(r'D50 ($\mu$m)', fontsize=axes_label_size)
             plt.ylabel(r'AE power ($\mathrm{mV}^2$)', fontsize=axes_label_size)
-            plt.title(f'AE vs D50 (r^2={r2:.3f})')
+            plt.title(rf'AE vs D50 ($r^2$={r2:.3f})')
             plt.legend()
             plot_path = os.path.join(
                 VARIANCE_OUTPUT_DIR,
