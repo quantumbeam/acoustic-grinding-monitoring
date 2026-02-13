@@ -358,9 +358,8 @@ def main():
 
             base_name = f"exp3_poly4_pseudostop_{material}_{target_val}um"
             fig.savefig(os.path.join(OUTPUT_DIR, f"{base_name}.png"), dpi=300, bbox_inches='tight')
-            fig.savefig(os.path.join(OUTPUT_DIR, f"{base_name}.pdf"), dpi=300, bbox_inches='tight')
             plt.close(fig)
-            print(f"  Saved: {base_name}.png/.pdf")
+            print(f"  Saved: {base_name}.png")
 
     # --- Save cache ---
     if CACHE_DIRTY:

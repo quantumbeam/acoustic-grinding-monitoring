@@ -1,11 +1,11 @@
 """
-Monotone-GP Threshold Pseudo-Stopping Visualization for exp3.
+I-spline Monotone Threshold Pseudo-Stopping Visualization for exp3.
 
-Applies monotone-GP forward models (particle2ae, trained on exp2) to exp3 AE time series,
+Applies monotone I-spline forward models (particle2ae, trained on exp2) to exp3 AE time series,
 identifies pseudo-stop cycles via threshold crossing, and outputs per-(Material, Target)
 overlay plots + summary CSV.
 
-Output: results/monotone_gp/
+Output: results/ispline/
 """
 
 import glob
@@ -19,7 +19,7 @@ import pandas as pd
 import scienceplots
 
 from fft_processing import calculate_fft_power
-from monotone_svgp import load_model_npz
+from monotone_ispline import load_model
 
 plt.style.use(["science", "ieee", "no-latex"])
 plt.rcParams.update(
@@ -39,9 +39,8 @@ PSD_BASE_PATH = os.path.join("data/powder_size_distribution", EXPERIMENT)
 AE_BASE_PATH = os.path.join("data/ae", EXPERIMENT)
 AE_SCALE_TO_MV2 = 1e6
 MOVING_AVG_WINDOW = 4
-OUTPUT_DIR = os.path.join("results", "monotone_gp")
-MODEL_DIR = os.path.join("results", "monotone_gp")
-K_SIGMA_AE = 0.0
+OUTPUT_DIR = os.path.join("results", "ispline")
+MODEL_DIR = os.path.join("results", "ispline")
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_FILE = os.path.join(SCRIPT_DIR, "ae_power_cache.json")
@@ -131,8 +130,7 @@ def main():
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    print("--- Monotone-GP Threshold Pseudo-Stopping Analysis (exp3) ---")
-    print(f"    K_SIGMA_AE = {K_SIGMA_AE}")
+    print("--- I-spline Monotone Threshold Pseudo-Stopping Analysis (exp3) ---")
 
     materials = [
         os.path.basename(d)
@@ -147,14 +145,14 @@ def main():
         model_key = MODEL_NAME_MAP.get(material, material)
         model_path = os.path.join(
             MODEL_DIR,
-            f"monotone_gp_model_particle2ae_{model_key}_exp2.npz",
+            f"ispline_model_particle2ae_{model_key}_exp2.joblib",
         )
         if not os.path.exists(model_path):
-            print(f"Warning: monotone-GP model not found for {material}: {model_path}")
+            print(f"Warning: I-spline model not found for {material}: {model_path}")
             continue
 
-        reg, _ = load_model_npz(model_path)
-        print(f"\n[{material}] Monotone-GP model loaded.")
+        reg, _ = load_model(model_path)
+        print(f"\n[{material}] I-spline model loaded.")
 
         target_files_sample = glob.glob(os.path.join(PSD_BASE_PATH, material, "1st", "*.csv"))
         targets = []
@@ -165,14 +163,9 @@ def main():
         targets = sorted(set(targets))
 
         for target_val in targets:
-            ae_mu, ae_var = reg.predict_f(np.array([[float(target_val)]], dtype=float))
-            theta_sigma = float(np.sqrt(max(ae_var[0], 0.0)))
-            theta_ae = float(ae_mu[0]) - K_SIGMA_AE * theta_sigma
+            theta_ae = float(reg.predict(np.array([[float(target_val)]], dtype=float))[0])
 
-            print(
-                f"  Target={target_val} um -> theta_AE={theta_ae:.4f} mV² "
-                f"(mu={float(ae_mu[0]):.4f}, sigma={theta_sigma:.4f})"
-            )
+            print(f"  Target={target_val} um -> theta_AE={theta_ae:.4f} mV²")
 
             trial_data = {}
 
@@ -207,8 +200,7 @@ def main():
                             "Material": material,
                             "Target_D50": target_val,
                             "Trial": trial,
-                            "theta_monotone_gp": theta_ae,
-                            "theta_monotone_gp_sigma": theta_sigma,
+                            "theta_ispline": theta_ae,
                             "reachable": False,
                             "cross_type": "unreach",
                             "k_star": None,
@@ -249,8 +241,7 @@ def main():
                         "Material": material,
                         "Target_D50": target_val,
                         "Trial": trial,
-                        "theta_monotone_gp": theta_ae,
-                        "theta_monotone_gp_sigma": theta_sigma,
+                        "theta_ispline": theta_ae,
                         "reachable": reachable,
                         "cross_type": cross_type,
                         "k_star": k_star,
@@ -263,7 +254,6 @@ def main():
                 )
 
                 trial_data[trial] = {
-                    "raw": np.array(raw_series),
                     "smoothed": smoothed,
                     "k_star": k_star,
                     "reachable": reachable,
@@ -301,12 +291,12 @@ def main():
                     plt.legend(loc="best")
                     plt.tight_layout()
 
-                    out_png = os.path.join(OUTPUT_DIR, f"exp3_monotone_gp_pseudostop_{material}_{target_val}um.png")
+                    out_png = os.path.join(OUTPUT_DIR, f"exp3_ispline_pseudostop_{material}_{target_val}um.png")
                     plt.savefig(out_png, dpi=300)
                 plt.close()
 
     df = pd.DataFrame(rows)
-    out_csv = os.path.join(OUTPUT_DIR, "exp3_monotone_gp_pseudostop_summary.csv")
+    out_csv = os.path.join(OUTPUT_DIR, "exp3_ispline_pseudostop_summary.csv")
     df.to_csv(out_csv, index=False)
 
     print(f"\nSaved summary: {out_csv}")
