@@ -15,6 +15,7 @@ import glob
 import json
 import os
 import re
+import argparse
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -50,8 +51,8 @@ PSD_BASE_PATH = os.path.join(REPO_ROOT, "data", "powder_size_distribution", EXPE
 AE_BASE_PATH = os.path.join(REPO_ROOT, "data", "ae", EXPERIMENT)
 AE_SCALE_TO_MV2 = 1e6
 MOVING_AVG_WINDOW = 4
-OUTPUT_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_bernstein")
-MODEL_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_bernstein")
+DEFAULT_OUTPUT_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_bernstein")
+DEFAULT_MODEL_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_bernstein")
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_FILE = os.path.join(SCRIPT_DIR, "ae_power_cache.json")
@@ -153,7 +154,15 @@ def get_cached_ae_power(file_path):
 def main():
     global CACHE_DIRTY
 
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    parser = argparse.ArgumentParser(description="Run exp3 pseudo-stop using monotone Bernstein models.")
+    parser.add_argument("--model-dir", type=str, default=DEFAULT_MODEL_DIR)
+    parser.add_argument("--output-dir", type=str, default=DEFAULT_OUTPUT_DIR)
+    args = parser.parse_args()
+
+    model_dir = os.path.abspath(args.model_dir)
+    output_dir = os.path.abspath(args.output_dir)
+
+    os.makedirs(output_dir, exist_ok=True)
 
     print("--- Monotone Bernstein Threshold Pseudo-Stopping Analysis (exp3) ---")
 
@@ -168,7 +177,7 @@ def main():
         model_key = MODEL_NAME_MAP.get(material, material)
 
         model_path = os.path.join(
-            MODEL_DIR,
+            model_dir,
             f"monotone_bernstein_model_particle2ae_{model_key}_exp2.joblib",
         )
         if not os.path.exists(model_path):
@@ -337,7 +346,7 @@ def main():
             ax.legend(loc="best")
 
             base_name = f"exp3_monotone_bernstein_pseudostop_{material}_{target_val}um"
-            fig.savefig(os.path.join(OUTPUT_DIR, f"{base_name}.png"), dpi=300, bbox_inches="tight")
+            fig.savefig(os.path.join(output_dir, f"{base_name}.png"), dpi=300, bbox_inches="tight")
             plt.close(fig)
             print(f"  Saved: {base_name}.png")
 
@@ -362,7 +371,7 @@ def main():
             "Measured_D50",
         ]
         df = df[[c for c in col_order if c in df.columns]]
-        csv_path = os.path.join(OUTPUT_DIR, "exp3_monotone_bernstein_pseudostop_summary.csv")
+        csv_path = os.path.join(output_dir, "exp3_monotone_bernstein_pseudostop_summary.csv")
         df.to_csv(csv_path, index=False)
         print(f"\nSummary CSV saved to: {csv_path}")
         print(df.to_string(index=False))

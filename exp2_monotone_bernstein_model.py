@@ -181,14 +181,14 @@ def choose_hyperparams(
     degree_candidates: list[int],
     lambda_candidates: list[float],
     cv_mode: str,
-) -> tuple[int, float]:
+) -> tuple[int, float, float]:
     if cv_mode == "none":
-        return int(degree_candidates[0]), float(lambda_candidates[0])
+        return int(degree_candidates[0]), float(lambda_candidates[0]), float("nan")
 
     unique_groups = np.unique(groups)
     n_splits = min(3, unique_groups.size)
     if n_splits < 2:
-        return int(degree_candidates[0]), float(lambda_candidates[0])
+        return int(degree_candidates[0]), float(lambda_candidates[0]), float("nan")
 
     gkf = GroupKFold(n_splits=n_splits)
 
@@ -224,8 +224,8 @@ def choose_hyperparams(
                 best = (int(degree), float(lambda_smooth))
 
     if best is None:
-        return int(degree_candidates[0]), float(lambda_candidates[0])
-    return best
+        return int(degree_candidates[0]), float(lambda_candidates[0]), float("nan")
+    return best[0], best[1], best_rmse
 
 
 def main():
@@ -236,14 +236,18 @@ def main():
     parser.add_argument("--degree-candidates", type=str, default="5,6,7,8,9")
     parser.add_argument("--lambda-candidates", type=str, default="0,1e-4,1e-3,1e-2")
     parser.add_argument("--cv-mode", type=str, default="group", choices=["none", "group"])
+    parser.add_argument("--output-dir", type=str, default="results")
+    parser.add_argument("--validation-dir", type=str, default="model_comparison/validation")
     args = parser.parse_args()
 
     degree_candidates = parse_int_list(args.degree_candidates)
     lambda_candidates = parse_float_list(args.lambda_candidates)
 
     experiment = "exp2"
-    output_dir = "results"
+    output_dir = args.output_dir
+    validation_dir = args.validation_dir
     os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(validation_dir, exist_ok=True)
 
     # Match publication-style readability used in GPR baseline plots.
     plt.rcParams.update(
@@ -266,6 +270,7 @@ def main():
     )
 
     all_metrics = []
+    lambda_effect_rows = []
     markers = {"1st": "o", "2nd": "x", "3rd": "^"}
     colors = {"1st": "black", "2nd": "red", "3rd": "blue"}
 
@@ -294,7 +299,7 @@ def main():
             else:
                 monotone = args.constraint
 
-            best_degree, best_lambda = choose_hyperparams(
+            cv_best_degree, cv_best_lambda, cv_best_rmse = choose_hyperparams(
                 x_data=x_data,
                 y_data=y_data,
                 groups=trial_labels,
@@ -303,7 +308,28 @@ def main():
                 lambda_candidates=lambda_candidates,
                 cv_mode=args.cv_mode,
             )
+            lambda0_degree, _, lambda0_cv_rmse = choose_hyperparams(
+                x_data=x_data,
+                y_data=y_data,
+                groups=trial_labels,
+                monotone=monotone,
+                degree_candidates=degree_candidates,
+                lambda_candidates=[0.0],
+                cv_mode=args.cv_mode,
+            )
 
+            # Main report model policy: lambda=0 with CV-selected degree under lambda=0.
+            best_degree = int(lambda0_degree)
+            best_lambda = 0.0
+
+            # Validation-only fit: full-grid CV best (may include non-zero lambda).
+            reg_full_cv = BernsteinMonotoneRegressor(
+                BernsteinMonotoneConfig(
+                    degree=int(cv_best_degree),
+                    monotone=monotone,
+                    lambda_smooth=float(cv_best_lambda),
+                )
+            ).fit(x_data, y_data)
             reg = BernsteinMonotoneRegressor(
                 BernsteinMonotoneConfig(
                     degree=best_degree,
@@ -329,6 +355,7 @@ def main():
             x_plot = np.linspace(float(np.min(x_data) * 0.9), float(np.max(x_data) * 1.1), 500)
             y_plot = reg.predict(x_plot)
             y_pred_train = reg.predict(x_data)
+            y_pred_train_full = reg_full_cv.predict(x_data)
 
             mono_stats = reg.monotonicity_metrics(x_plot)
 
@@ -346,7 +373,53 @@ def main():
                     "constraint_direction": monotone,
                     "degree": best_degree,
                     "lambda_smooth": best_lambda,
+                    "cv_best_degree_full_grid": cv_best_degree,
+                    "cv_best_lambda_full_grid": cv_best_lambda,
+                    "cv_best_rmse_full_grid": cv_best_rmse,
+                    "cv_best_degree_lambda0": lambda0_degree,
+                    "cv_best_rmse_lambda0": lambda0_cv_rmse,
+                    "cv_rmse_delta_lambda0_minus_full": (
+                        float(lambda0_cv_rmse - cv_best_rmse)
+                        if np.isfinite(lambda0_cv_rmse) and np.isfinite(cv_best_rmse)
+                        else float("nan")
+                    ),
                     "model_path": model_path,
+                }
+            )
+            lambda_effect_rows.append(
+                {
+                    "direction": direction,
+                    "reagent": current_reagent,
+                    "constraint_direction": monotone,
+                    "cv_best_degree_full_grid": int(cv_best_degree),
+                    "cv_best_lambda_full_grid": float(cv_best_lambda),
+                    "cv_best_rmse_full_grid": float(cv_best_rmse),
+                    "degree_lambda0_main": int(best_degree),
+                    "lambda_lambda0_main": float(best_lambda),
+                    "cv_best_degree_lambda0": int(lambda0_degree),
+                    "cv_best_rmse_lambda0": float(lambda0_cv_rmse),
+                    "cv_rmse_delta_lambda0_minus_full": (
+                        float(lambda0_cv_rmse - cv_best_rmse)
+                        if np.isfinite(lambda0_cv_rmse) and np.isfinite(cv_best_rmse)
+                        else float("nan")
+                    ),
+                    "train_rmse_full_grid": float(np.sqrt(mean_squared_error(y_data, y_pred_train_full))),
+                    "train_rmse_lambda0_main": float(np.sqrt(mean_squared_error(y_data, y_pred_train))),
+                    "train_rmse_delta_lambda0_minus_full": float(
+                        np.sqrt(mean_squared_error(y_data, y_pred_train))
+                        - np.sqrt(mean_squared_error(y_data, y_pred_train_full))
+                    ),
+                    "train_mae_full_grid": float(mean_absolute_error(y_data, y_pred_train_full)),
+                    "train_mae_lambda0_main": float(mean_absolute_error(y_data, y_pred_train)),
+                    "train_mae_delta_lambda0_minus_full": float(
+                        mean_absolute_error(y_data, y_pred_train)
+                        - mean_absolute_error(y_data, y_pred_train_full)
+                    ),
+                    "train_r2_full_grid": float(r2_score(y_data, y_pred_train_full)),
+                    "train_r2_lambda0_main": float(r2_score(y_data, y_pred_train)),
+                    "train_r2_delta_lambda0_minus_full": float(
+                        r2_score(y_data, y_pred_train) - r2_score(y_data, y_pred_train_full)
+                    ),
                 }
             )
 
@@ -374,14 +447,34 @@ def main():
             print(
                 f"[{current_reagent}][{direction}] "
                 f"R2={all_metrics[-1]['r_squared']:.4f}, "
-                f"degree={best_degree}, lambda={best_lambda}, constraint={monotone}"
+                f"main(degree={best_degree}, lambda={best_lambda}), "
+                f"cv_best_full(degree={cv_best_degree}, lambda={cv_best_lambda}, rmse={cv_best_rmse:.4f}), "
+                f"cv_lambda0(degree={lambda0_degree}, rmse={lambda0_cv_rmse:.4f}), "
+                f"constraint={monotone}"
             )
 
     metrics_path = os.path.join(output_dir, f"{experiment}_monotone_bernstein_metrics_both_directions.csv")
     pd.DataFrame(all_metrics).to_csv(metrics_path, index=False)
+    lambda_effect_df = pd.DataFrame(lambda_effect_rows)
+    lambda_effect_path = os.path.join(validation_dir, f"{experiment}_monotone_bernstein_lambda_effect_comparison.csv")
+    lambda_effect_df.to_csv(lambda_effect_path, index=False)
+
+    summary = {
+        "n_models": int(len(lambda_effect_df)),
+        "mean_abs_cv_rmse_delta": float(lambda_effect_df["cv_rmse_delta_lambda0_minus_full"].abs().mean()),
+        "max_abs_cv_rmse_delta": float(lambda_effect_df["cv_rmse_delta_lambda0_minus_full"].abs().max()),
+        "mean_abs_train_rmse_delta": float(lambda_effect_df["train_rmse_delta_lambda0_minus_full"].abs().mean()),
+        "max_abs_train_rmse_delta": float(lambda_effect_df["train_rmse_delta_lambda0_minus_full"].abs().max()),
+        "mean_abs_train_r2_delta": float(lambda_effect_df["train_r2_delta_lambda0_minus_full"].abs().mean()),
+        "max_abs_train_r2_delta": float(lambda_effect_df["train_r2_delta_lambda0_minus_full"].abs().max()),
+    }
+    summary_path = os.path.join(validation_dir, f"{experiment}_monotone_bernstein_lambda_effect_summary.csv")
+    pd.DataFrame([summary]).to_csv(summary_path, index=False)
 
     print(f"Saved dataset: {dataset_path}")
     print(f"Saved metrics: {metrics_path}")
+    print(f"Saved lambda effect detail: {lambda_effect_path}")
+    print(f"Saved lambda effect summary: {summary_path}")
 
 
 if __name__ == "__main__":
