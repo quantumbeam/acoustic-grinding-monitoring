@@ -1,0 +1,2 @@
+n_models,mean_abs_cv_rmse_delta,max_abs_cv_rmse_delta,mean_abs_train_rmse_delta,max_abs_train_rmse_delta,mean_abs_train_r2_delta,max_abs_train_r2_delta
+6,0.6888061266055393,3.565441913312526,1.9993495784490591,11.812634722323082,0.000973371340855067,0.005260330638247601

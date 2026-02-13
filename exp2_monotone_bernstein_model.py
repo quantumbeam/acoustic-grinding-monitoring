@@ -228,19 +228,100 @@ def choose_hyperparams(
     return best[0], best[1], best_rmse
 
 
+def evaluate_degree_oof_curve(
+    x_data: np.ndarray,
+    y_data: np.ndarray,
+    groups: np.ndarray,
+    monotone: str,
+    degree_candidates: list[int],
+    cv_mode: str,
+) -> list[dict]:
+    rows = []
+
+    unique_groups = np.unique(groups)
+    n_splits = min(3, unique_groups.size)
+    run_cv = cv_mode != "none" and n_splits >= 2
+    gkf = GroupKFold(n_splits=n_splits) if run_cv else None
+
+    x_min = float(np.min(x_data))
+    x_max = float(np.max(x_data))
+    x_grid = np.linspace(x_min, x_max, 500)
+    dx = float(x_grid[1] - x_grid[0]) if x_grid.size > 1 else 1.0
+
+    for degree in degree_candidates:
+        fold_rmse = []
+        fold_mae = []
+        failed = False
+
+        if run_cv and gkf is not None:
+            for tr_idx, va_idx in gkf.split(x_data, y_data, groups=groups):
+                try:
+                    reg_cv = BernsteinMonotoneRegressor(
+                        BernsteinMonotoneConfig(
+                            degree=int(degree),
+                            monotone=monotone,
+                            lambda_smooth=0.0,
+                        )
+                    ).fit(x_data[tr_idx], y_data[tr_idx])
+                except RuntimeError:
+                    failed = True
+                    break
+
+                y_pred_va = reg_cv.predict(x_data[va_idx])
+                fold_rmse.append(float(np.sqrt(mean_squared_error(y_data[va_idx], y_pred_va))))
+                fold_mae.append(float(mean_absolute_error(y_data[va_idx], y_pred_va)))
+
+        try:
+            reg_full = BernsteinMonotoneRegressor(
+                BernsteinMonotoneConfig(
+                    degree=int(degree),
+                    monotone=monotone,
+                    lambda_smooth=0.0,
+                )
+            ).fit(x_data, y_data)
+            y_grid = reg_full.predict(x_grid)
+            d1 = np.gradient(y_grid, dx)
+            d2 = np.gradient(d1, dx)
+            curvature_l1 = float(np.sum(np.abs(d2)) * dx)
+            edge_slope_abs = float(abs(d1[0]) + abs(d1[-1]))
+        except RuntimeError:
+            failed = True
+            curvature_l1 = float("nan")
+            edge_slope_abs = float("nan")
+
+        rows.append(
+            {
+                "degree": int(degree),
+                "lambda_smooth": 0.0,
+                "n_folds": int(n_splits if run_cv else 0),
+                "cv_valid": bool(run_cv and not failed and len(fold_rmse) > 0),
+                "cv_rmse_mean": float(np.mean(fold_rmse)) if (not failed and fold_rmse) else float("nan"),
+                "cv_rmse_std": float(np.std(fold_rmse, ddof=0)) if (not failed and fold_rmse) else float("nan"),
+                "cv_mae_mean": float(np.mean(fold_mae)) if (not failed and fold_mae) else float("nan"),
+                "cv_mae_std": float(np.std(fold_mae, ddof=0)) if (not failed and fold_mae) else float("nan"),
+                "curvature_l1": curvature_l1,
+                "edge_slope_abs": edge_slope_abs,
+            }
+        )
+
+    return rows
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train monotone Bernstein models on exp2 data.")
     parser.add_argument("--reagent", type=str, default="all", choices=["NaCl", "Citricacid", "MSG", "all"])
     parser.add_argument("--trial", type=str, default="all", choices=["1st", "2nd", "3rd", "all"])
-    parser.add_argument("--constraint", type=str, default="auto", choices=["auto", "increasing", "decreasing"])
+    parser.add_argument("--constraint", type=str, default="increasing", choices=["auto", "increasing", "decreasing"])
     parser.add_argument("--degree-candidates", type=str, default="5,6,7,8,9")
+    parser.add_argument("--degree-validation-candidates", type=str, default="2,3,4,5,6,7,8,9,10,11,12,13,14,15")
     parser.add_argument("--lambda-candidates", type=str, default="0,1e-4,1e-3,1e-2")
     parser.add_argument("--cv-mode", type=str, default="group", choices=["none", "group"])
     parser.add_argument("--output-dir", type=str, default="results")
-    parser.add_argument("--validation-dir", type=str, default="model_comparison/validation")
+    parser.add_argument("--validation-dir", type=str, default="results/model_validation")
     args = parser.parse_args()
 
     degree_candidates = parse_int_list(args.degree_candidates)
+    degree_validation_candidates = parse_int_list(args.degree_validation_candidates)
     lambda_candidates = parse_float_list(args.lambda_candidates)
 
     experiment = "exp2"
@@ -271,6 +352,7 @@ def main():
 
     all_metrics = []
     lambda_effect_rows = []
+    degree_curve_rows = []
     markers = {"1st": "o", "2nd": "x", "3rd": "^"}
     colors = {"1st": "black", "2nd": "red", "3rd": "blue"}
 
@@ -298,6 +380,24 @@ def main():
                 monotone = infer_monotone_direction(x_data, y_data)
             else:
                 monotone = args.constraint
+
+            degree_eval_rows = evaluate_degree_oof_curve(
+                x_data=x_data,
+                y_data=y_data,
+                groups=trial_labels,
+                monotone=monotone,
+                degree_candidates=degree_validation_candidates,
+                cv_mode=args.cv_mode,
+            )
+            for row in degree_eval_rows:
+                row.update(
+                    {
+                        "reagent": current_reagent,
+                        "direction": direction,
+                        "constraint_direction": monotone,
+                    }
+                )
+                degree_curve_rows.append(row)
 
             cv_best_degree, cv_best_lambda, cv_best_rmse = choose_hyperparams(
                 x_data=x_data,
@@ -471,10 +571,51 @@ def main():
     summary_path = os.path.join(validation_dir, f"{experiment}_monotone_bernstein_lambda_effect_summary.csv")
     pd.DataFrame([summary]).to_csv(summary_path, index=False)
 
+    degree_curve_df = pd.DataFrame(degree_curve_rows)
+    degree_curve_path = os.path.join(validation_dir, f"{experiment}_monotone_bernstein_degree_oof_curve.csv")
+    degree_curve_df.to_csv(degree_curve_path, index=False)
+
+    degree_summary_rows = []
+    if not degree_curve_df.empty:
+        for (reagent, direction), g in degree_curve_df.groupby(["reagent", "direction"]):
+            valid = g[g["cv_valid"]].copy()
+            if valid.empty:
+                continue
+            valid = valid.sort_values("degree")
+            idx_best = valid["cv_rmse_mean"].idxmin()
+            best_row = valid.loc[idx_best]
+            rmse_min = float(best_row["cv_rmse_mean"])
+            rmse_min_std = float(best_row["cv_rmse_std"])
+            one_se_limit = rmse_min + rmse_min_std
+            one_se_candidates = valid[valid["cv_rmse_mean"] <= one_se_limit]
+            one_se_degree = int(one_se_candidates["degree"].min()) if not one_se_candidates.empty else int(best_row["degree"])
+            degree_summary_rows.append(
+                {
+                    "reagent": reagent,
+                    "direction": direction,
+                    "best_degree_by_cv_rmse": int(best_row["degree"]),
+                    "best_cv_rmse_mean": rmse_min,
+                    "best_cv_rmse_std": rmse_min_std,
+                    "one_se_degree": one_se_degree,
+                    "best_degree_is_boundary": bool(
+                        int(best_row["degree"]) == int(valid["degree"].min())
+                        or int(best_row["degree"]) == int(valid["degree"].max())
+                    ),
+                    "min_degree_tested": int(valid["degree"].min()),
+                    "max_degree_tested": int(valid["degree"].max()),
+                    "curvature_l1_at_best": float(best_row["curvature_l1"]),
+                    "edge_slope_abs_at_best": float(best_row["edge_slope_abs"]),
+                }
+            )
+    degree_summary_path = os.path.join(validation_dir, f"{experiment}_monotone_bernstein_degree_oof_summary.csv")
+    pd.DataFrame(degree_summary_rows).to_csv(degree_summary_path, index=False)
+
     print(f"Saved dataset: {dataset_path}")
     print(f"Saved metrics: {metrics_path}")
     print(f"Saved lambda effect detail: {lambda_effect_path}")
     print(f"Saved lambda effect summary: {summary_path}")
+    print(f"Saved degree OOF curve: {degree_curve_path}")
+    print(f"Saved degree OOF summary: {degree_summary_path}")
 
 
 if __name__ == "__main__":
