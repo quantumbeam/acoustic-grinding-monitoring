@@ -12,8 +12,8 @@ from fft_processing import calculate_fft_power
 import matplotlib.pyplot as plt
 import scienceplots
 
-# Style setting (LaTeX-less environment)
-plt.style.use(['science', 'ieee'])
+# Style setting (force non-TeX rendering for portable execution)
+plt.style.use(['science', 'ieee', 'no-latex'])
 
 
 # ------------------------------------------------------------

@@ -1,0 +1,7 @@
+direction,reagent,rmse_train,mae_train,violation_rate,max_violation_derivative,mean_derivative,constraint_direction,model_path
+particle2ae,Citricacid,36.542154028336604,24.697287862536182,0.0,0.0,3.7458240956711264,increasing,results/ispline/ispline_model_particle2ae_Citricacid_exp2.joblib
+ae2particle,Citricacid,7.719595165798134,5.385775693188973,0.0,0.0,0.18542597862790855,increasing,results/ispline/ispline_model_ae2particle_Citricacid_exp2.joblib
+particle2ae,MSG,103.35089073516814,63.288716373838966,0.0,0.0,7.37253978260495,increasing,results/ispline/ispline_model_particle2ae_MSG_exp2.joblib
+ae2particle,MSG,8.761310581929862,6.859339378439612,0.0,0.0,0.09898644366729854,increasing,results/ispline/ispline_model_ae2particle_MSG_exp2.joblib
+particle2ae,NaCl,11.649135347241536,7.983274120681626,0.0,0.0,0.6342640767500043,increasing,results/ispline/ispline_model_particle2ae_NaCl_exp2.joblib
+ae2particle,NaCl,11.466228426827577,8.72555294063303,0.0,0.0,0.9215268668938797,increasing,results/ispline/ispline_model_ae2particle_NaCl_exp2.joblib

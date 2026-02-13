@@ -6,7 +6,7 @@ import re
 import sys
 from fft_processing import calculate_fft_power
 import scienceplots
-plt.style.use(['science', 'ieee'])
+plt.style.use(['science', 'ieee', 'no-latex'])
 
 
 # ================== 設定 ==================

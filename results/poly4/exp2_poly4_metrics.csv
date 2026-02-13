@@ -1,0 +1,4 @@
+reagent,direction,degree,r_squared,rmse,n_samples,model_path
+Citricacid,particle2ae,4,0.990214432305522,31.51270850554025,21,results/poly4/poly4_model_particle2ae_Citricacid_exp2.joblib
+MSG,particle2ae,4,0.9721555127685906,118.71335038189048,21,results/poly4/poly4_model_particle2ae_MSG_exp2.joblib
+NaCl,particle2ae,4,0.9581116366158839,11.8485301465066,21,results/poly4/poly4_model_particle2ae_NaCl_exp2.joblib
