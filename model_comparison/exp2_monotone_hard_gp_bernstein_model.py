@@ -1,8 +1,12 @@
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import argparse
 import glob
 import json
 import math
-import os
 import re
 
 import joblib
@@ -246,9 +250,10 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
     cache_file = os.path.join(script_dir, "ae_power_cache.json")
 
-    output_dir = "results"
+    output_dir = os.path.join("model_comparison", "monotone_hard_gp_bernstein")
     os.makedirs(output_dir, exist_ok=True)
 
+    # Match publication-style readability used in GPR baseline plots.
     plt.rcParams.update(
         {
             "font.size": 24,
@@ -444,8 +449,8 @@ if __name__ == "__main__":
                     label=t,
                 )
 
-            plt.plot(x_plot, y_plot_mean_mono, "k--", label="Monotone mean (hard, Bernstein)")
-            plt.plot(x_plot, y_plot_mean_total, "k-", label="Monotone mean + residual GP")
+            plt.plot(x_plot, y_plot_mean_mono, "k--", linewidth=2.0, label="Monotone mean (hard, Bernstein)")
+            plt.plot(x_plot, y_plot_mean_total, "k-", linewidth=2.0, label="Monotone mean + residual GP")
             plt.fill_between(
                 x_plot,
                 y_plot_mean_total - 1.96 * y_plot_std,

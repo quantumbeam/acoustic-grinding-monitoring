@@ -1012,6 +1012,1682 @@
   "/home/yusaku/acoustic-powder-monitoring/data/ae/exp2/NaCl/3rd/20251217_145737NaCl_grind25min_3rd.csv": 2.3607915427576244e-05,
   "/home/yusaku/acoustic-powder-monitoring/data/ae/exp2/NaCl/3rd/20251217_145823NaCl_grind25min_3rd.csv": 2.4515358898065365e-05,
   "/home/yusaku/acoustic-powder-monitoring/data/ae/exp2/NaCl/3rd/20251217_145909NaCl_grind25min_3rd.csv": 2.330819847453847e-05,
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175109Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.002099563339354752
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175158Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0010129172681113104
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175244Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0007414692907837831
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175329Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0006700774710639185
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175415Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0005103160714589012
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175501Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0003875543639700638
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175547Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0002958241872938819
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_175633Citricacid_grind25min_for100um.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0002560187411882164
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_181930Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0015025666530044022
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182019Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0008363286983923785
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182105Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0008798922265126273
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182151Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0005939879869779136
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182237Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00046707237592962767
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182323Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0003210296128263209
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182408Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00038960374924263655
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182455Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.00040699419456872765
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182540Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0002672455015325219
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182626Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0002397329385919674
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182712Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.00013626459874886552
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182758Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.00010812631086997766
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182844Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.00017246127217246949
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_182929Citricacid_grind25min_for50um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00012734451766555364
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_190735Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.001750933028390455
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_190824Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0008976787310672163
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_190910Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0007691355031456683
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_190956Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00072503451633128
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191042Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0005984346697402652
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191128Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0005559206017768711
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191214Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0003752624099996079
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191300Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0003182250151373037
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191346Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0002504116211098376
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191432Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00020393279324104534
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191517Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00020076744650129744
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191603Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.000172299323097911
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191649Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00012396416824618078
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191735Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00012098166427112446
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191821Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00013283466112768674
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191907Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00012391078807581546
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_191953Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0001408021691128712
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_192039Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 9.747675630336081e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_192125Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 7.33257973576113e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_192210Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 5.813939034233002e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_192256Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 5.890783374846711e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_192342Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 2.9798975032570496e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_192428Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 2.7226782985475e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/1st/20251218_192514Citricacid_grind25min_for20um.csv": {
+    "mtime": 1766716569.0,
+    "power": 2.9124744509950758e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180003Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0014188885421620265
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180052Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0008710126582848223
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180138Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0008489404393957921
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180224Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00045191849206344256
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180310Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0004908880128332289
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180355Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0004754172549733471
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180441Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00035748578645225076
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_180527Citricacid_grind25min_for100um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.000269377395329171
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_183641Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.001805616627943252
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_183730Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0009520240927670186
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_183816Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0006647364999486505
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_183902Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0004771707301371798
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_183948Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0004871403597038971
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184034Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00038263818548358225
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184119Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00035053924751803994
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184205Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00033081659221163715
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184251Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00026919566764103486
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184337Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0002116720107422254
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184423Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00025077800581694236
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184509Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00017145504990395897
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184555Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00025958390139719525
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184640Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00012466132064856885
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184726Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00012669938782942927
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184812Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.000129369561939569
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_184858Citricacid_grind25min_for50um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 7.942704164573369e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_192858Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.0016660529074123958
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_192947Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.001090233697396528
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193033Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.0007626230439038348
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193119Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.000615696323198197
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193205Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.0004064375808894616
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193251Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.0003627188725477565
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193337Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.00029404995177113077
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193423Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00022556486747950176
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193509Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.00024448600584542964
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193555Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.00026584016470410256
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193641Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716615.0,
+    "power": 0.0002231097753361047
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193727Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00021674610215439755
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193813Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00016466262481212846
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193858Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00018320922500084986
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_193944Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00013881953360945896
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194030Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.000108133604724487
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194116Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00011736569444296664
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194202Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 6.690775006337528e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194248Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 6.900091026396195e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194334Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 8.164292400900729e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194420Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 6.275904624417799e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194506Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 2.5019555074447776e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194552Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 4.5276752939909516e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194638Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 5.5657009648947656e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194724Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 4.335600084242755e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194810Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 3.691523243361445e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194856Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 2.0560446686602088e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_194942Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 5.466260205182655e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/2nd/20251218_195027Citricacid_grind25min_for20um_2nd.csv": {
+    "mtime": 1766716569.0,
+    "power": 2.3687833196648776e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_180900Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0015752259370095804
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_180949Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0008362742709827378
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_181035Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0007026376133929216
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_181121Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0005626238089735102
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_181206Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0005180926555494807
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_181252Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0004240393636763263
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_181338Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.00030381481094816096
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_181424Citricacid_grind25min_for100um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.00033965236916025165
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185234Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0017803857895284663
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185323Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0008561386120321087
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185409Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0007521680597650338
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185455Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0005394659071628994
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185540Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00047727696080910107
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185626Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00034474981907709883
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185712Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0003801966020480344
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185758Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00032640054116413913
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185844Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0002169931265894896
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_185930Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0002149012810833685
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_190016Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00015889459131824909
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_190102Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00017544612036340216
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_190147Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00013993549453592577
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_190233Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00015590723896562495
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_190319Citricacid_grind25min_for50um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00011927304976565908
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195343Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0018050742517357905
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195432Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0009588139659696179
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195518Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0006754840539529329
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195604Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0005508420522443115
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195650Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.0005130994893159101
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195736Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.00033325945008356024
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195821Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.00034622443157657955
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195907Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.0002918237874562821
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_195954Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.00029376947808596707
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200039Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00021893680547945227
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200125Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716568.0,
+    "power": 0.00020990744320543273
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200211Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00015701242744365208
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200257Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00016617959842536416
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200343Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00013506088076398483
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200429Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00012018304338174454
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200515Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 7.219538473425567e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200601Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 9.6319215008913e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200647Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 5.451288750769368e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200733Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 0.00016063080647483828
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200819Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 5.3038407109827196e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200905Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 3.733671532736825e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_200951Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 3.528017520402028e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_201037Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 5.354399980861386e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_201123Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 4.619234125159809e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_201208Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 3.831020071796564e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_201254Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 2.2396442203695296e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/Citricacid/3rd/20251218_201340Citricacid_grind25min_for20um_3rd.csv": {
+    "mtime": 1766716569.0,
+    "power": 1.4641998937744976e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_184849MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.004230563054547547
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_184938MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.002998043147955743
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_185024MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0021392954264623444
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_185110MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0012643971924222812
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_185156MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0016278196079907497
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_185242MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.001009719891738524
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_185327MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0009407858817996736
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_185413MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.001018213455017915
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_185459MSG_grind_for200um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0007124591950806317
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_191631MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.003499424419067558
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_191720MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0028743396055267907
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_191805MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.002049571620959024
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_191851MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.001452133540493645
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_191937MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0010888515782350263
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_192023MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0009007710019743225
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_192109MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0008811511023816888
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_192155MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0008536684182105037
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_192241MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0007117062409232046
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_192327MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0005297850038195537
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_192412MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.000699542372618937
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_192458MSG_grind_for100um.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.000487197259822933
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_195618MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00390183889532884
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_195707MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0028885450816394896
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_195753MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.002036322378063456
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_195839MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0016649610381836823
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_195925MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0011812854887633427
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200011MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0010852638699893362
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200057MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0009586025554238584
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200142MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0008586252336101729
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200228MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.001002015397405899
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200314MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0006909965334258905
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200400MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005531231634447404
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200446MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0006478767465451102
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200532MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005040444225874309
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200618MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00046716029414590945
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200704MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005282540796481165
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200749MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0004609298330954669
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200835MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00045561392680477583
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_200921MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00040556169892025146
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_201007MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0004591388980791092
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_201053MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00041399807007826177
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_201139MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005035526203104875
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_201225MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00035882241833108225
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_201312MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00026716863046867263
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_201358MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0004343293847287369
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/1st/20251219_201445MSG_grind_for50um.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0002942277249380024
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_185904MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.003627232691898821
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_185953MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0027189532960007192
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_190039MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.002167559015943977
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_190125MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.001482698363023741
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_190210MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0011819199678277821
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_190256MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0009431167030084694
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_190342MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0008045392499907992
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_190428MSG_grind_for200um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0008083782100585061
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_192818MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.003093777272687044
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_192907MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.003040264592525382
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_192953MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0019483214133065947
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193039MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0013661666886166713
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193125MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0011485232438555072
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193211MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0010429116866842707
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193257MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0008719513471821364
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193344MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.000806362347019248
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193430MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006248825281171759
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193517MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006226108560859214
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193603MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006273024174594881
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_193649MSG_grind_for100um_2nd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0005469780906606751
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_201800MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.002966050124183116
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_201850MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.002445980110513055
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_201936MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0018570953499230053
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202023MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0012811929570097007
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202110MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0010213628361118523
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202156MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0009993021379369569
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202243MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0009254154839708005
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202329MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005941902607286558
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202416MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.000589993371502963
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202502MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0006356045153677687
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202548MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005540034577044442
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202634MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0004581106585409148
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202720MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0004024364600034756
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202806MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0004849794625508748
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202852MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0003587855263329165
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_202938MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00042953550572390214
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203024MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005698793579799132
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203110MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00032937584875334237
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203156MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0003104610140413739
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203242MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00033123894277475705
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203328MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005507051132768913
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203414MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0004171975252505359
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203500MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0002938695742217334
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203546MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00045329361062481515
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/2nd/20251219_203632MSG_grind_for50um_2nd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00031594863809171616
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_190736MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00255034995267134
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_190825MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0025429201287236356
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_190911MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.002204258795737956
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_190957MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0016743199326324774
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_191042MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0012886124127927997
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_191128MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0011374415353078377
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_191214MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0008509659528019019
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_191300MSG_grind_for200um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0008909349256253014
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194044MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0027583432927449593
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194134MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.002135823322926111
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194221MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.002028513067701308
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194307MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0016107796940858588
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194354MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0011779837500925146
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194440MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0008962949619227071
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194525MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0009409267438169133
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194611MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.000815549533159508
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194657MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.000596243993490402
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194743MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006588681467309757
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194829MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0004931491429903175
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_194915MSG_grind_for100um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0005590162102192471
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204039MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0037206239428580973
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204128MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0027261728779521942
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204214MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.002083787029378467
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204300MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.001423192244121692
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204346MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0013149436726555487
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204432MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0011351361110980905
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204518MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.001209569332694032
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204605MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0008194005254027931
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204651MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.000945464742891792
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204737MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0007200159392539834
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204822MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006927331889928997
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204908MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0007147753972851969
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_204954MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006714366171633461
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205040MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006993478526797028
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205127MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006590590990652435
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205214MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.00047829696190879504
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205301MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0005842713665636283
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205346MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0005764403090915194
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205432MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.0006120875277042208
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205518MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716538.0,
+    "power": 0.00037692517818922744
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205604MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716539.0,
+    "power": 0.0004964826545089719
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205650MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0006200311185800521
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205736MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716539.0,
+    "power": 0.0003951062628067328
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205822MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.000499873971922579
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205908MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.0005535712656784439
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_205954MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00025797090554256736
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_210040MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00030178425983624067
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/MSG/3rd/20251219_210126MSG_grind_for50um_3rd.csv": {
+    "mtime": 1766716540.0,
+    "power": 0.00029339404906690125
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_155918NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.000194705905013758
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160008NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00021511144091172746
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160054NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00017287860148459968
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160140NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0001802421000459138
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160226NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00017561757818692088
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160312NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0001517990657833811
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160358NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00014445514778971573
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160444NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00010969803176613011
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_160531NaCl_grind_for_250um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0001049352261362208
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161345NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00015109464063181626
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161434NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.000168113597197459
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161520NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00012679379961391755
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161606NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.0001438745264877787
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161652NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00011000231111470647
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161738NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00012017227368724202
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161824NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 9.022453973949268e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161910NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 9.004030528303397e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_161955NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 8.171774624615485e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162041NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 7.763517613494243e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162127NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 6.201484791976974e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162213NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 6.867222348072292e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162259NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.489161295591342e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162345NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.73501351100836e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162431NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.104525934314511e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162517NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.377543961067535e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162603NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.1397853138826324e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162649NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.489161308086324e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162735NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.255022042882212e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_162821NaCl_grind_for_150um.csv": {
+    "mtime": 1766716561.0,
+    "power": 2.6603903026223187e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_163710NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00017548364292093195
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_163759NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00017786113089884796
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_163845NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00019689547347860736
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_163931NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00016975818777145666
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164016NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0001452366137956935
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164102NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00014875072117876749
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164148NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00013137399191080754
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164234NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00011756260740184856
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164320NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00011113087753702563
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164406NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 9.782759638034143e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164451NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 8.848490716830806e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164537NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 7.903015121400637e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/1st/20251217_164623NaCl_grind_for_200um.csv": {
+    "mtime": 1766716562.0,
+    "power": 7.923163178626496e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170125NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00021702495957482703
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170215NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.0002154560139956342
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170301NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.0002023926312894971
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170346NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00020248807386212712
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170433NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00018514886500038872
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170519NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00015330454729528962
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170604NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00011631107039565399
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170650NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00012437034744984288
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170736NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 9.174802681912631e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170822NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 8.953527193072889e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170908NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 7.281697246413593e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_170954NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.9776526522416315e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171039NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 6.368010259371732e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171125NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.661318913272398e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171211NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.957553107877122e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171257NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.081399141790549e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171343NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 6.620642734816643e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171429NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.850510989352132e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171514NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.481024767897133e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171600NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.1917340401073077e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171646NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.9454788814586605e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171732NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.408282296041028e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171818NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.3712962450951995e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_171904NaCl_grind_for_150um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 3.858512009445293e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180139NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00022571887412371617
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180228NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00027588294790846865
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180314NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.0002498168609312239
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180400NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00021090561240947938
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180446NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00017172387363340171
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180532NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.0001698687547672255
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180617NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00014733357459180963
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180703NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00012527931767554963
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180749NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00010910999491262134
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180835NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 9.217996136385221e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_180921NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00010788964122827254
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_181006NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 7.344633383441435e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_181052NaCl_grind_for_200um_2nd.csv": {
+    "mtime": 1766716561.0,
+    "power": 7.245760694419908e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183416NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00023886692505246886
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183505NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00022754529414081119
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183551NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0002204880709332135
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183637NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00019045654069855698
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183723NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00015573251849041947
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183809NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00015672200753977038
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183855NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00011758745122074254
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/2nd/20251217_183940NaCl_grind_for_250um_2nd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00011695963071432589
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172326NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00017656616926029772
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172415NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00022940691156451818
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172501NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00021418803967462424
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172547NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00019753343649665304
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172633NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00016073065209988458
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172718NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00014319222036522893
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172804NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00017677808161661662
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172850NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00012609117358707226
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_172936NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.0001044763379645459
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173022NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00012658287032667225
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173108NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 7.815437194292531e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173154NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 7.684064474482508e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173239NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 6.782138724757297e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173325NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 6.658918244553124e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173411NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.8421027127364925e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173457NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.607413374836499e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173543NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 5.359074285142176e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173629NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 6.523955313163857e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173714NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.7582025762119935e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173800NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.304420958322096e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173846NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 4.5233167347488784e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_173932NaCl_grind_for_150um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 3.9773067082379867e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181349NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00020307138794295446
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181439NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00026316872106708667
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181524NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00022558865907870197
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181610NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00023085306622433197
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181656NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00018202650540636743
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181742NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00018632009013952526
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181828NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0001497474923334162
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_181914NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00012550193302468342
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_182000NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00013829118611143306
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_182045NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 0.00011286686016201476
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_182131NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716561.0,
+    "power": 8.842339882420615e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_182217NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 7.036993787169161e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_182303NaCl_grind_for_200um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 6.384149383174835e-05
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184412NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00021400901031862852
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184501NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0002044781764763029
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184547NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00020384559187069189
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184633NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0002047226050516329
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184718NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00015261385274612652
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184804NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.0001463729122480329
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184850NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00012961858965300943
+  },
+  "/home/yusaku/acoustic-powder-monitoring/data/ae/exp3/NaCl/3rd/20251217_184936NaCl_grind_for_250um_3rd.csv": {
+    "mtime": 1766716562.0,
+    "power": 0.00010810282882562086
+  },
   "data/ae/exp3/Citricacid/1st/20251218_175109Citricacid_grind25min_for100um.csv": {
     "mtime": 1766716568.0,
     "power": 0.002099563339354752

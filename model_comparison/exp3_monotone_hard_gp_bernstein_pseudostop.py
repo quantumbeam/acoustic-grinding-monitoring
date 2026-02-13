@@ -1,3 +1,8 @@
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 """
 Monotone Hard-Mean(Bernstein) + Residual GP Threshold Pseudo-Stopping Visualization for exp3.
 
@@ -42,12 +47,13 @@ plt.rcParams.update(
 # Constants
 # ============================================================
 EXPERIMENT = "exp3"
-PSD_BASE_PATH = os.path.join("data/powder_size_distribution", EXPERIMENT)
-AE_BASE_PATH = os.path.join("data/ae", EXPERIMENT)
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PSD_BASE_PATH = os.path.join(REPO_ROOT, "data", "powder_size_distribution", EXPERIMENT)
+AE_BASE_PATH = os.path.join(REPO_ROOT, "data", "ae", EXPERIMENT)
 AE_SCALE_TO_MV2 = 1e6
 MOVING_AVG_WINDOW = 4
-OUTPUT_DIR = os.path.join("results", "monotone_hard_gp_bernstein")
-MODEL_DIR = os.path.join("results", "monotone_hard_gp_bernstein")
+OUTPUT_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_hard_gp_bernstein")
+MODEL_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_hard_gp_bernstein")
 K_SIGMA_AE = 0.0  # threshold offset: theta = monotone_mean - K * residual_sigma
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

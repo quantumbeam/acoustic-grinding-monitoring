@@ -1,8 +1,3 @@
-import os
-import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import argparse
 import glob
 import json
@@ -247,8 +242,21 @@ def main():
     lambda_candidates = parse_float_list(args.lambda_candidates)
 
     experiment = "exp2"
-    output_dir = os.path.join("model_comparison", "monotone_bernstein")
+    output_dir = "results"
     os.makedirs(output_dir, exist_ok=True)
+
+    # Match publication-style readability used in GPR baseline plots.
+    plt.rcParams.update(
+        {
+            "font.size": 24,
+            "axes.labelsize": 32,
+            "xtick.labelsize": 24,
+            "ytick.labelsize": 24,
+            "legend.fontsize": 18,
+            "font.family": "sans-serif",
+            "mathtext.fontset": "dejavusans",
+        }
+    )
 
     data_array = build_shared_dataset(experiment=experiment, reagent=args.reagent, trial=args.trial)
 
@@ -354,7 +362,7 @@ def main():
                     label=t,
                 )
 
-            plt.plot(x_plot, y_plot, "k-", label="Monotone Bernstein fit")
+            plt.plot(x_plot, y_plot, "k-", linewidth=2.0, label="Monotone Bernstein fit")
             plt.xlabel(x_label)
             plt.ylabel(y_label)
             plt.legend()

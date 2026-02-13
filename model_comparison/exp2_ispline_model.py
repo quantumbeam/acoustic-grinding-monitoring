@@ -186,6 +186,18 @@ def main():
     output_dir = os.path.join("model_comparison", "ispline")
     os.makedirs(output_dir, exist_ok=True)
 
+    plt.rcParams.update(
+        {
+            "font.size": 24,
+            "axes.labelsize": 32,
+            "xtick.labelsize": 24,
+            "ytick.labelsize": 24,
+            "legend.fontsize": 18,
+            "font.family": "sans-serif",
+            "mathtext.fontset": "dejavusans",
+        }
+    )
+
     data_array = build_shared_dataset(experiment=experiment, reagent=args.reagent, trial=args.trial)
 
     dataset_path = os.path.join(output_dir, f"{experiment}_ispline_dataset_raw.csv")

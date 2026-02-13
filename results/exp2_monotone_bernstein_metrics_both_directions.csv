@@ -1,0 +1,7 @@
+direction,reagent,method,rmse_train,mae_train,r_squared,violation_rate,max_violation_derivative,mean_derivative,constraint_direction,degree,lambda_smooth,model_path
+particle2ae,Citricacid,monotone_bernstein,36.732862244800245,26.38775151176462,0.9867039052455226,0.0,0.0,3.783087490008913,increasing,7,0.0,results/monotone_bernstein_model_particle2ae_Citricacid_exp2.joblib
+ae2particle,Citricacid,monotone_bernstein,8.155727425778654,5.317158499755724,0.9860711645579923,0.0,0.0,0.18606441686337474,increasing,7,0.0001,results/monotone_bernstein_model_ae2particle_Citricacid_exp2.joblib
+particle2ae,MSG,monotone_bernstein,118.59911790902846,77.01739104336282,0.9722090739608009,0.0,0.0,8.809744563338146,increasing,5,0.01,results/monotone_bernstein_model_particle2ae_MSG_exp2.joblib
+ae2particle,MSG,monotone_bernstein,10.697555274362447,8.614856459380853,0.9862505351860968,0.0,0.0,0.10280932786903314,increasing,5,0.01,results/monotone_bernstein_model_ae2particle_MSG_exp2.joblib
+particle2ae,NaCl,monotone_bernstein,12.036445364174057,8.55485596213808,0.956772418891919,0.0,0.0,0.6478379771467343,increasing,5,0.01,results/monotone_bernstein_model_particle2ae_NaCl_exp2.joblib
+ae2particle,NaCl,monotone_bernstein,11.972824689581326,9.341192667996056,0.9682607121008272,0.0,0.0,0.948249986523095,increasing,8,0.0,results/monotone_bernstein_model_ae2particle_NaCl_exp2.joblib
