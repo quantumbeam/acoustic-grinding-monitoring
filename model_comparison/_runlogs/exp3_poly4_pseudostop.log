@@ -1,0 +1,84 @@
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+--- Poly4 Threshold Pseudo-Stopping Analysis (exp3) ---
+
+[Citricacid] Poly4 model loaded. x_range: [10.9, 245.0] um
+  Target=20 um -> theta_AE=38.6564 mV²
+    1st: n=24, k*=23
+    2nd: n=29, k*=28
+    3rd: n=27, k*=26
+  Saved: exp3_poly4_pseudostop_Citricacid_20um.png
+  Target=50 um -> theta_AE=157.3360 mV²
+    1st: n=14, k*=13
+    2nd: n=17, k*=16
+    3rd: n=15, k*=14
+  Saved: exp3_poly4_pseudostop_Citricacid_50um.png
+  Target=100 um -> theta_AE=414.8075 mV²
+    1st: n=8, k*=7
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_poly4_pseudostop_Citricacid_100um.png
+
+[MSG] Poly4 model loaded. x_range: [37.2, 316.3] um
+  Target=50 um -> theta_AE=400.8529 mV²
+    1st: n=25, k*=22
+    2nd: n=25, k*=19
+    3rd: n=28, k*=27
+  Saved: exp3_poly4_pseudostop_MSG_50um.png
+  Target=100 um -> theta_AE=601.2635 mV²
+    1st: n=12, unreach
+    2nd: n=12, unreach
+    3rd: n=12, k*=11
+  Saved: exp3_poly4_pseudostop_MSG_100um.png
+  Target=200 um -> theta_AE=1092.9138 mV²
+    1st: n=9, k*=8
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_poly4_pseudostop_MSG_200um.png
+
+[NaCl] Poly4 model loaded. x_range: [103.2, 317.4] um
+  Target=150 um -> theta_AE=48.1987 mV²
+    1st: n=20, k*=19
+    2nd: n=24, k*=22
+    3rd: n=22, k*=21
+  Saved: exp3_poly4_pseudostop_NaCl_150um.png
+  Target=200 um -> theta_AE=84.3702 mV²
+    1st: n=13, unreach
+    2nd: n=13, unreach
+    3rd: n=13, k*=12
+  Saved: exp3_poly4_pseudostop_NaCl_200um.png
+  Target=250 um -> theta_AE=144.4359 mV²
+    1st: n=9, k*=8
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_poly4_pseudostop_NaCl_250um.png
+
+Summary CSV saved to: model_comparison/poly4/exp3_poly4_pseudostop_summary.csv
+  Material  Target_D50 Trial  theta_poly4  reachable    cross_type  k_star  S_AE_at_k_star    min_S_AE      margin  n_cycles  Measured_D50
+Citricacid          20   1st    38.656382       True    last_cross    23.0       36.264584   36.264584   -2.391798        24     21.272009
+Citricacid          20   2nd    38.656382       True    last_cross    28.0       33.956529   33.956529   -4.699853        29     14.075905
+Citricacid          20   3rd    38.656382       True    last_cross    26.0       30.385246   30.385246   -8.271136        27     16.871954
+Citricacid          50   1st   157.336015       True    last_cross    13.0      136.049175  136.049175  -21.286840        14     46.069932
+Citricacid          50   2nd   157.336015       True    last_cross    16.0      115.039328  115.039328  -42.296687        17     31.445636
+Citricacid          50   3rd   157.336015       True    last_cross    14.0      147.640476  147.640476   -9.695539        15     37.328847
+Citricacid         100   1st   414.807451       True    last_cross     7.0      362.428341  362.428341  -52.379110         8     83.236410
+Citricacid         100   2nd   414.807451       True    last_cross     7.0      398.292112  398.292112  -16.515339         8    100.210290
+Citricacid         100   3rd   414.807451       True    last_cross     7.0      396.399800  396.399800  -18.407651         8    111.582733
+       MSG          50   1st   400.852911       True earlier_cross    22.0      385.885435  338.637040  -62.215872        25     53.108302
+       MSG          50   2nd   400.852911       True    last_cross    19.0      385.238791  370.077337  -30.775574        25     54.937552
+       MSG          50   3rd   400.852911       True    last_cross    27.0      351.680120  351.680120  -49.172791        28     50.079034
+       MSG         100   1st   601.263498      False       unreach     NaN             NaN  607.057719    5.794221        12    129.251265
+       MSG         100   2nd   601.263498      False       unreach     NaN             NaN  605.443473    4.179975        12    124.923817
+       MSG         100   3rd   601.263498       True    last_cross    11.0      576.819373  576.819373  -24.444125        12    123.924933
+       MSG         200   1st  1092.913800       True    last_cross     8.0      920.294606  920.294606 -172.619194         9    179.587870
+       MSG         200   2nd  1092.913800       True    last_cross     7.0      934.488533  934.488533 -158.425267         8    203.290377
+       MSG         200   3rd  1092.913800       True    last_cross     7.0     1041.988707 1041.988707  -50.925093         8    189.032872
+      NaCl         150   1st    48.198674       True    last_cross    19.0       46.360897   46.360897   -1.837777        20    133.362302
+      NaCl         150   2nd    48.198674       True earlier_cross    22.0       47.291979   43.958924   -4.239751        24    123.806276
+      NaCl         150   3rd    48.198674       True    last_cross    21.0       43.908117   43.908117   -4.290557        22    139.812267
+      NaCl         200   1st    84.370222      False       unreach     NaN             NaN   86.143572    1.773349        13    196.069053
+      NaCl         200   2nd    84.370222      False       unreach     NaN             NaN   86.493386    2.123164        13    204.387531
+      NaCl         200   3rd    84.370222       True    last_cross    12.0       83.875423   83.875423   -0.494800        13    189.501496
+      NaCl         250   1st   144.435858       True    last_cross     8.0      127.721868  127.721868  -16.713990         9    223.631544
+      NaCl         250   2nd   144.435858       True    last_cross     7.0      136.750402  136.750402   -7.685456         8    252.074230
+      NaCl         250   3rd   144.435858       True    last_cross     7.0      134.177046  134.177046  -10.258812         8    238.221898

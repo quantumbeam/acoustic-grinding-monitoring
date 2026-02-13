@@ -1,0 +1,20 @@
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+--- I-spline Monotone Threshold Pseudo-Stopping Analysis (exp3) ---
+
+[Citricacid] I-spline model loaded.
+  Target=20 um -> theta_AE=28.1168 mV²
+  Target=50 um -> theta_AE=162.9813 mV²
+  Target=100 um -> theta_AE=416.6965 mV²
+
+[MSG] I-spline model loaded.
+  Target=50 um -> theta_AE=376.5116 mV²
+  Target=100 um -> theta_AE=612.0503 mV²
+  Target=200 um -> theta_AE=1044.1203 mV²
+
+[NaCl] I-spline model loaded.
+  Target=150 um -> theta_AE=51.1629 mV²
+  Target=200 um -> theta_AE=83.9632 mV²
+  Target=250 um -> theta_AE=142.9161 mV²
+
+Saved summary: model_comparison/ispline/exp3_ispline_pseudostop_summary.csv

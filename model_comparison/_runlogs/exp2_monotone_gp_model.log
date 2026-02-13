@@ -1,0 +1,23 @@
+2026-02-13 09:49:33.633137: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2026-02-13 09:49:33.650829: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-02-13 09:49:33.768331: I external/local_tsl/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2026-02-13 09:49:33.933825: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:479] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2026-02-13 09:49:34.113791: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:10575] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2026-02-13 09:49:34.114934: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1442] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2026-02-13 09:49:31.902374: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX512F AVX512_VNNI AVX512_BF16 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2026-02-13 09:49:34.760346: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/gpflow/versions.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Checking AE files:   0%|          | 0/1013 [00:00<?, ?it/s]Checking AE files: 100%|██████████| 1013/1013 [00:00<00:00, 62776.37it/s]
+Matching data:   0%|          | 0/63 [00:00<?, ?it/s]Matching data: 100%|██████████| 63/63 [00:00<00:00, 1330.20it/s]
+[Citricacid][particle2ae] RMSE=37.0649, violation_rate=0.1500, constraint=increasing
+[Citricacid][ae2particle] RMSE=7.0581, violation_rate=0.1920, constraint=increasing
+[MSG][particle2ae] RMSE=108.6683, violation_rate=0.0720, constraint=increasing
+[MSG][ae2particle] RMSE=10.7659, violation_rate=0.1840, constraint=increasing
+[NaCl][particle2ae] RMSE=12.2984, violation_rate=0.0240, constraint=increasing
+[NaCl][ae2particle] RMSE=12.2958, violation_rate=0.1240, constraint=increasing
+Saved dataset: model_comparison/monotone_gp/exp2_monotone_gp_dataset_raw.csv
+Saved metrics: model_comparison/monotone_gp/exp2_monotone_gp_metrics_both_directions.csv

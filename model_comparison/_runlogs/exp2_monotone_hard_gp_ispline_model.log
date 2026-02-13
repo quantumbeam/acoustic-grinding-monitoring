@@ -1,0 +1,23 @@
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+--- Scanning for required files ---
+Found 1013 required AE files.
+--- Loading AE Power Cache (Policy A) ---
+Cache hit for all required files (skipped 1013).
+--- Creating dataset for exp2 (shared for both directions) ---
+Collected 63 data points.
+Saved dataset: model_comparison/monotone_hard_gp_ispline/exp2_monotone_hard_gp_ispline_dataset_raw.csv
+
+=== Reagent: Citricacid ===
+[particle2ae] R2(total): 1.0000 | constraint=increasing | Saved: model_comparison/monotone_hard_gp_ispline/monotone_hard_gp_ispline_model_particle2ae_Citricacid_exp2.joblib
+[ae2particle] R2(total): 1.0000 | constraint=increasing | Saved: model_comparison/monotone_hard_gp_ispline/monotone_hard_gp_ispline_model_ae2particle_Citricacid_exp2.joblib
+
+=== Reagent: MSG ===
+[particle2ae] R2(total): 1.0000 | constraint=increasing | Saved: model_comparison/monotone_hard_gp_ispline/monotone_hard_gp_ispline_model_particle2ae_MSG_exp2.joblib
+[ae2particle] R2(total): 1.0000 | constraint=increasing | Saved: model_comparison/monotone_hard_gp_ispline/monotone_hard_gp_ispline_model_ae2particle_MSG_exp2.joblib
+
+=== Reagent: NaCl ===
+[particle2ae] R2(total): 0.9997 | constraint=increasing | Saved: model_comparison/monotone_hard_gp_ispline/monotone_hard_gp_ispline_model_particle2ae_NaCl_exp2.joblib
+[ae2particle] R2(total): 0.9709 | constraint=increasing | Saved: model_comparison/monotone_hard_gp_ispline/monotone_hard_gp_ispline_model_ae2particle_NaCl_exp2.joblib
+
+Saved metrics: model_comparison/monotone_hard_gp_ispline/exp2_monotone_hard_gp_ispline_metrics_both_directions.csv

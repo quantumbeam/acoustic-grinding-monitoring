@@ -1,0 +1,84 @@
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+--- Monotone Bernstein Threshold Pseudo-Stopping Analysis (exp3) ---
+
+[Citricacid] monotone_bernstein model loaded.
+  Target=20 um -> theta_AE=39.4810 mV²
+    1st: n=24, k*=23
+    2nd: n=29, k*=26
+    3rd: n=27, k*=26
+  Saved: exp3_monotone_bernstein_pseudostop_Citricacid_20um.png
+  Target=50 um -> theta_AE=155.9423 mV²
+    1st: n=14, k*=13
+    2nd: n=17, k*=16
+    3rd: n=15, k*=14
+  Saved: exp3_monotone_bernstein_pseudostop_Citricacid_50um.png
+  Target=100 um -> theta_AE=418.3246 mV²
+    1st: n=8, k*=7
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_monotone_bernstein_pseudostop_Citricacid_100um.png
+
+[MSG] monotone_bernstein model loaded.
+  Target=50 um -> theta_AE=388.3343 mV²
+    1st: n=25, k*=22
+    2nd: n=25, k*=19
+    3rd: n=28, k*=27
+  Saved: exp3_monotone_bernstein_pseudostop_MSG_50um.png
+  Target=100 um -> theta_AE=587.5545 mV²
+    1st: n=12, unreach
+    2nd: n=12, unreach
+    3rd: n=12, k*=11
+  Saved: exp3_monotone_bernstein_pseudostop_MSG_100um.png
+  Target=200 um -> theta_AE=1091.8566 mV²
+    1st: n=9, k*=8
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_monotone_bernstein_pseudostop_MSG_200um.png
+
+[NaCl] monotone_bernstein model loaded.
+  Target=150 um -> theta_AE=47.3720 mV²
+    1st: n=20, k*=19
+    2nd: n=24, k*=22
+    3rd: n=22, k*=21
+  Saved: exp3_monotone_bernstein_pseudostop_NaCl_150um.png
+  Target=200 um -> theta_AE=86.8049 mV²
+    1st: n=13, k*=12
+    2nd: n=13, k*=12
+    3rd: n=13, k*=12
+  Saved: exp3_monotone_bernstein_pseudostop_NaCl_200um.png
+  Target=250 um -> theta_AE=142.6976 mV²
+    1st: n=9, k*=8
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_monotone_bernstein_pseudostop_NaCl_250um.png
+
+Summary CSV saved to: model_comparison/monotone_bernstein/exp3_monotone_bernstein_pseudostop_summary.csv
+  Material  Target_D50 Trial  theta_bernstein  reachable    cross_type  k_star  S_AE_at_k_star    min_S_AE      margin  n_cycles  Measured_D50
+Citricacid          20   1st        39.481043       True    last_cross    23.0       36.264584   36.264584   -3.216459        24     21.272009
+Citricacid          20   2nd        39.481043       True earlier_cross    26.0       39.122172   33.956529   -5.524514        29     14.075905
+Citricacid          20   3rd        39.481043       True    last_cross    26.0       30.385246   30.385246   -9.095797        27     16.871954
+Citricacid          50   1st       155.942339       True    last_cross    13.0      136.049175  136.049175  -19.893164        14     46.069932
+Citricacid          50   2nd       155.942339       True    last_cross    16.0      115.039328  115.039328  -40.903011        17     31.445636
+Citricacid          50   3rd       155.942339       True    last_cross    14.0      147.640476  147.640476   -8.301863        15     37.328847
+Citricacid         100   1st       418.324594       True    last_cross     7.0      362.428341  362.428341  -55.896253         8     83.236410
+Citricacid         100   2nd       418.324594       True    last_cross     7.0      398.292112  398.292112  -20.032482         8    100.210290
+Citricacid         100   3rd       418.324594       True    last_cross     7.0      396.399800  396.399800  -21.924794         8    111.582733
+       MSG          50   1st       388.334309       True    last_cross    22.0      385.885435  338.637040  -49.697270        25     53.108302
+       MSG          50   2nd       388.334309       True    last_cross    19.0      385.238791  370.077337  -18.256972        25     54.937552
+       MSG          50   3rd       388.334309       True    last_cross    27.0      351.680120  351.680120  -36.654189        28     50.079034
+       MSG         100   1st       587.554500      False       unreach     NaN             NaN  607.057719   19.503219        12    129.251265
+       MSG         100   2nd       587.554500      False       unreach     NaN             NaN  605.443473   17.888973        12    124.923817
+       MSG         100   3rd       587.554500       True    last_cross    11.0      576.819373  576.819373  -10.735127        12    123.924933
+       MSG         200   1st      1091.856617       True    last_cross     8.0      920.294606  920.294606 -171.562011         9    179.587870
+       MSG         200   2nd      1091.856617       True    last_cross     7.0      934.488533  934.488533 -157.368084         8    203.290377
+       MSG         200   3rd      1091.856617       True    last_cross     7.0     1041.988707 1041.988707  -49.867910         8    189.032872
+      NaCl         150   1st        47.372026       True    last_cross    19.0       46.360897   46.360897   -1.011129        20    133.362302
+      NaCl         150   2nd        47.372026       True earlier_cross    22.0       47.291979   43.958924   -3.413103        24    123.806276
+      NaCl         150   3rd        47.372026       True    last_cross    21.0       43.908117   43.908117   -3.463909        22    139.812267
+      NaCl         200   1st        86.804863       True    last_cross    12.0       86.143572   86.143572   -0.661291        13    196.069053
+      NaCl         200   2nd        86.804863       True    last_cross    12.0       86.493386   86.493386   -0.311477        13    204.387531
+      NaCl         200   3rd        86.804863       True    last_cross    12.0       83.875423   83.875423   -2.929440        13    189.501496
+      NaCl         250   1st       142.697619       True    last_cross     8.0      127.721868  127.721868  -14.975751         9    223.631544
+      NaCl         250   2nd       142.697619       True    last_cross     7.0      136.750402  136.750402   -5.947217         8    252.074230
+      NaCl         250   3rd       142.697619       True    last_cross     7.0      134.177046  134.177046   -8.520573         8    238.221898

@@ -1,0 +1,24 @@
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+--- Poly4 Model Fitting (degree=4) ---
+    Dataset: 63 rows
+
+[Citricacid] R²=0.9902, RMSE=31.51 mV²
+    coeffs: [-1.02849085e-06  3.21247499e-04 -1.81986040e-02  4.18580843e+00
+ -4.01857664e+01]
+    Saved: model_comparison/poly4/poly4_model_particle2ae_Citricacid_exp2.joblib
+    Plot: exp2_poly4_particle2ae_Citricacid.png
+
+[MSG] R²=0.9722, RMSE=118.71 mV²
+    coeffs: [-1.51490308e-06  1.12388969e-03 -2.54752098e-01  2.53934001e+01
+ -3.62954915e+02]
+    Saved: model_comparison/poly4/poly4_model_particle2ae_MSG_exp2.joblib
+    Plot: exp2_poly4_particle2ae_MSG.png
+
+[NaCl] R²=0.9581, RMSE=11.85 mV²
+    coeffs: [-3.44130704e-07  2.57821264e-04 -6.64622450e-02  7.66460895e+00
+ -3.02022752e+02]
+    Saved: model_comparison/poly4/poly4_model_particle2ae_NaCl_exp2.joblib
+    Plot: exp2_poly4_particle2ae_NaCl.png
+
+Metrics saved: model_comparison/poly4/exp2_poly4_metrics.csv

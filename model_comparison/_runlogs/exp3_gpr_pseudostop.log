@@ -1,0 +1,87 @@
+/home/yusaku/acoustic-powder-monitoring/.venv/lib/python3.10/site-packages/joblib/_multiprocessing_helpers.py:44: UserWarning: [Errno 13] Permission denied.  joblib will operate in serial mode
+  warnings.warn("%s.  joblib will operate in serial mode" % (e,))
+--- GPR Threshold Pseudo-Stopping Analysis (exp3) ---
+    K_SIGMA_AE = 0.0
+
+[Citricacid] GPR model loaded.
+  Target=20 um -> theta_AE=38.7606 mV² (mu=38.7606, sigma=38.0599)
+    1st: n=24, k*=23
+    2nd: n=29, k*=28
+    3rd: n=27, k*=26
+  Saved: exp3_gpr_pseudostop_Citricacid_20um.png
+  Target=50 um -> theta_AE=151.7519 mV² (mu=151.7519, sigma=39.1400)
+    1st: n=14, k*=13
+    2nd: n=17, k*=16
+    3rd: n=15, k*=14
+  Saved: exp3_gpr_pseudostop_Citricacid_50um.png
+  Target=100 um -> theta_AE=419.7739 mV² (mu=419.7739, sigma=39.8802)
+    1st: n=8, k*=7
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_gpr_pseudostop_Citricacid_100um.png
+
+[MSG] GPR model loaded.
+  Target=50 um -> theta_AE=377.5493 mV² (mu=377.5493, sigma=131.2103)
+    1st: n=25, k*=24
+    2nd: n=25, k*=24
+    3rd: n=28, k*=27
+  Saved: exp3_gpr_pseudostop_MSG_50um.png
+  Target=100 um -> theta_AE=608.7189 mV² (mu=608.7189, sigma=138.7834)
+    1st: n=12, k*=11
+    2nd: n=12, k*=11
+    3rd: n=12, k*=11
+  Saved: exp3_gpr_pseudostop_MSG_100um.png
+  Target=200 um -> theta_AE=1065.4753 mV² (mu=1065.4753, sigma=136.4737)
+    1st: n=9, k*=8
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_gpr_pseudostop_MSG_200um.png
+
+[NaCl] GPR model loaded.
+  Target=150 um -> theta_AE=46.9520 mV² (mu=46.9520, sigma=14.3107)
+    1st: n=20, k*=19
+    2nd: n=24, k*=23
+    3rd: n=22, k*=21
+  Saved: exp3_gpr_pseudostop_NaCl_150um.png
+  Target=200 um -> theta_AE=88.4338 mV² (mu=88.4338, sigma=14.3335)
+    1st: n=13, k*=12
+    2nd: n=13, k*=12
+    3rd: n=13, k*=12
+  Saved: exp3_gpr_pseudostop_NaCl_200um.png
+  Target=250 um -> theta_AE=141.9814 mV² (mu=141.9814, sigma=14.2621)
+    1st: n=9, k*=8
+    2nd: n=8, k*=7
+    3rd: n=8, k*=7
+  Saved: exp3_gpr_pseudostop_NaCl_250um.png
+
+AE power cache updated.
+
+Summary CSV saved to: model_comparison/gpr/exp3_gpr_pseudostop_summary.csv
+  Material  Target_D50 Trial   theta_gpr  theta_gpr_sigma  reachable cross_type  k_star  S_AE_at_k_star    min_S_AE      margin  n_cycles  Measured_D50
+Citricacid          20   1st   38.760577        38.059894       True last_cross      23       36.264584   36.264584   -2.495993        24     21.272009
+Citricacid          20   2nd   38.760577        38.059894       True last_cross      28       33.956529   33.956529   -4.804049        29     14.075905
+Citricacid          20   3rd   38.760577        38.059894       True last_cross      26       30.385246   30.385246   -8.375332        27     16.871954
+Citricacid          50   1st  151.751865        39.139990       True last_cross      13      136.049175  136.049175  -15.702690        14     46.069932
+Citricacid          50   2nd  151.751865        39.139990       True last_cross      16      115.039328  115.039328  -36.712537        17     31.445636
+Citricacid          50   3rd  151.751865        39.139990       True last_cross      14      147.640476  147.640476   -4.111389        15     37.328847
+Citricacid         100   1st  419.773863        39.880187       True last_cross       7      362.428341  362.428341  -57.345522         8     83.236410
+Citricacid         100   2nd  419.773863        39.880187       True last_cross       7      398.292112  398.292112  -21.481750         8    100.210290
+Citricacid         100   3rd  419.773863        39.880187       True last_cross       7      396.399800  396.399800  -23.374063         8    111.582733
+       MSG          50   1st  377.549258       131.210280       True last_cross      24      338.637040  338.637040  -38.912219        25     53.108302
+       MSG          50   2nd  377.549258       131.210280       True last_cross      24      370.077337  370.077337   -7.471921        25     54.937552
+       MSG          50   3rd  377.549258       131.210280       True last_cross      27      351.680120  351.680120  -25.869138        28     50.079034
+       MSG         100   1st  608.718924       138.783445       True last_cross      11      607.057719  607.057719   -1.661204        12    129.251265
+       MSG         100   2nd  608.718924       138.783445       True last_cross      11      605.443473  605.443473   -3.275451        12    124.923817
+       MSG         100   3rd  608.718924       138.783445       True last_cross      11      576.819373  576.819373  -31.899550        12    123.924933
+       MSG         200   1st 1065.475269       136.473662       True last_cross       8      920.294606  920.294606 -145.180663         9    179.587870
+       MSG         200   2nd 1065.475269       136.473662       True last_cross       7      934.488533  934.488533 -130.986736         8    203.290377
+       MSG         200   3rd 1065.475269       136.473662       True last_cross       7     1041.988707 1041.988707  -23.486562         8    189.032872
+      NaCl         150   1st   46.951954        14.310750       True last_cross      19       46.360897   46.360897   -0.591057        20    133.362302
+      NaCl         150   2nd   46.951954        14.310750       True last_cross      23       43.958924   43.958924   -2.993031        24    123.806276
+      NaCl         150   3rd   46.951954        14.310750       True last_cross      21       43.908117   43.908117   -3.043837        22    139.812267
+      NaCl         200   1st   88.433834        14.333458       True last_cross      12       86.143572   86.143572   -2.290263        13    196.069053
+      NaCl         200   2nd   88.433834        14.333458       True last_cross      12       86.493386   86.493386   -1.940448        13    204.387531
+      NaCl         200   3rd   88.433834        14.333458       True last_cross      12       83.875423   83.875423   -4.558412        13    189.501496
+      NaCl         250   1st  141.981447        14.262091       True last_cross       8      127.721868  127.721868  -14.259579         9    223.631544
+      NaCl         250   2nd  141.981447        14.262091       True last_cross       7      136.750402  136.750402   -5.231045         8    252.074230
+      NaCl         250   3rd  141.981447        14.262091       True last_cross       7      134.177046  134.177046   -7.804401         8    238.221898
