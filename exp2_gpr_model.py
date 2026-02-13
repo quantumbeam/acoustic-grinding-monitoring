@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import scienceplots
 
 # Style setting (LaTeX-less environment)
-plt.style.use(['science', 'ieee'])
+plt.style.use(['science', 'ieee', 'no-latex'])
 
 
 # ------------------------------------------------------------
