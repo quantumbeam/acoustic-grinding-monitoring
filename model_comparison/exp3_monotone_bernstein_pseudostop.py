@@ -157,10 +157,18 @@ def main():
     parser = argparse.ArgumentParser(description="Run exp3 pseudo-stop using monotone Bernstein models.")
     parser.add_argument("--model-dir", type=str, default=DEFAULT_MODEL_DIR)
     parser.add_argument("--output-dir", type=str, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument(
+        "--criterion",
+        type=str,
+        default="default",
+        choices=["default", "aic", "bic"],
+        help="Model selection criterion used in exp2 model filename.",
+    )
     args = parser.parse_args()
 
     model_dir = os.path.abspath(args.model_dir)
     output_dir = os.path.abspath(args.output_dir)
+    criterion = args.criterion
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -176,16 +184,18 @@ def main():
     for material in materials:
         model_key = MODEL_NAME_MAP.get(material, material)
 
-        model_path = os.path.join(
-            model_dir,
-            f"monotone_bernstein_model_particle2ae_{model_key}_exp2.joblib",
-        )
+        if criterion == "default":
+            model_filename = f"monotone_bernstein_model_particle2ae_{model_key}_exp2.joblib"
+        else:
+            model_filename = f"monotone_bernstein_model_{criterion}_particle2ae_{model_key}_exp2.joblib"
+
+        model_path = os.path.join(model_dir, model_filename)
         if not os.path.exists(model_path):
             print(f"Warning: monotone_bernstein model not found for {material}: {model_path}")
             continue
         model, _ = load_model(model_path)
 
-        print(f"\n[{material}] monotone_bernstein model loaded.")
+        print(f"\n[{material}] monotone_bernstein model loaded ({criterion}).")
 
         target_files_sample = glob.glob(os.path.join(PSD_BASE_PATH, material, "1st", "*.csv"))
         targets = []
@@ -345,7 +355,8 @@ def main():
             ax.set_title(f"{material}, Target = {target_val} " + r"$\mathrm{\mu m}$")
             ax.legend(loc="best")
 
-            base_name = f"exp3_monotone_bernstein_pseudostop_{material}_{target_val}um"
+            suffix = "" if criterion == "default" else f"_{criterion}"
+            base_name = f"exp3_monotone_bernstein_pseudostop{suffix}_{material}_{target_val}um"
             fig.savefig(os.path.join(output_dir, f"{base_name}.png"), dpi=300, bbox_inches="tight")
             plt.close(fig)
             print(f"  Saved: {base_name}.png")
@@ -371,7 +382,8 @@ def main():
             "Measured_D50",
         ]
         df = df[[c for c in col_order if c in df.columns]]
-        csv_path = os.path.join(output_dir, "exp3_monotone_bernstein_pseudostop_summary.csv")
+        suffix = "" if criterion == "default" else f"_{criterion}"
+        csv_path = os.path.join(output_dir, f"exp3_monotone_bernstein_pseudostop_summary{suffix}.csv")
         df.to_csv(csv_path, index=False)
         print(f"\nSummary CSV saved to: {csv_path}")
         print(df.to_string(index=False))
