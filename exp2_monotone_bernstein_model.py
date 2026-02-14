@@ -307,6 +307,45 @@ def evaluate_degree_oof_curve(
     return rows
 
 
+def save_degree_cv_error_plots(
+    degree_curve_df: pd.DataFrame,
+    validation_dir: str,
+    experiment: str,
+) -> None:
+    if degree_curve_df.empty:
+        return
+
+    for (reagent, direction), g in degree_curve_df.groupby(["reagent", "direction"]):
+        valid = g[g["cv_valid"]].copy()
+        if valid.empty:
+            continue
+        valid = valid.sort_values("degree")
+
+        plt.figure(figsize=(10, 6))
+        plt.errorbar(
+            valid["degree"].to_numpy(dtype=int),
+            valid["cv_rmse_mean"].to_numpy(dtype=float),
+            yerr=valid["cv_rmse_std"].to_numpy(dtype=float),
+            fmt="o-",
+            color="black",
+            ecolor="gray",
+            capsize=4,
+            linewidth=2,
+            markersize=7,
+        )
+        plt.xlabel("Bernstein degree")
+        plt.ylabel("CV RMSE")
+        plt.title(f"{experiment} {reagent} {direction}")
+        plt.grid(True, alpha=0.3)
+        plt.tight_layout()
+        plot_path = os.path.join(
+            validation_dir,
+            f"{experiment}_monotone_bernstein_degree_vs_cv_rmse_{reagent}_{direction}.png",
+        )
+        plt.savefig(plot_path, dpi=300)
+        plt.close()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train monotone Bernstein models on exp2 data.")
     parser.add_argument("--reagent", type=str, default="all", choices=["NaCl", "Citricacid", "MSG", "all"])
@@ -574,6 +613,11 @@ def main():
     degree_curve_df = pd.DataFrame(degree_curve_rows)
     degree_curve_path = os.path.join(validation_dir, f"{experiment}_monotone_bernstein_degree_oof_curve.csv")
     degree_curve_df.to_csv(degree_curve_path, index=False)
+    save_degree_cv_error_plots(
+        degree_curve_df=degree_curve_df,
+        validation_dir=validation_dir,
+        experiment=experiment,
+    )
 
     degree_summary_rows = []
     if not degree_curve_df.empty:
