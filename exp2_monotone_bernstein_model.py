@@ -355,7 +355,7 @@ def main():
     parser.add_argument("--degree-validation-candidates", type=str, default="2,3,4,5,6,7,8,9,10,11,12,13,14,15")
     parser.add_argument("--lambda-candidates", type=str, default="0,1e-4,1e-3,1e-2")
     parser.add_argument("--cv-mode", type=str, default="group", choices=["none", "group"])
-    parser.add_argument("--output-dir", type=str, default="results")
+    parser.add_argument("--output-dir", type=str, default="model_comparison/monotone_bernstein")
     parser.add_argument("--validation-dir", type=str, default="results/model_validation")
     args = parser.parse_args()
 

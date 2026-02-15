@@ -51,8 +51,7 @@ PSD_BASE_PATH = os.path.join(REPO_ROOT, "data", "powder_size_distribution", EXPE
 AE_BASE_PATH = os.path.join(REPO_ROOT, "data", "ae", EXPERIMENT)
 AE_SCALE_TO_MV2 = 1e6
 MOVING_AVG_WINDOW = 4
-DEFAULT_OUTPUT_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_bernstein")
-DEFAULT_MODEL_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_bernstein")
+DEFAULT_BASE_DIR = os.path.join(REPO_ROOT, "model_comparison", "monotone_bernstein")
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_FILE = os.path.join(SCRIPT_DIR, "ae_power_cache.json")
@@ -155,8 +154,8 @@ def main():
     global CACHE_DIRTY
 
     parser = argparse.ArgumentParser(description="Run exp3 pseudo-stop using monotone Bernstein models.")
-    parser.add_argument("--model-dir", type=str, default=DEFAULT_MODEL_DIR)
-    parser.add_argument("--output-dir", type=str, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--model-dir", type=str, default=DEFAULT_BASE_DIR)
+    parser.add_argument("--output-dir", type=str, default=DEFAULT_BASE_DIR)
     parser.add_argument(
         "--criterion",
         type=str,
@@ -166,9 +165,18 @@ def main():
     )
     args = parser.parse_args()
 
-    model_dir = os.path.abspath(args.model_dir)
-    output_dir = os.path.abspath(args.output_dir)
     criterion = args.criterion
+    criterion_dir = "cv" if criterion == "default" else criterion
+
+    if os.path.abspath(args.model_dir) == os.path.abspath(DEFAULT_BASE_DIR):
+        model_dir = os.path.join(DEFAULT_BASE_DIR, criterion_dir)
+    else:
+        model_dir = os.path.abspath(args.model_dir)
+
+    if os.path.abspath(args.output_dir) == os.path.abspath(DEFAULT_BASE_DIR):
+        output_dir = os.path.join(DEFAULT_BASE_DIR, criterion_dir)
+    else:
+        output_dir = os.path.abspath(args.output_dir)
 
     os.makedirs(output_dir, exist_ok=True)
 

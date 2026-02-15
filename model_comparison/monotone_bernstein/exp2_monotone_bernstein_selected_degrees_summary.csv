@@ -1,0 +1,7 @@
+reagent,direction,constraint_direction,cv_selected_degree,cv_selected_lambda,aic_selected_degree,aic_selected_lambda,bic_selected_degree,bic_selected_lambda
+Citricacid,ae2particle,increasing,7,0.0001,6,0.0,4,0.0
+Citricacid,particle2ae,increasing,7,0.0,3,0.0,3,0.0
+MSG,ae2particle,increasing,5,0.01,3,0.0,3,0.0
+MSG,particle2ae,increasing,5,0.01,3,0.0,2,0.0
+NaCl,ae2particle,increasing,8,0.0,2,0.0,2,0.0
+NaCl,particle2ae,increasing,5,0.01,3,0.0,3,0.0
