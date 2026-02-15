@@ -1,4 +1,0 @@
-reagent,direction,cv_best_degree,cv_degree_range,cv_representative_degree,cv_selection_note,aic_best_degree,bic_best_degree,same_degree_cv_aic,same_degree_cv_bic
-Citricacid,particle2ae,7,3-8,3,CV差が小さいため3〜8を同等扱い,3,3,False,False
-MSG,particle2ae,3,3,3,CV最小の3を採用,3,2,True,False
-NaCl,particle2ae,2,2-4,2,CV差が小さいため2〜4を許容,3,3,False,False

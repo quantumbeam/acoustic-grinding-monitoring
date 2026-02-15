@@ -80,7 +80,7 @@ def fit_score_row(
         }
 
 
-def save_aic_bic_curve_plot(
+def save_bic_curve_plot(
     curve_df: pd.DataFrame,
     out_path: str,
     title: str,
@@ -157,8 +157,8 @@ def main():
     parser.add_argument("--degree-candidates", type=str, default="2,3,4,5,6,7,8,9,10,11,12,13,14,15")
     parser.add_argument("--lambda-candidates", type=str, default="0")
     parser.add_argument("--cv-mode", type=str, default="group", choices=["none", "group"])
-    parser.add_argument("--output-dir", type=str, default="results/aic_bic")
-    parser.add_argument("--validation-dir", type=str, default="results/model_validation/aic_bic")
+    parser.add_argument("--output-dir", type=str, default="results")
+    parser.add_argument("--validation-dir", type=str, default="results/model_validation")
     args = parser.parse_args()
 
     degree_candidates = parse_int_list(args.degree_candidates)
@@ -252,45 +252,44 @@ def main():
                 cv_mode=args.cv_mode,
             )
 
-            # Save selected models for downstream use.
-            for criterion, best_row in [("aic", best_aic), ("bic", best_bic)]:
-                degree_best = int(best_row["degree"])
-                lambda_best = float(best_row["lambda_smooth"])
-                reg = BernsteinMonotoneRegressor(
-                    BernsteinMonotoneConfig(
-                        degree=degree_best,
-                        monotone=monotone,
-                        lambda_smooth=lambda_best,
-                    )
-                ).fit(x_data, y_data)
-                model_path = os.path.join(
-                    args.output_dir,
-                    f"monotone_bernstein_model_{criterion}_{direction}_{current_reagent}_{experiment}.joblib",
+            # Save only BIC-selected models/plots for downstream use.
+            degree_best = int(best_bic["degree"])
+            lambda_best = float(best_bic["lambda_smooth"])
+            reg = BernsteinMonotoneRegressor(
+                BernsteinMonotoneConfig(
+                    degree=degree_best,
+                    monotone=monotone,
+                    lambda_smooth=lambda_best,
                 )
-                save_model(
-                    model_path,
-                    reg,
-                    extra={
-                        "experiment": experiment,
-                        "direction": direction,
-                        "reagent": str(current_reagent),
-                        "criterion": criterion,
-                    },
-                )
+            ).fit(x_data, y_data)
+            model_path = os.path.join(
+                args.output_dir,
+                f"monotone_bernstein_model_bic_{direction}_{current_reagent}_{experiment}.joblib",
+            )
+            save_model(
+                model_path,
+                reg,
+                extra={
+                    "experiment": experiment,
+                    "direction": direction,
+                    "reagent": str(current_reagent),
+                    "criterion": "bic",
+                },
+            )
 
-                plot_path = os.path.join(
-                    args.output_dir,
-                    f"{experiment}_monotone_bernstein_plot_{criterion}_{direction}_{current_reagent}.png",
-                )
-                save_fit_plot(
-                    x_data=x_data,
-                    y_data=y_data,
-                    trial_labels=trial_labels,
-                    reg=reg,
-                    x_label=x_label,
-                    y_label=y_label,
-                    out_path=plot_path,
-                )
+            plot_path = os.path.join(
+                args.output_dir,
+                f"{experiment}_monotone_bernstein_plot_bic_{direction}_{current_reagent}.png",
+            )
+            save_fit_plot(
+                x_data=x_data,
+                y_data=y_data,
+                trial_labels=trial_labels,
+                reg=reg,
+                x_label=x_label,
+                y_label=y_label,
+                out_path=plot_path,
+            )
 
             summary_rows.append(
                 {
@@ -316,9 +315,9 @@ def main():
 
             plot_path = os.path.join(
                 args.validation_dir,
-                f"{experiment}_monotone_bernstein_aic_bic_curve_{current_reagent}_{direction}.png",
+                f"{experiment}_monotone_bernstein_bic_curve_{current_reagent}_{direction}.png",
             )
-            save_aic_bic_curve_plot(
+            save_bic_curve_plot(
                 curve_df=local_df,
                 out_path=plot_path,
                 title=f"{experiment} {current_reagent} {direction}",
@@ -331,16 +330,16 @@ def main():
             )
 
     curve_df = pd.DataFrame(curve_rows)
-    curve_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_aic_bic_curve.csv")
+    curve_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_bic_curve.csv")
     curve_df.to_csv(curve_path, index=False)
 
     summary_df = pd.DataFrame(summary_rows)
-    summary_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_aic_bic_selection_summary.csv")
+    summary_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_bic_selection_summary.csv")
     summary_df.to_csv(summary_path, index=False)
 
     print(f"Saved dataset: {dataset_path}")
-    print(f"Saved AIC/BIC curve: {curve_path}")
-    print(f"Saved AIC/BIC selection summary: {summary_path}")
+    print(f"Saved BIC curve: {curve_path}")
+    print(f"Saved BIC selection summary: {summary_path}")
 
 
 if __name__ == "__main__":

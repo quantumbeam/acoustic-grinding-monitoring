@@ -75,8 +75,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="Unified exp3 evaluation using monotone Bernstein BIC models (P2AE + AE2P)."
     )
-    parser.add_argument("--model-dir", type=str, default="results/aic_bic")
-    parser.add_argument("--output-dir", type=str, default="results/aic_bic")
+    parser.add_argument("--model-dir", type=str, default="results")
+    parser.add_argument("--output-dir", type=str, default="results")
     parser.add_argument("--experiment", type=str, default="exp3_bernstein_bic")
     parser.add_argument("--ae-scale-to-mv2", type=float, default=1e6)
     parser.add_argument("--moving-avg-window", type=int, default=4)
