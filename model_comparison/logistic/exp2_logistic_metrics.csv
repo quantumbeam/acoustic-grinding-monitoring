@@ -1,0 +1,4 @@
+reagent,direction,method,r_squared,rmse,n_samples,L,k,x0,b,model_path
+Citricacid,particle2ae,logistic,0.9832444724476248,41.23554819397977,21,1096.9062758633922,0.025331733872191103,107.70474658098145,-66.93170856310529,model_comparison/logistic/logistic_model_particle2ae_Citricacid_exp2.joblib
+MSG,particle2ae,logistic,0.9682648034281586,126.73616054457037,21,5876.840730274143,0.011574929522851996,347.2538076104684,209.7916406966284,model_comparison/logistic/logistic_model_particle2ae_MSG_exp2.joblib
+NaCl,particle2ae,logistic,0.9555792085536072,12.201435478998853,21,185.08849823280485,0.026237381226270885,226.97690300925782,24.132737682647775,model_comparison/logistic/logistic_model_particle2ae_NaCl_exp2.joblib
