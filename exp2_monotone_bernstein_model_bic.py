@@ -214,6 +214,7 @@ def main():
 
     curve_rows = []
     summary_rows = []
+    metrics_rows = []
     p2ae_models: dict[str, BernsteinMonotoneRegressor] = {}
 
     for current_reagent in np.unique(data_array[:, 4]):
@@ -306,6 +307,35 @@ def main():
             if direction == "particle2ae":
                 p2ae_models[str(current_reagent)] = reg
 
+            y_pred_train = reg.predict(x_data)
+            x_grid = np.linspace(float(np.min(x_data)), float(np.max(x_data)), 400)
+            mono_stats = reg.monotonicity_metrics(x_grid)
+
+            metrics_rows.append(
+                {
+                    "direction": direction,
+                    "reagent": str(current_reagent),
+                    "method": "monotone_bernstein_bic",
+                    "selection_criterion": "bic",
+                    "rmse_train": float(np.sqrt(mean_squared_error(y_data, y_pred_train))),
+                    "mae_train": float(mean_absolute_error(y_data, y_pred_train)),
+                    "r_squared": float(r2_score(y_data, y_pred_train)),
+                    "violation_rate": float(mono_stats["violation_rate"]),
+                    "max_violation_derivative": float(mono_stats["max_violation_derivative"]),
+                    "mean_derivative": float(mono_stats["mean_derivative"]),
+                    "constraint_direction": monotone,
+                    "degree": degree_best,
+                    "lambda_smooth": lambda_best,
+                    "n_params": int(degree_best + 1),
+                    "aic_selected": float(best_bic["aic"]),
+                    "bic_selected": float(best_bic["bic"]),
+                    "cv_best_degree": int(cv_best_degree),
+                    "cv_best_lambda": float(cv_best_lambda),
+                    "cv_best_rmse": float(cv_best_rmse),
+                    "model_path": model_path,
+                }
+            )
+
             plot_path = os.path.join(
                 args.plot_output_dir,
                 f"{experiment}_monotone_bernstein_plot_bic_{direction}_{current_reagent}.png",
@@ -366,6 +396,10 @@ def main():
     summary_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_bic_selection_summary.csv")
     summary_df.to_csv(summary_path, index=False)
 
+    metrics_df = pd.DataFrame(metrics_rows)
+    metrics_path = os.path.join(args.output_dir, f"{experiment}_monotone_bernstein_metrics_both_directions_bic.csv")
+    metrics_df.to_csv(metrics_path, index=False)
+
     exp3_psd_base = os.path.join("data", "powder_size_distribution", "exp3")
     threshold_rows = []
     targets_by_reagent = collect_exp3_targets_by_reagent(
@@ -388,6 +422,7 @@ def main():
     pd.DataFrame(threshold_rows).to_csv(threshold_path, index=False)
 
     print(f"Saved dataset: {dataset_path}")
+    print(f"Saved metrics: {metrics_path}")
     print(f"Saved BIC curve: {curve_path}")
     print(f"Saved BIC selection summary: {summary_path}")
     print(f"Saved exp3 AE thresholds: {threshold_path}")
