@@ -1,5 +1,7 @@
 import argparse
+import glob
 import os
+import re
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -149,6 +151,24 @@ def save_fit_plot(
     plt.close()
 
 
+def collect_exp3_targets_by_reagent(base_path: str, reagents: list[str]) -> dict[str, list[int]]:
+    targets_by_reagent: dict[str, list[int]] = {}
+    for reagent in reagents:
+        reagent_dir = os.path.join(base_path, reagent)
+        if not os.path.isdir(reagent_dir):
+            continue
+
+        targets = set()
+        for csv_path in glob.glob(os.path.join(reagent_dir, "*", "*.csv")):
+            m = re.search(r"_for_?(\d+)um", os.path.basename(csv_path))
+            if m:
+                targets.add(int(m.group(1)))
+
+        if targets:
+            targets_by_reagent[reagent] = sorted(targets)
+    return targets_by_reagent
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train exp2 monotone Bernstein models with degree selection by BIC.")
     parser.add_argument("--reagent", type=str, default="all", choices=["NaCl", "Citricacid", "MSG", "all"])
@@ -194,6 +214,7 @@ def main():
 
     curve_rows = []
     summary_rows = []
+    p2ae_models: dict[str, BernsteinMonotoneRegressor] = {}
 
     for current_reagent in np.unique(data_array[:, 4]):
         mask = data_array[:, 4] == current_reagent
@@ -282,6 +303,8 @@ def main():
                     "criterion": "bic",
                 },
             )
+            if direction == "particle2ae":
+                p2ae_models[str(current_reagent)] = reg
 
             plot_path = os.path.join(
                 args.plot_output_dir,
@@ -343,9 +366,31 @@ def main():
     summary_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_bic_selection_summary.csv")
     summary_df.to_csv(summary_path, index=False)
 
+    exp3_psd_base = os.path.join("data", "powder_size_distribution", "exp3")
+    threshold_rows = []
+    targets_by_reagent = collect_exp3_targets_by_reagent(
+        base_path=exp3_psd_base,
+        reagents=sorted(p2ae_models.keys()),
+    )
+    for reagent, model in p2ae_models.items():
+        for target_d50 in targets_by_reagent.get(reagent, []):
+            ae_threshold = float(model.predict(np.array([float(target_d50)], dtype=float))[0])
+            threshold_rows.append(
+                {
+                    "Material": reagent,
+                    "Target_D50": int(target_d50),
+                    "AE_Threshold_mV2": ae_threshold,
+                    "Model": "monotone_bernstein_bic_particle2ae_exp2",
+                }
+            )
+
+    threshold_path = os.path.join(args.output_dir, "exp3_ae_thresholds_from_exp2_monotone_bernstein_bic.csv")
+    pd.DataFrame(threshold_rows).to_csv(threshold_path, index=False)
+
     print(f"Saved dataset: {dataset_path}")
     print(f"Saved BIC curve: {curve_path}")
     print(f"Saved BIC selection summary: {summary_path}")
+    print(f"Saved exp3 AE thresholds: {threshold_path}")
 
 
 if __name__ == "__main__":

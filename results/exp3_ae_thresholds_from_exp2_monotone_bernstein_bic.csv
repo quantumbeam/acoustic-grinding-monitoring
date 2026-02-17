@@ -1,0 +1,10 @@
+Material,Target_D50,AE_Threshold_mV2,Model
+Citricacid,20,36.42290255992524,monotone_bernstein_bic_particle2ae_exp2
+Citricacid,50,153.5296863571915,monotone_bernstein_bic_particle2ae_exp2
+Citricacid,100,418.49724664142866,monotone_bernstein_bic_particle2ae_exp2
+MSG,50,474.6947675305546,monotone_bernstein_bic_particle2ae_exp2
+MSG,100,878.8775796716153,monotone_bernstein_bic_particle2ae_exp2
+MSG,200,1661.4440182663284,monotone_bernstein_bic_particle2ae_exp2
+NaCl,150,46.937644723231536,monotone_bernstein_bic_particle2ae_exp2
+NaCl,200,89.83549202842205,monotone_bernstein_bic_particle2ae_exp2
+NaCl,250,141.6358615996868,monotone_bernstein_bic_particle2ae_exp2
