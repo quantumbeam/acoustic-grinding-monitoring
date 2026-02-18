@@ -77,7 +77,7 @@ def main():
     )
     parser.add_argument("--model-dir", type=str, default="results")
     parser.add_argument("--output-dir", type=str, default="results")
-    parser.add_argument("--experiment", type=str, default="exp3_bernstein_bic")
+    parser.add_argument("--experiment", type=str, default="exp3")
     parser.add_argument("--ae-scale-to-mv2", type=float, default=1e6)
     parser.add_argument("--moving-avg-window", type=int, default=4)
     args = parser.parse_args()
