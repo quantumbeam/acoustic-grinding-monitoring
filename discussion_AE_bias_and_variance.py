@@ -360,7 +360,7 @@ if __name__ == '__main__':
     if ae_series_by_trial:
         trial_avg_path = os.path.join(
             VARIANCE_OUTPUT_DIR,
-            "gpr_dataset_raw_trial_avg.csv"
+            "ae_dataset_raw_trial_avg.csv"
         )
         trial_rows = []
         variance_mode = args.variance_mode
