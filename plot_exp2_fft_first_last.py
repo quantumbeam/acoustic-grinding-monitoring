@@ -29,6 +29,17 @@ def try_set_plot_style() -> None:
         plt.style.use(["science", "ieee", "no-latex"])
     except Exception:
         pass
+    plt.rcParams.update(
+        {
+            "font.size": 15,
+            "axes.labelsize": 20,
+            "xtick.labelsize": 15,
+            "ytick.labelsize": 15,
+            "legend.fontsize": 14,
+            "font.family": "sans-serif",
+            "mathtext.fontset": "dejavusans",
+        }
+    )
 
 
 def find_grind_files(material: str, grind_min: int) -> list[str]:
@@ -95,14 +106,14 @@ def main() -> None:
         freq_first_khz = f_first[mask_first] / 1000.0
         freq_last_khz = f_last[mask_last] / 1000.0
 
-        fig, ax = plt.subplots(figsize=(7.2, 4.6))
+        fig, ax = plt.subplots(figsize=(7.2, 4.8))
         ax.plot(
             freq_first_khz,
             a_first_mv,
             color="#E74C3C",
             lw=1.0,
             alpha=0.95,
-            label="First file",
+            label="First grind",
         )
         ax.plot(
             freq_last_khz,
@@ -111,7 +122,7 @@ def main() -> None:
             lw=1.0,
             linestyle=(0, (2, 1)),
             alpha=0.9,
-            label="Last file",
+            label="Last grind",
         )
         ax.set_xlabel("Frequency (kHz)")
         ax.set_ylabel("Amplitude (mV)")
@@ -119,7 +130,6 @@ def main() -> None:
         y_max = max(float(np.max(a_first_mv)), float(np.max(a_last_mv)))
         ax.set_ylim(0.0, y_max * 1.05 if y_max > 0 else 0.1)
         ax.legend(frameon=False)
-        ax.grid(alpha=0.25, linewidth=0.5)
         fig.tight_layout()
 
         out_stem = f"fft_plot_{OUTPUT_NAME_MAP[material]}"
