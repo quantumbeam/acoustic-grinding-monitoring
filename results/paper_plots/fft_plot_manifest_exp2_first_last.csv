@@ -1,0 +1,4 @@
+material,label_for_output,trial,grind_min,n_files_for_grind,first_file,last_file,pdf,png
+NaCl,NaCl,1st,25,33,data/ae/exp2/NaCl/1st/20251216_144933NaCl_grind25min.csv,data/ae/exp2/NaCl/1st/20251216_151403NaCl_grind25min.csv,results/paper_plots/fft_plot_NaCl.pdf,results/paper_plots/fft_plot_NaCl.png
+Citricacid,Citricacid,1st,25,33,data/ae/exp2/Citricacid/1st/20251218_132614Citricacid_grind25min.csv,data/ae/exp2/Citricacid/1st/20251218_135047Citricacid_grind25min.csv,results/paper_plots/fft_plot_Citricacid.pdf,results/paper_plots/fft_plot_Citricacid.png
+MSG,Ajinomoto,1st,25,33,data/ae/exp2/MSG/1st/20260217_150353MSG_grind25min.csv,data/ae/exp2/MSG/1st/20260217_152824MSG_grind25min.csv,results/paper_plots/fft_plot_Ajinomoto.pdf,results/paper_plots/fft_plot_Ajinomoto.png
