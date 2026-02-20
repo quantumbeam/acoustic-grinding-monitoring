@@ -354,11 +354,23 @@ def build_exp3_gpr_detail(model_dir: str, output_csv: str) -> None:
                 estimation_error = None
                 estimation_error_percent = None
                 estimation_error_in_range = None
+                estimation_error_pm = None
+                estimation_error_mp = None
+                z_pred_pm = None
+                z_pred_mp = None
+                estimation_error_percent_pm = None
+                estimation_error_percent_mp = None
                 if d50_hat is not None and measured_d50_f is not None:
-                    estimation_error = measured_d50_f - d50_hat
+                    estimation_error_pm = d50_hat - measured_d50_f
+                    estimation_error_mp = measured_d50_f - d50_hat
+                    estimation_error = estimation_error_mp
                     if measured_d50_f != 0:
-                        estimation_error_percent = (estimation_error / measured_d50_f) * 100.0
-                    if d50_hat_sigma is not None:
+                        estimation_error_percent_pm = (estimation_error_pm / measured_d50_f) * 100.0
+                        estimation_error_percent_mp = (estimation_error_mp / measured_d50_f) * 100.0
+                        estimation_error_percent = estimation_error_percent_mp
+                    if d50_hat_sigma is not None and abs(float(d50_hat_sigma)) > 1e-12:
+                        z_pred_pm = estimation_error_pm / d50_hat_sigma
+                        z_pred_mp = estimation_error_mp / d50_hat_sigma
                         estimation_error_in_range = abs(estimation_error) <= d50_hat_sigma
 
                 rows.append(
@@ -372,6 +384,12 @@ def build_exp3_gpr_detail(model_dir: str, output_csv: str) -> None:
                         "AE2P_Predicted_Sigma": d50_hat_sigma,
                         "AE2P_Estimation_Error": estimation_error,
                         "AE2P_Estimation_Error_Percent": estimation_error_percent,
+                        "AE2P_Estimation_Error_PM": estimation_error_pm,
+                        "AE2P_Estimation_Error_MP": estimation_error_mp,
+                        "AE2P_z_pred_PM": z_pred_pm,
+                        "AE2P_z_pred_MP": z_pred_mp,
+                        "AE2P_Estimation_Error_Percent_PM": estimation_error_percent_pm,
+                        "AE2P_Estimation_Error_Percent_MP": estimation_error_percent_mp,
                         "AE2P_Est_Error_In_GPR_Range": estimation_error_in_range,
                     }
                 )
