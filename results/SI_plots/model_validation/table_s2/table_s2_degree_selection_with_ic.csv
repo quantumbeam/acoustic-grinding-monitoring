@@ -1,0 +1,4 @@
+Material,Degree selected by AIC,Degree selected by BIC,Degree selected by CV,AIC (at AIC-selected degree),BIC (at BIC-selected degree)
+NaCl,3,3,2,113.98766066915016,118.16575042004384
+Citric acid,3,3,7,162.87756718291166,167.05565693380535
+MSG,2,2,3,240.43407413494637,243.5676414481166
