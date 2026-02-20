@@ -14,7 +14,7 @@ DEFAULT_SAMPLING_RATE_HZ = 2_000_000.0
 TARGET_TRIAL = "1st"
 TARGET_GRIND_MIN = 25
 TARGET_REAGENTS = ["NaCl", "Citricacid", "MSG"]
-OUTPUT_DIR = os.path.join("results", "SI", "AE_raw", "FigS1")
+OUTPUT_DIR = os.path.join("results", "SI_figs", "AE_raw")
 FIG_WIDTH_IN = 7.2
 FIG_HEIGHT_IN = 9.6
 AX_LABEL_FONTSIZE = 17
@@ -126,7 +126,7 @@ def main() -> None:
                 "amplitude_v": signal_slice,
             }
         )
-        excerpt_path = os.path.join(excerpt_dir, f"fig_s1_{reagent.lower()}_raw_excerpt.csv")
+        excerpt_path = os.path.join(excerpt_dir, f"ae_raw_{reagent.lower()}_excerpt.csv")
         excerpt_df.to_csv(excerpt_path, index=False)
 
         selected.append(
@@ -154,14 +154,14 @@ def main() -> None:
     axes[-1].set_xlabel("Time (ms)")
     fig.tight_layout(rect=(0.0, 0.0, 1.0, 0.99))
 
-    png_path = os.path.join(OUTPUT_DIR, "fig_s1_ae_raw_exp2_25min_1st.png")
-    pdf_path = os.path.join(OUTPUT_DIR, "fig_s1_ae_raw_exp2_25min_1st.pdf")
+    png_path = os.path.join(OUTPUT_DIR, "ae_raw_exp2_25min_1st.png")
+    pdf_path = os.path.join(OUTPUT_DIR, "ae_raw_exp2_25min_1st.pdf")
     fig.savefig(png_path, dpi=300, bbox_inches="tight")
     fig.savefig(pdf_path, bbox_inches="tight")
     plt.close(fig)
 
     selected_df = pd.DataFrame(selected)
-    manifest_path = os.path.join(OUTPUT_DIR, "fig_s1_selected_files.csv")
+    manifest_path = os.path.join(OUTPUT_DIR, "ae_raw_selected_files.csv")
     selected_df.to_csv(manifest_path, index=False)
 
     print(f"Saved figure: {png_path}")

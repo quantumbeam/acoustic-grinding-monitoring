@@ -10,7 +10,7 @@ import pandas as pd
 EXPERIMENT = "exp2"
 TRIALS = ["1st", "2nd", "3rd"]
 GRIND_MINS = [3, 5, 7, 10, 15, 20, 25]
-BASE_OUTPUT_DIR = os.path.join("results", "SI", "PSD")
+BASE_OUTPUT_DIR = os.path.join("results", "SI_figs", "PSD")
 FIG_WIDTH_IN = 7.2
 FIG_HEIGHT_IN = 9.6
 AX_LABEL_FONTSIZE = 15
@@ -68,10 +68,10 @@ def find_psd_file(material: str, trial: str, grind_min: int) -> str | None:
     return candidates[0] if candidates else None
 
 
-def build_figure(material: str, fig_id: str, fig_caption: str, output_dir: str) -> None:
+def build_figure(material: str, output_dir: str) -> None:
     os.makedirs(output_dir, exist_ok=True)
 
-    cmap = plt.get_cmap("viridis", len(GRIND_MINS))
+    cmap = plt.get_cmap("rainbow")
     fig, axes = plt.subplots(3, 1, figsize=(FIG_WIDTH_IN, FIG_HEIGHT_IN), sharex=True, sharey=True)
     panel_labels = ["(a)", "(b)", "(c)"]
     manifest_rows = []
@@ -90,13 +90,12 @@ def build_figure(material: str, fig_id: str, fig_caption: str, output_dir: str) 
             ax.plot(
                 sizes,
                 volumes,
-                color=cmap(j),
-                linewidth=1.2,
+                color=cmap(j / (len(GRIND_MINS) - 1)),
+                linewidth=1.5,
                 label=f"{grind_min} min",
             )
             manifest_rows.append(
                 {
-                    "figure": fig_id,
                     "material": material,
                     "trial": trial,
                     "grind_min": grind_min,
@@ -125,7 +124,7 @@ def build_figure(material: str, fig_id: str, fig_caption: str, output_dir: str) 
     )
     fig.tight_layout(rect=(0.0, 0.06, 1.0, 1.0))
 
-    base = f"{fig_id.lower()}_{material.lower()}_psd_3to25min"
+    base = f"psd_{material.lower()}_3to25min"
     png_path = os.path.join(output_dir, f"{base}.png")
     pdf_path = os.path.join(output_dir, f"{base}.pdf")
     manifest_path = os.path.join(output_dir, f"{base}_manifest.csv")
@@ -160,29 +159,13 @@ def main() -> None:
     try_set_plot_style()
 
     fig_meta = {
-        "NaCl": (
-            "FigS2",
-            "Fig. S2: Particle size distributions of sodium chloride for (a) the 1st trial, "
-            "(b) the 2nd trial, and (c) the 3rd trial.",
-            os.path.join(BASE_OUTPUT_DIR, "FigS2_NaCl"),
-        ),
-        "MSG": (
-            "FigS4",
-            "Fig. S4: Particle size distributions of monosodium glutamate for (a) the 1st trial, "
-            "(b) the 2nd trial, and (c) the 3rd trial.",
-            os.path.join(BASE_OUTPUT_DIR, "FigS4_MSG"),
-        ),
-        "Citricacid": (
-            "FigS3",
-            "Fig. S3: Particle size distributions of citric acid for (a) the 1st trial, "
-            "(b) the 2nd trial, and (c) the 3rd trial.",
-            os.path.join(BASE_OUTPUT_DIR, "FigS3_Citricacid"),
-        ),
+        "NaCl": os.path.join(BASE_OUTPUT_DIR, "NaCl"),
+        "MSG": os.path.join(BASE_OUTPUT_DIR, "MSG"),
+        "Citricacid": os.path.join(BASE_OUTPUT_DIR, "Citricacid"),
     }
 
     for material in args.materials:
-        fig_id, caption, out_dir = fig_meta[material]
-        build_figure(material=material, fig_id=fig_id, fig_caption=caption, output_dir=out_dir)
+        build_figure(material=material, output_dir=fig_meta[material])
 
 
 if __name__ == "__main__":

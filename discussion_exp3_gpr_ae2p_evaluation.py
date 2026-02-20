@@ -29,8 +29,10 @@ plt.rcParams.update(
 
 RESULTS_DIR = "results"
 DISCUSSION_DIR = os.path.join(RESULTS_DIR, "discussion")
+SI_DIR = os.path.join(RESULTS_DIR, "SI")
 DISCUSSION_MODEL_DIR = os.path.join(DISCUSSION_DIR, "models", "gpr")
 INPUT_CSV_DEFAULT = os.path.join(DISCUSSION_DIR, "exp3_gpr_evaluation_detail.csv")
+SI_DETAIL_CSV_DEFAULT = os.path.join(SI_DIR, "exp3_gpr_evaluation_detail.csv")
 M_BOUNDARY = 1.96
 AE_SCALE_TO_MV2 = 1e6
 MOVING_AVG_WINDOW = 4
@@ -394,11 +396,16 @@ def build_exp3_gpr_detail(model_dir: str, output_csv: str) -> None:
                     }
                 )
 
+    detail_df = pd.DataFrame(rows)
+
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
-    pd.DataFrame(rows).to_csv(output_csv, index=False)
+    detail_df.to_csv(output_csv, index=False)
+    os.makedirs(SI_DIR, exist_ok=True)
+    detail_df.to_csv(SI_DETAIL_CSV_DEFAULT, index=False)
     if cache_dirty:
         save_ae_power_cache(CACHE_FILE, cache)
     print(f"Saved discussion exp3 detail to: {output_csv}")
+    print(f"Saved SI exp3 detail to: {SI_DETAIL_CSV_DEFAULT}")
 
 
 def ensure_detail_csv(input_csv: str, model_dir: str, force_retrain_models: bool, force_rebuild_detail: bool) -> None:

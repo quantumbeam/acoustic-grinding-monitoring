@@ -1,0 +1,4 @@
+reagent,trial,grind_min,selected_file,total_samples_in_file,samples_exported,sampling_rate_hz,excerpt_csv
+NaCl,1st,25,data/ae/exp2/NaCl/1st/20251216_144933NaCl_grind25min.csv,1200000,120000,2000000.0,results/SI_figs/AE_raw/excerpts/ae_raw_nacl_excerpt.csv
+Citricacid,1st,25,data/ae/exp2/Citricacid/1st/20251218_132614Citricacid_grind25min.csv,1200000,120000,2000000.0,results/SI_figs/AE_raw/excerpts/ae_raw_citricacid_excerpt.csv
+MSG,1st,25,data/ae/exp2/MSG/1st/20260217_150353MSG_grind25min.csv,1200000,120000,2000000.0,results/SI_figs/AE_raw/excerpts/ae_raw_msg_excerpt.csv

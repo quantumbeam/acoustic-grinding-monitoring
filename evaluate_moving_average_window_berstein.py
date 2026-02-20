@@ -313,7 +313,7 @@ def main():
     parser.add_argument("--window-sizes", type=int, nargs="+", default=[3, 4, 5, 6, 7])
     parser.add_argument("--rmse-tol", type=float, default=0.0)
     parser.add_argument("--model-dir", type=str, default="results")
-    parser.add_argument("--out-dir", type=str, default=os.path.join("results", "SI", "moving_average_bernstein"))
+    parser.add_argument("--out-dir", type=str, default=os.path.join("results", "SI_figs", "moving_average_bernstein"))
     parser.add_argument(
         "--include-all",
         action=argparse.BooleanOptionalAction,

@@ -61,6 +61,66 @@ def get_d50(file_path):
     return None
 
 
+def read_distribution(file_path: str) -> tuple[list[float], list[float]]:
+    sizes: list[float] = []
+    volumes: list[float] = []
+    in_table = False
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                if not in_table:
+                    if line.strip().startswith("SizeClasses"):
+                        in_table = True
+                    continue
+                parts = [p.strip() for p in line.split(",")]
+                if len(parts) < 2:
+                    continue
+                try:
+                    size = float(parts[0])
+                    volume = float(parts[1])
+                except ValueError:
+                    continue
+                if np.isfinite(size) and np.isfinite(volume):
+                    sizes.append(size)
+                    volumes.append(volume)
+    except OSError:
+        return [], []
+    return sizes, volumes
+
+
+def compute_metric_from_distribution(metric: str, sizes: list[float], volumes: list[float]) -> float | None:
+    if not sizes or not volumes:
+        return None
+
+    size_arr = np.array(sizes, dtype=float)
+    vol_arr = np.array(volumes, dtype=float)
+    if size_arr.size == 0 or vol_arr.size == 0:
+        return None
+
+    total = float(np.sum(vol_arr))
+    if total <= 0.0:
+        return None
+
+    if metric == "D50":
+        cum = np.cumsum(vol_arr)
+        return float(np.interp(total * 0.5, cum, size_arr))
+    if metric == "Dmean":
+        return float(np.sum(size_arr * vol_arr) / total)
+    if metric == "Dmode":
+        return float(size_arr[int(np.argmax(vol_arr))])
+    return None
+
+
+def get_particle_metric(file_path: str, metric: str) -> float | None:
+    metric_upper = str(metric).upper()
+    if metric_upper == "D50":
+        return get_d50(file_path)
+    if metric_upper in {"DMEAN", "DMODE"}:
+        sizes, volumes = read_distribution(file_path)
+        return compute_metric_from_distribution(metric_upper.title(), sizes, volumes)
+    return None
+
+
 def moving_average(data, window_size=4):
     if len(data) < window_size:
         return np.array([])
@@ -96,7 +156,7 @@ def parse_int_list(s: str) -> list[int]:
     return vals
 
 
-def build_shared_dataset(experiment: str, reagent: str, trial: str):
+def build_shared_dataset(experiment: str, reagent: str, trial: str, metric: str = "D50"):
     ae_base_path = os.path.join("data/ae", experiment)
     psd_base_path = os.path.join("data/powder_size_distribution", experiment)
 
@@ -136,8 +196,8 @@ def build_shared_dataset(experiment: str, reagent: str, trial: str):
 
         reagent_name = path_parts[-3]
         trial_name = path_parts[-2]
-        d50 = get_d50(psd_file)
-        if d50 is None:
+        metric_value = get_particle_metric(psd_file, metric=metric)
+        if metric_value is None:
             continue
 
         match = re.search(r"(grind\d+min)", os.path.basename(psd_file))
@@ -165,7 +225,7 @@ def build_shared_dataset(experiment: str, reagent: str, trial: str):
         if smoothed.size == 0:
             continue
 
-        collected_data.append((float(d50), float(smoothed[-1]), grind_min, trial_name, reagent_name))
+        collected_data.append((float(metric_value), float(smoothed[-1]), grind_min, trial_name, reagent_name))
 
     if not collected_data:
         raise RuntimeError("No matched data points found.")

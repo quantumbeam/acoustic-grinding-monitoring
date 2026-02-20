@@ -2,6 +2,8 @@ import argparse
 import glob
 import os
 import re
+import subprocess
+import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -169,11 +171,81 @@ def collect_exp3_targets_by_reagent(base_path: str, reagents: list[str]) -> dict
     return targets_by_reagent
 
 
+def metric_axis_label(metric: str) -> str:
+    if metric == "D50":
+        return r"$D_{50}~(\mathrm{\mu m})$"
+    if metric == "Dmean":
+        return r"$D_{\mathrm{mean}}~(\mathrm{\mu m})$"
+    if metric == "Dmode":
+        return r"$D_{\mathrm{mode}}~(\mathrm{\mu m})$"
+    return r"Particle size $(\mathrm{\mu m})$"
+
+
+def metric_suffix(metric: str) -> str:
+    return "" if metric == "D50" else f"_{metric}"
+
+
+def resolve_metric_dirs(
+    metric: str,
+    output_dir: str,
+    plot_output_dir: str,
+    validation_dir: str,
+) -> tuple[str, str, str]:
+    if metric == "D50":
+        return output_dir, plot_output_dir, validation_dir
+
+    scratch_base = os.path.join("/tmp", "acoustic-powder-monitoring", "bernstein")
+    out_dir = os.path.join(scratch_base, metric)
+    plot_dir = os.path.join(scratch_base, metric, "plots")
+    val_dir = os.path.join(scratch_base, metric, "model_validation")
+
+    return out_dir, plot_dir, val_dir
+
+
+def run_all_metrics(args: argparse.Namespace) -> None:
+    for metric in ["D50", "Dmean", "Dmode"]:
+        out_dir, plot_dir, val_dir = resolve_metric_dirs(
+            metric=metric,
+            output_dir=args.output_dir,
+            plot_output_dir=args.plot_output_dir,
+            validation_dir=args.validation_dir,
+        )
+        cmd = [
+            sys.executable,
+            os.path.abspath(__file__),
+            "--reagent",
+            str(args.reagent),
+            "--trial",
+            str(args.trial),
+            "--constraint",
+            str(args.constraint),
+            "--metric",
+            metric,
+            "--degree-candidates",
+            str(args.degree_candidates),
+            "--lambda-candidates",
+            str(args.lambda_candidates),
+            "--cv-mode",
+            str(args.cv_mode),
+            "--output-dir",
+            out_dir,
+            "--plot-output-dir",
+            plot_dir,
+            "--validation-dir",
+            val_dir,
+            "--metrics-output-root",
+            str(args.metrics_output_root),
+        ]
+        print(f"[all-metrics] Running: {' '.join(cmd)}")
+        subprocess.run(cmd, check=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train exp2 monotone Bernstein models with degree selection by BIC.")
     parser.add_argument("--reagent", type=str, default="all", choices=["NaCl", "Citricacid", "MSG", "all"])
     parser.add_argument("--trial", type=str, default="all", choices=["1st", "2nd", "3rd", "all"])
     parser.add_argument("--constraint", type=str, default="increasing", choices=["auto", "increasing", "decreasing"])
+    parser.add_argument("--metric", type=str, default="all", choices=["all", "D50", "Dmean", "Dmode"])
     parser.add_argument("--degree-candidates", type=str, default="2,3,4,5,6,7,8,9,10,11,12,13,14,15")
     parser.add_argument("--lambda-candidates", type=str, default="0")
     parser.add_argument("--cv-mode", type=str, default="group", choices=["none", "group"])
@@ -184,10 +256,21 @@ def main():
         type=str,
         default="results/model_validation",
     )
+    parser.add_argument(
+        "--metrics-output-root",
+        type=str,
+        default="results/SI_figs",
+    )
     args = parser.parse_args()
+    if args.metric == "all":
+        run_all_metrics(args)
+        return
 
     degree_candidates = parse_int_list(args.degree_candidates)
     lambda_candidates = parse_float_list(args.lambda_candidates)
+    metric = str(args.metric)
+    out_suffix = metric_suffix(metric)
+    size_label = metric_axis_label(metric)
 
     experiment = "exp2"
     os.makedirs(args.output_dir, exist_ok=True)
@@ -206,9 +289,9 @@ def main():
         }
     )
 
-    data_array = build_shared_dataset(experiment=experiment, reagent=args.reagent, trial=args.trial)
-    dataset_path = os.path.join(args.output_dir, f"{experiment}_monotone_bernstein_dataset_raw_bic.csv")
-    pd.DataFrame(data_array, columns=["d50", "ae_power_mV2", "grind_min", "trial", "reagent"]).to_csv(
+    data_array = build_shared_dataset(experiment=experiment, reagent=args.reagent, trial=args.trial, metric=metric)
+    dataset_path = os.path.join(args.output_dir, f"{experiment}_monotone_bernstein_dataset_raw_bic{out_suffix}.csv")
+    pd.DataFrame(data_array, columns=["particle_size", "ae_power_mV2", "grind_min", "trial", "reagent"]).to_csv(
         dataset_path, index=False
     )
 
@@ -221,21 +304,21 @@ def main():
         mask = data_array[:, 4] == current_reagent
         reagent_data = data_array[mask]
 
-        d50_vals = np.array(reagent_data[:, 0], dtype=float)
+        size_vals = np.array(reagent_data[:, 0], dtype=float)
         ae_vals = np.array(reagent_data[:, 1], dtype=float)
         trial_labels = np.array(reagent_data[:, 3], dtype=object)
 
         for direction in ["particle2ae", "ae2particle"]:
             if direction == "particle2ae":
-                x_data = d50_vals
+                x_data = size_vals
                 y_data = ae_vals
-                x_label = r"$D_{50}~(\mathrm{\mu m})$"
+                x_label = size_label
                 y_label = r"Total spectral power ($\mathrm{mV}^2$)"
             else:
                 x_data = ae_vals
-                y_data = d50_vals
+                y_data = size_vals
                 x_label = r"Total spectral power ($\mathrm{mV}^2$)"
-                y_label = r"$D_{50}~(\mathrm{\mu m})$"
+                y_label = size_label
 
             if args.constraint == "auto":
                 monotone = infer_monotone_direction(x_data, y_data)
@@ -292,7 +375,7 @@ def main():
             ).fit(x_data, y_data)
             model_path = os.path.join(
                 args.output_dir,
-                f"monotone_bernstein_model_bic_{direction}_{current_reagent}_{experiment}.joblib",
+                f"monotone_bernstein_model_bic_{direction}_{current_reagent}_{experiment}{out_suffix}.joblib",
             )
             save_model(
                 model_path,
@@ -317,6 +400,7 @@ def main():
                     "reagent": str(current_reagent),
                     "method": "monotone_bernstein_bic",
                     "selection_criterion": "bic",
+                    "metric": metric,
                     "rmse_train": float(np.sqrt(mean_squared_error(y_data, y_pred_train))),
                     "mae_train": float(mean_absolute_error(y_data, y_pred_train)),
                     "r_squared": float(r2_score(y_data, y_pred_train)),
@@ -338,7 +422,7 @@ def main():
 
             plot_path = os.path.join(
                 args.plot_output_dir,
-                f"{experiment}_monotone_bernstein_plot_bic_{direction}_{current_reagent}.png",
+                f"{experiment}_monotone_bernstein_plot_bic_{direction}_{current_reagent}{out_suffix}.png",
             )
             save_fit_plot(
                 x_data=x_data,
@@ -374,7 +458,7 @@ def main():
 
             plot_path = os.path.join(
                 args.validation_dir,
-                f"{experiment}_monotone_bernstein_bic_curve_{current_reagent}_{direction}.png",
+                f"{experiment}_monotone_bernstein_bic_curve_{current_reagent}_{direction}{out_suffix}.png",
             )
             save_bic_curve_plot(
                 curve_df=local_df,
@@ -389,43 +473,53 @@ def main():
             )
 
     curve_df = pd.DataFrame(curve_rows)
-    curve_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_bic_curve.csv")
+    curve_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_bic_curve{out_suffix}.csv")
     curve_df.to_csv(curve_path, index=False)
 
     summary_df = pd.DataFrame(summary_rows)
-    summary_path = os.path.join(args.validation_dir, f"{experiment}_monotone_bernstein_bic_selection_summary.csv")
+    summary_path = os.path.join(
+        args.validation_dir, f"{experiment}_monotone_bernstein_bic_selection_summary{out_suffix}.csv"
+    )
     summary_df.to_csv(summary_path, index=False)
 
     metrics_df = pd.DataFrame(metrics_rows)
-    metrics_path = os.path.join(args.output_dir, f"{experiment}_monotone_bernstein_metrics_both_directions_bic.csv")
+    if metric == "D50":
+        metrics_dir = args.metrics_output_root
+    else:
+        metrics_dir = os.path.join(args.metrics_output_root, "mean_and_mode", metric)
+    os.makedirs(metrics_dir, exist_ok=True)
+    metrics_path = os.path.join(metrics_dir, f"{experiment}_monotone_bernstein_metrics_both_directions_bic{out_suffix}.csv")
     metrics_df.to_csv(metrics_path, index=False)
 
-    exp3_psd_base = os.path.join("data", "powder_size_distribution", "exp3")
-    threshold_rows = []
-    targets_by_reagent = collect_exp3_targets_by_reagent(
-        base_path=exp3_psd_base,
-        reagents=sorted(p2ae_models.keys()),
-    )
-    for reagent, model in p2ae_models.items():
-        for target_d50 in targets_by_reagent.get(reagent, []):
-            ae_threshold = float(model.predict(np.array([float(target_d50)], dtype=float))[0])
-            threshold_rows.append(
-                {
-                    "Material": reagent,
-                    "Target_D50": int(target_d50),
-                    "AE_Threshold_mV2": ae_threshold,
-                    "Model": "monotone_bernstein_bic_particle2ae_exp2",
-                }
-            )
+    threshold_path = None
+    if metric == "D50":
+        exp3_psd_base = os.path.join("data", "powder_size_distribution", "exp3")
+        threshold_rows = []
+        targets_by_reagent = collect_exp3_targets_by_reagent(
+            base_path=exp3_psd_base,
+            reagents=sorted(p2ae_models.keys()),
+        )
+        for reagent, model in p2ae_models.items():
+            for target_d50 in targets_by_reagent.get(reagent, []):
+                ae_threshold = float(model.predict(np.array([float(target_d50)], dtype=float))[0])
+                threshold_rows.append(
+                    {
+                        "Material": reagent,
+                        "Target_D50": int(target_d50),
+                        "AE_Threshold_mV2": ae_threshold,
+                        "Model": "monotone_bernstein_bic_particle2ae_exp2",
+                    }
+                )
 
-    threshold_path = os.path.join(args.output_dir, "exp3_ae_thresholds_from_exp2_monotone_bernstein_bic.csv")
-    pd.DataFrame(threshold_rows).to_csv(threshold_path, index=False)
+        threshold_path = os.path.join(args.output_dir, "exp3_ae_thresholds_from_exp2_monotone_bernstein_bic.csv")
+        pd.DataFrame(threshold_rows).to_csv(threshold_path, index=False)
 
     print(f"Saved dataset: {dataset_path}")
     print(f"Saved metrics: {metrics_path}")
     print(f"Saved BIC curve: {curve_path}")
     print(f"Saved BIC selection summary: {summary_path}")
-    print(f"Saved exp3 AE thresholds: {threshold_path}")
+    if threshold_path is not None:
+        print(f"Saved exp3 AE thresholds: {threshold_path}")
 
 
 if __name__ == "__main__":
