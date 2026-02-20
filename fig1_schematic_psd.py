@@ -57,7 +57,7 @@ def main() -> None:
     p = argparse.ArgumentParser()
 
     # --- Defaults tuned for Fig.1 (D50 paper) ---
-    p.add_argument("--outdir", type=str, default="results")
+    p.add_argument("--outdir", type=str, default="results/paper_plots")
     p.add_argument("--basename", type=str, default="fig1_d50_schematic")
 
     # Slightly horizontal for Fig.1 right panel

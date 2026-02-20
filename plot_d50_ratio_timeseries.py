@@ -63,7 +63,7 @@ def main():
     parser.add_argument(
         "--out-dir",
         type=str,
-        default=os.path.join("results", "discussion", "d50_ratio_timeseries"),
+        default=os.path.join("results", "paper_plots", "discussion", "d50_ratio_timeseries"),
     )
     args = parser.parse_args()
 

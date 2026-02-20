@@ -1027,7 +1027,7 @@ def main():
     reagent_filter = None if args.reagent == "all" else args.reagent
     trial_filter = None if args.trial == "all" else args.trial
     metrics_paths = []
-    output_root = os.path.join("results", "SI_figs", "mean_and_mode")
+    output_root = os.path.join("results", "SI_plots", "mean_and_mode")
 
     for metric in args.metrics:
         output_dir = os.path.join(output_root, metric)

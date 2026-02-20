@@ -194,7 +194,7 @@ if __name__ == '__main__':
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     CACHE_FILE = os.path.join(SCRIPT_DIR, 'ae_power_cache.json')
 
-    VARIANCE_OUTPUT_DIR = os.path.join('results', 'discussion', 'variance_analysis')
+    VARIANCE_OUTPUT_DIR = os.path.join('results', 'paper_plots', 'discussion', 'variance_analysis')
 
     # ------------------------------------------------------------
     # Plot settings

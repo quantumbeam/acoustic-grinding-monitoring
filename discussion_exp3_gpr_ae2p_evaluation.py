@@ -27,9 +27,9 @@ plt.rcParams.update(
     }
 )
 
-RESULTS_DIR = "results"
+RESULTS_DIR = os.path.join("results", "paper_plots")
 DISCUSSION_DIR = os.path.join(RESULTS_DIR, "discussion")
-SI_DIR = os.path.join(RESULTS_DIR, "SI")
+SI_DIR = os.path.join("results", "SI_plots")
 DISCUSSION_MODEL_DIR = os.path.join(DISCUSSION_DIR, "models", "gpr")
 INPUT_CSV_DEFAULT = os.path.join(DISCUSSION_DIR, "exp3_gpr_evaluation_detail.csv")
 SI_DETAIL_CSV_DEFAULT = os.path.join(SI_DIR, "exp3_gpr_evaluation_detail.csv")

@@ -66,7 +66,7 @@ def get_d50(file_path):
 # ============================================================
 # Configuration
 # ============================================================
-RESULTS_DIR = 'results'
+RESULTS_DIR = 'results/paper_plots'
 EXPERIMENT = 'exp3'
 PSD_BASE_PATH = os.path.join('data/powder_size_distribution', EXPERIMENT)
 AE_BASE_PATH = os.path.join('data/ae', EXPERIMENT)

@@ -11,7 +11,7 @@ plt.style.use(['science', 'ieee', 'no-latex'])
 
 # ================== 設定 ==================
 experiment_name_list = ["force", "spr"]
-png_output_dir = "results/discussion/force_and_speed_dependene"
+png_output_dir = "results/paper_plots/discussion/force_and_speed_dependene"
 # 移動平均の点数
 moving_average_window = 4
 # FFT processing parameters (match fft_processing defaults)

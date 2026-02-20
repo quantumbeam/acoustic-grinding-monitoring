@@ -10,7 +10,7 @@ import pandas as pd
 EXPERIMENT = "exp2"
 TRIALS = ["1st", "2nd", "3rd"]
 GRIND_MINS = [3, 5, 7, 10, 15, 20, 25]
-BASE_OUTPUT_DIR = os.path.join("results", "SI_figs", "PSD")
+BASE_OUTPUT_DIR = os.path.join("results", "SI_plots", "PSD")
 FIG_WIDTH_IN = 7.2
 FIG_HEIGHT_IN = 9.6
 AX_LABEL_FONTSIZE = 15

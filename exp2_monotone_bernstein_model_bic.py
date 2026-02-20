@@ -249,17 +249,17 @@ def main():
     parser.add_argument("--degree-candidates", type=str, default="2,3,4,5,6,7,8,9,10,11,12,13,14,15")
     parser.add_argument("--lambda-candidates", type=str, default="0")
     parser.add_argument("--cv-mode", type=str, default="group", choices=["none", "group"])
-    parser.add_argument("--output-dir", type=str, default="results")
-    parser.add_argument("--plot-output-dir", type=str, default="results")
+    parser.add_argument("--output-dir", type=str, default="results/paper_plots")
+    parser.add_argument("--plot-output-dir", type=str, default="results/paper_plots")
     parser.add_argument(
         "--validation-dir",
         type=str,
-        default="results/SI_figs/model_validation/D50",
+        default="results/SI_plots/model_validation/D50",
     )
     parser.add_argument(
         "--metrics-output-root",
         type=str,
-        default="results/SI_figs",
+        default="results/SI_plots",
     )
     args = parser.parse_args()
     if args.metric == "all":

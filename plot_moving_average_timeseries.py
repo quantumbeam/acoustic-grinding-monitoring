@@ -97,7 +97,7 @@ def main():
     parser.add_argument("--trial", type=str, default="all")
     parser.add_argument("--grind-min", type=int, default=25)
     parser.add_argument("--window", type=int, default=4)
-    parser.add_argument("--out-dir", type=str, default="results")
+    parser.add_argument("--out-dir", type=str, default="results/paper_plots")
     parser.add_argument("--dpi", type=int, default=300)
     args = parser.parse_args()
 
