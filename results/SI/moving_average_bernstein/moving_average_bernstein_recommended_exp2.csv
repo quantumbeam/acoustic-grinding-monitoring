@@ -1,0 +1,5 @@
+reagent,window_size,rmse,mae,r2,n_samples,model_path,model_selection,rmse_tol
+Citricacid,4,39.947301516196205,25.745027509599076,0.9842750433692838,21,results/monotone_bernstein_model_bic_particle2ae_Citricacid_exp2.joblib,bic,0.0
+MSG,5,220.55627763754575,174.99581868884076,0.8576315651597487,18,results/monotone_bernstein_model_bic_particle2ae_MSG_exp2.joblib,bic,0.0
+NaCl,5,10.458077992443854,7.829623164211605,0.9564697027476291,18,results/monotone_bernstein_model_bic_particle2ae_NaCl_exp2.joblib,bic,0.0
+all,5,129.8436930737184,70.38836759034147,0.9378963423638298,54,results/monotone_bernstein_model_bic_particle2ae_Citricacid_exp2.joblib;results/monotone_bernstein_model_bic_particle2ae_MSG_exp2.joblib;results/monotone_bernstein_model_bic_particle2ae_NaCl_exp2.joblib,bic(per-reagent),0.0
