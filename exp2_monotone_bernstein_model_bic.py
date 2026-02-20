@@ -254,7 +254,7 @@ def main():
     parser.add_argument(
         "--validation-dir",
         type=str,
-        default="results/model_validation",
+        default="results/SI_figs/model_validation/D50",
     )
     parser.add_argument(
         "--metrics-output-root",
