@@ -5,6 +5,9 @@ import joblib
 import re
 import glob
 import json
+import sys
+import subprocess
+import argparse
 from fft_processing import calculate_fft_power
 
 # ============================================================
@@ -67,6 +70,13 @@ def get_d50(file_path):
 # Configuration
 # ============================================================
 RESULTS_DIR = 'results/paper_plots'
+MODEL_DIR_CANDIDATES = [
+    RESULTS_DIR,
+    os.path.join('model_comparison', 'gpr'),
+]
+EXP2_GPR_DIR = os.path.join('model_comparison', 'gpr')
+EXP2_DATASET_PATH = os.path.join(EXP2_GPR_DIR, 'exp2_gpr_dataset_raw.csv')
+EXP2_COMMON_AE_SUMMARY_PATH = os.path.join(EXP2_GPR_DIR, 'exp2_common_ae_last_summary.csv')
 EXPERIMENT = 'exp3'
 PSD_BASE_PATH = os.path.join('data/powder_size_distribution', EXPERIMENT)
 AE_BASE_PATH = os.path.join('data/ae', EXPERIMENT)
@@ -90,6 +100,16 @@ MODEL_NAME_MAP = {
 K_SIGMA_AE = 0.0  # Method A threshold parameter
 
 os.makedirs(RESULTS_DIR, exist_ok=True)
+
+parser = argparse.ArgumentParser(
+    description="Unified exp3 evaluation with optional auto-training of exp2 GPR models."
+)
+parser.add_argument(
+    "--force-retrain-exp2-models",
+    action="store_true",
+    help="Force rerun model_comparison/exp2_gpr_model.py before exp3 evaluation.",
+)
+args = parser.parse_args()
 
 print("--- Unified Evaluation: Method P2AE (Threshold) & Method AE2P (Estimation) ---")
 
@@ -133,9 +153,87 @@ def get_cached_ae_power(file_path):
     CACHE_DIRTY = True
     return float(p)
 
+
+def find_model_path(model_tag: str, model_key: str, experiment: str = "exp2"):
+    filename = f"gpr_model_{model_tag}_{model_key}_{experiment}.joblib"
+    for base_dir in MODEL_DIR_CANDIDATES:
+        path = os.path.join(base_dir, filename)
+        if os.path.exists(path):
+            return path
+    return None
+
+
+def ensure_exp2_gpr_models(required_model_keys, force_retrain=False):
+    if force_retrain:
+        trainer_script = os.path.join(SCRIPT_DIR, "model_comparison", "exp2_gpr_model.py")
+        print("Force retrain enabled. Running exp2 GPR training script...")
+        subprocess.run([sys.executable, trainer_script], check=True)
+
+    missing = []
+    for model_key in sorted(set(required_model_keys)):
+        for model_tag in (MODEL_A_TAG, MODEL_B_TAG):
+            if find_model_path(model_tag, model_key, experiment="exp2") is None:
+                missing.append((model_tag, model_key))
+
+    if not missing:
+        return
+
+    trainer_script = os.path.join(SCRIPT_DIR, "model_comparison", "exp2_gpr_model.py")
+    print("Missing exp2 GPR models detected. Training automatically...")
+    subprocess.run([sys.executable, trainer_script], check=True)
+
+    unresolved = []
+    for model_tag, model_key in missing:
+        if find_model_path(model_tag, model_key, experiment="exp2") is None:
+            unresolved.append((model_tag, model_key))
+    if unresolved:
+        unresolved_str = ", ".join(f"{tag}:{key}" for tag, key in unresolved)
+        raise FileNotFoundError(f"Failed to prepare required exp2 GPR models: {unresolved_str}")
+
+
+def refresh_exp2_common_ae_last_summary():
+    os.makedirs(EXP2_GPR_DIR, exist_ok=True)
+
+    need_trainer = False
+    if not os.path.exists(EXP2_DATASET_PATH):
+        need_trainer = True
+    else:
+        try:
+            exp2_df_preview = pd.read_csv(EXP2_DATASET_PATH, nrows=5)
+            if "Common_AE_Last_mV2" not in exp2_df_preview.columns:
+                need_trainer = True
+        except Exception:
+            need_trainer = True
+
+    if need_trainer:
+        trainer_script = os.path.join(SCRIPT_DIR, "model_comparison", "exp2_gpr_model.py")
+        print("Preparing exp2 dataset/summary CSV via exp2 GPR training script...")
+        subprocess.run([sys.executable, trainer_script], check=True)
+
+    exp2_df = pd.read_csv(EXP2_DATASET_PATH)
+    if "Common_AE_Last_mV2" not in exp2_df.columns:
+        raise KeyError(f"Missing column 'Common_AE_Last_mV2' in {EXP2_DATASET_PATH}")
+    exp2_df["Common_AE_Last_mV2"] = pd.to_numeric(exp2_df["Common_AE_Last_mV2"], errors="coerce")
+    exp2_df["grind_min"] = pd.to_numeric(exp2_df["grind_min"], errors="coerce")
+
+    exp2_summary_df = (
+        exp2_df.groupby(["reagent", "grind_min"], dropna=False)["Common_AE_Last_mV2"]
+        .mean()
+        .round(2)
+        .reset_index(name="num_Common_AE_Last_mV2_mu_trial")
+        .sort_values(["reagent", "grind_min"], kind="stable")
+    )
+    exp2_summary_df.to_csv(EXP2_COMMON_AE_SUMMARY_PATH, index=False)
+    print(f"Saved exp2 common AE-last summary: {EXP2_COMMON_AE_SUMMARY_PATH}")
+
 # Get materials and sort them naturally
 materials = [os.path.basename(d) for d in glob.glob(os.path.join(PSD_BASE_PATH, '*')) if os.path.isdir(d)]
 materials.sort(key=natural_keys)
+materials = [m for m in materials if not m.endswith("_gpr")]
+
+required_model_keys = [MODEL_NAME_MAP.get(m, m) for m in materials]
+ensure_exp2_gpr_models(required_model_keys, force_retrain=args.force_retrain_exp2_models)
+refresh_exp2_common_ae_last_summary()
 
 rows = []
 
@@ -143,15 +241,15 @@ for material in materials:
     model_key = MODEL_NAME_MAP.get(material, material)
     
     # 1. Load Forward Model for Method P2AE (Target -> AE Threshold)
-    model_a_path = os.path.join(RESULTS_DIR, f"gpr_model_{MODEL_A_TAG}_{model_key}_exp2.joblib")
-    if not os.path.exists(model_a_path):
+    model_a_path = find_model_path(MODEL_A_TAG, model_key, experiment="exp2")
+    if model_a_path is None:
         print(f"Warning: Method P2AE model not found for {material}")
         continue
     gpr_A = joblib.load(model_a_path)
 
     # 2. Load Inverse Model for Method AE2P (AE -> D50 Estimation)
-    model_b_path = os.path.join(RESULTS_DIR, f"gpr_model_{MODEL_B_TAG}_{model_key}_exp2.joblib")
-    if not os.path.exists(model_b_path):
+    model_b_path = find_model_path(MODEL_B_TAG, model_key, experiment="exp2")
+    if model_b_path is None:
         print(f"Warning: Method AE2P model not found for {material}")
         continue
     gpr_B = joblib.load(model_b_path)
@@ -291,6 +389,7 @@ summary_cols = [
     "AE2P_Est_Error_In_GPR_Range",
     "num_AE2P_mu_GPR",
     "num_AE2P_sigma_GPR",
+    "num_Common_AE_Last_mV2_mu_trial",
     "num_Common_mu_trial",
     "num_Common_sigma_trial",
 ]
@@ -337,6 +436,7 @@ summary_rows = []
 
 for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
     # 1. Measured Stats (Common)
+    mu_ae_last = g["Common_AE_Last_mV2"].mean()
     mu_trial = g["Common_Measured_D50"].mean()
     sigma_trial = g["Common_Measured_D50"].std(ddof=1)
     
@@ -373,6 +473,7 @@ for (mat, tgt), g in df.groupby(["Material", "Target_D50"]):
         # Raw numeric values for plotting if needed
         "num_AE2P_mu_GPR": mu_gpr,
         "num_AE2P_sigma_GPR": mean_sigma_gpr,
+        "num_Common_AE_Last_mV2_mu_trial": round(float(mu_ae_last), 2) if pd.notnull(mu_ae_last) else np.nan,
         "num_Common_mu_trial": mu_trial,
         "num_Common_sigma_trial": sigma_trial
     })

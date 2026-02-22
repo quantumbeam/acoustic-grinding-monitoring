@@ -258,9 +258,10 @@ if __name__ == '__main__':
             continue
 
         final_ae_power = float(smoothed[-1])
+        final_ae_last_power = float(ae_power_mV2[-1])
 
-        # Store (d50, ae, grind_min, trial, reagent)
-        collected_data.append((float(d50), final_ae_power, grind_min, trial, reagent))
+        # Store (d50, ae_smoothed_last, grind_min, trial, reagent, ae_raw_last)
+        collected_data.append((float(d50), final_ae_power, grind_min, trial, reagent, final_ae_last_power))
 
     if not collected_data:
         print("No matched data points found.")
@@ -278,10 +279,23 @@ if __name__ == '__main__':
     dataset_path = os.path.join(MODEL_DIR, f"{EXPERIMENT}_gpr_dataset_raw.csv")
     dataset_df = pd.DataFrame(
         data_array,
-        columns=["d50", "ae_power_mV2", "grind_min", "trial", "reagent"]
+        columns=["d50", "ae_power_mV2", "grind_min", "trial", "reagent", "Common_AE_Last_mV2"]
     )
+    dataset_df["Common_AE_Last_mV2"] = pd.to_numeric(dataset_df["Common_AE_Last_mV2"], errors="coerce")
+    dataset_df["grind_min"] = pd.to_numeric(dataset_df["grind_min"], errors="coerce")
     dataset_df.to_csv(dataset_path, index=False)
     print(f"Saved dataset: {dataset_path}")
+
+    exp2_common_ae_summary_path = os.path.join(MODEL_DIR, f"{EXPERIMENT}_common_ae_last_summary.csv")
+    exp2_common_ae_summary_df = (
+        dataset_df.groupby(["reagent", "grind_min"], dropna=False)["Common_AE_Last_mV2"]
+        .mean()
+        .round(2)
+        .reset_index(name="num_Common_AE_Last_mV2_mu_trial")
+        .sort_values(["reagent", "grind_min"], kind="stable")
+    )
+    exp2_common_ae_summary_df.to_csv(exp2_common_ae_summary_path, index=False)
+    print(f"Saved exp2 common AE-last summary: {exp2_common_ae_summary_path}")
 
     markers = {'1st': 'o', '2nd': 'x', '3rd': '^'}
     colors = {'1st': 'black', '2nd': 'red', '3rd': 'blue'}

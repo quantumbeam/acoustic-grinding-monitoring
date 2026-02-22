@@ -1,7 +1,7 @@
 direction,reagent,r_squared,average_variance,mpiw,nmpiw,kernel_optimized,model_path
-particle2ae,Citricacid,0.9898910532119485,2269.216743369029,183.5248051758585,0.5761055410018724,1.35**2 * RBF(length_scale=95.8) + WhiteKernel(noise_level=0.0129),model_comparison/gpr/gpr_model_particle2ae_Citricacid_exp2.joblib
-ae2particle,Citricacid,0.9904010342036694,127.6085084390981,42.9636918482004,0.6217220839982817,1.31**2 * RBF(length_scale=334) + WhiteKernel(noise_level=0.0127),model_comparison/gpr/gpr_model_ae2particle_Citricacid_exp2.joblib
-particle2ae,MSG,0.9766043469016447,23275.06971181713,589.5035281732027,0.8286219986288687,1.25**2 * RBF(length_scale=89.4) + WhiteKernel(noise_level=0.0305),model_comparison/gpr/gpr_model_particle2ae_MSG_exp2.joblib
-ae2particle,MSG,0.986196350956022,199.5421555205622,54.85829753005816,0.6013131250282392,2.69**2 * RBF(length_scale=1.93e+03) + WhiteKernel(noise_level=0.0167),model_comparison/gpr/gpr_model_ae2particle_MSG_exp2.joblib
-particle2ae,NaCl,0.954724402329469,226.37428521960194,58.729111728169386,1.0144616889128673,1.3**2 * RBF(length_scale=124) + WhiteKernel(noise_level=0.054),model_comparison/gpr/gpr_model_particle2ae_NaCl_exp2.joblib
-ae2particle,NaCl,0.9731829526995254,239.67939587533135,59.848123113071665,0.8905380925292112,1.09**2 * RBF(length_scale=51.6) + WhiteKernel(noise_level=0.0359),model_comparison/gpr/gpr_model_ae2particle_NaCl_exp2.joblib
+particle2ae,Citricacid,0.9898910525848081,2269.2164285135964,183.52479337162666,0.5761055039470265,1.35**2 * RBF(length_scale=95.8) + WhiteKernel(noise_level=0.0129),model_comparison/gpr/gpr_model_particle2ae_Citricacid_exp2.joblib
+ae2particle,Citricacid,0.9904010342397297,127.6085044429755,42.963691110282305,0.6217220733199634,1.31**2 * RBF(length_scale=334) + WhiteKernel(noise_level=0.0127),model_comparison/gpr/gpr_model_ae2particle_Citricacid_exp2.joblib
+particle2ae,MSG,0.8926343495001247,93339.4686164866,1196.9891411440526,1.4573576827107482,2.67**2 * RBF(length_scale=430) + WhiteKernel(noise_level=0.122),model_comparison/gpr/gpr_model_particle2ae_MSG_exp2.joblib
+ae2particle,MSG,0.9184253562716368,1217.0826270776442,136.4162426787411,1.3585648932261583,1.22**2 * RBF(length_scale=1.32e+03) + WhiteKernel(noise_level=0.0973),model_comparison/gpr/gpr_model_ae2particle_MSG_exp2.joblib
+particle2ae,NaCl,0.9547244025698316,226.3742916664206,58.72911254640072,1.0144617030466472,1.3**2 * RBF(length_scale=124) + WhiteKernel(noise_level=0.054),model_comparison/gpr/gpr_model_particle2ae_NaCl_exp2.joblib
+ae2particle,NaCl,0.9731829360233973,239.67999917109125,59.84820018975806,0.8905392394277556,1.09**2 * RBF(length_scale=51.6) + WhiteKernel(noise_level=0.0359),model_comparison/gpr/gpr_model_ae2particle_NaCl_exp2.joblib
