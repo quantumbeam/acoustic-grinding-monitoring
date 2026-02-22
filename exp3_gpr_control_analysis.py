@@ -77,6 +77,7 @@ MODEL_DIR_CANDIDATES = [
 EXP2_GPR_DIR = os.path.join('model_comparison', 'gpr')
 EXP2_DATASET_PATH = os.path.join(EXP2_GPR_DIR, 'exp2_gpr_dataset_raw.csv')
 EXP2_COMMON_AE_SUMMARY_PATH = os.path.join(EXP2_GPR_DIR, 'exp2_common_ae_last_summary.csv')
+EXP2_COMMON_AE_SUMMARY_PAPER_PATH = os.path.join(RESULTS_DIR, 'exp2_common_ae_last_summary.csv')
 EXPERIMENT = 'exp3'
 PSD_BASE_PATH = os.path.join('data/powder_size_distribution', EXPERIMENT)
 AE_BASE_PATH = os.path.join('data/ae', EXPERIMENT)
@@ -225,6 +226,8 @@ def refresh_exp2_common_ae_last_summary():
     )
     exp2_summary_df.to_csv(EXP2_COMMON_AE_SUMMARY_PATH, index=False)
     print(f"Saved exp2 common AE-last summary: {EXP2_COMMON_AE_SUMMARY_PATH}")
+    exp2_summary_df.to_csv(EXP2_COMMON_AE_SUMMARY_PAPER_PATH, index=False)
+    print(f"Saved exp2 common AE-last summary: {EXP2_COMMON_AE_SUMMARY_PAPER_PATH}")
 
 # Get materials and sort them naturally
 materials = [os.path.basename(d) for d in glob.glob(os.path.join(PSD_BASE_PATH, '*')) if os.path.isdir(d)]
