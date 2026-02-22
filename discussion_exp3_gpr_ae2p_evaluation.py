@@ -260,6 +260,120 @@ def train_exp2_gpr_models(model_dir: str) -> None:
     print(f"Saved model metrics to: {metrics_path}")
 
 
+def export_paper_plots_ae2p_compat(detail_df: pd.DataFrame) -> None:
+    """Export AE2P-only compatibility CSVs under results/paper_plots."""
+    if detail_df.empty:
+        return
+
+    os.makedirs(RESULTS_DIR, exist_ok=True)
+
+    detail_export = detail_df.copy()
+    detail_export["Common_Measured_Mean"] = detail_export["Common_Measured_D50"]
+    detail_export["P2AE_Total_Deviation"] = np.nan
+    detail_export["P2AE_Total_Deviation_Percent"] = np.nan
+    detail_export["AE2P_GPR_Prediction"] = detail_export.apply(
+        lambda row: (
+            f"{row['AE2P_Predicted_D50']:.2f} ± {row['AE2P_Predicted_Sigma']:.2f}"
+            if pd.notnull(row["AE2P_Predicted_D50"]) and pd.notnull(row["AE2P_Predicted_Sigma"])
+            else "N/A"
+        ),
+        axis=1,
+    )
+    detail_export["num_AE2P_mu_GPR"] = detail_export["AE2P_Predicted_D50"]
+    detail_export["num_AE2P_sigma_GPR"] = detail_export["AE2P_Predicted_Sigma"]
+    detail_export["num_Common_AE_Last_mV2_mu_trial"] = detail_export["Common_AE_Last_mV2"]
+    detail_export["num_Common_mu_trial"] = detail_export["Common_Measured_D50"]
+    detail_export["num_Common_sigma_trial"] = np.nan
+
+    detail_cols = [
+        "Material",
+        "Trial",
+        "Target_D50",
+        "Common_Measured_Mean",
+        "P2AE_Total_Deviation",
+        "P2AE_Total_Deviation_Percent",
+        "AE2P_GPR_Prediction",
+        "AE2P_Estimation_Error",
+        "AE2P_Estimation_Error_Percent",
+        "AE2P_Est_Error_In_GPR_Range",
+        "num_AE2P_mu_GPR",
+        "num_AE2P_sigma_GPR",
+        "num_Common_AE_Last_mV2_mu_trial",
+        "num_Common_mu_trial",
+        "num_Common_sigma_trial",
+        "Common_Measured_D50",
+        "Common_AE_Last_mV2",
+        "AE2P_Predicted_D50",
+        "AE2P_Predicted_Sigma",
+    ]
+    detail_cols = [c for c in detail_cols if c in detail_export.columns]
+    detail_export = detail_export[detail_cols + [c for c in detail_export.columns if c not in detail_cols]]
+    detail_out = os.path.join(RESULTS_DIR, "exp3_evaluation_detail.csv")
+    detail_export.to_csv(detail_out, index=False)
+    print(f"Saved AE2P-only compatibility detail to: {detail_out}")
+
+    summary_rows = []
+    for (mat, tgt), g in detail_df.groupby(["Material", "Target_D50"]):
+        mu_ae_last = g["Common_AE_Last_mV2"].mean()
+        mu_trial = g["Common_Measured_D50"].mean()
+        sigma_trial = g["Common_Measured_D50"].std(ddof=1)
+
+        mu_gpr = g["AE2P_Predicted_D50"].mean()
+        mean_sigma_gpr = g["AE2P_Predicted_Sigma"].mean()
+        mean_est_error = g["AE2P_Estimation_Error"].mean()
+        mean_est_error_pct = g["AE2P_Estimation_Error_Percent"].mean()
+        ae2p_in_gpr_range = None
+        if pd.notnull(mean_est_error) and pd.notnull(mean_sigma_gpr):
+            ae2p_in_gpr_range = abs(mean_est_error) <= mean_sigma_gpr
+
+        meas_str = f"{mu_trial:.2f} ± {sigma_trial:.2f}" if pd.notnull(mu_trial) else "N/A"
+        gpr_str = f"{mu_gpr:.2f} ± {mean_sigma_gpr:.2f}" if pd.notnull(mu_gpr) else "N/A"
+
+        summary_rows.append(
+            {
+                "Material": mat,
+                "Target_D50": tgt,
+                "Common_Measured_Mean": meas_str,
+                "P2AE_Total_Deviation": np.nan,
+                "P2AE_Total_Deviation_Percent": np.nan,
+                "AE2P_GPR_Prediction": gpr_str,
+                "AE2P_Estimation_Error": mean_est_error,
+                "AE2P_Estimation_Error_Percent": mean_est_error_pct,
+                "AE2P_Est_Error_In_GPR_Range": ae2p_in_gpr_range,
+                "num_AE2P_mu_GPR": mu_gpr,
+                "num_AE2P_sigma_GPR": mean_sigma_gpr,
+                "num_Common_AE_Last_mV2_mu_trial": round(float(mu_ae_last), 2)
+                if pd.notnull(mu_ae_last)
+                else np.nan,
+                "num_Common_mu_trial": mu_trial,
+                "num_Common_sigma_trial": sigma_trial,
+            }
+        )
+
+    summary_df = pd.DataFrame(summary_rows)
+    summary_cols = [
+        "Material",
+        "Target_D50",
+        "Common_Measured_Mean",
+        "P2AE_Total_Deviation",
+        "P2AE_Total_Deviation_Percent",
+        "AE2P_GPR_Prediction",
+        "AE2P_Estimation_Error",
+        "AE2P_Estimation_Error_Percent",
+        "AE2P_Est_Error_In_GPR_Range",
+        "num_AE2P_mu_GPR",
+        "num_AE2P_sigma_GPR",
+        "num_Common_AE_Last_mV2_mu_trial",
+        "num_Common_mu_trial",
+        "num_Common_sigma_trial",
+    ]
+    summary_cols = [c for c in summary_cols if c in summary_df.columns]
+    summary_df = summary_df[summary_cols + [c for c in summary_df.columns if c not in summary_cols]]
+    summary_out = os.path.join(RESULTS_DIR, "exp3_evaluation_summary_for_table.csv")
+    summary_df.to_csv(summary_out, index=False)
+    print(f"Saved AE2P-only compatibility summary to: {summary_out}")
+
+
 def collect_exp3_materials() -> list[str]:
     psd_base_path = os.path.join("data", "powder_size_distribution", "exp3")
     materials = [
@@ -402,6 +516,7 @@ def build_exp3_gpr_detail(model_dir: str, output_csv: str) -> None:
     detail_df.to_csv(output_csv, index=False)
     os.makedirs(SI_DIR, exist_ok=True)
     detail_df.to_csv(SI_DETAIL_CSV_DEFAULT, index=False)
+    export_paper_plots_ae2p_compat(detail_df)
     if cache_dirty:
         save_ae_power_cache(CACHE_FILE, cache)
     print(f"Saved discussion exp3 detail to: {output_csv}")
@@ -459,6 +574,8 @@ def main():
     if missing:
         print(f"Missing required columns in {input_csv}: {missing}")
         return
+
+    export_paper_plots_ae2p_compat(df)
 
     plot_df = df.copy()
     plot_df["AE2P_Measured_Error"] = (
