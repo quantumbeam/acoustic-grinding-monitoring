@@ -3,6 +3,9 @@ import glob
 import json
 import os
 import re
+import shutil
+import subprocess
+import sys
 from math import erf, sqrt
 
 import joblib
@@ -13,6 +16,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import ConstantKernel, RBF, WhiteKernel
 
 from fft_processing import calculate_fft_power
+from monotone_bernstein import load_model
 
 # Match figure typography to other discussion plots
 plt.rcParams.update(
@@ -30,7 +34,7 @@ plt.rcParams.update(
 RESULTS_DIR = os.path.join("results", "paper_plots")
 DISCUSSION_DIR = os.path.join(RESULTS_DIR, "discussion")
 SI_DIR = os.path.join("results", "SI_plots")
-DISCUSSION_MODEL_DIR = os.path.join(DISCUSSION_DIR, "models", "gpr")
+DISCUSSION_MODEL_DIR = RESULTS_DIR
 INPUT_CSV_DEFAULT = os.path.join(DISCUSSION_DIR, "exp3_gpr_evaluation_detail.csv")
 SI_DETAIL_CSV_DEFAULT = os.path.join(SI_DIR, "exp3_gpr_evaluation_detail.csv")
 M_BOUNDARY = 1.96
@@ -39,6 +43,9 @@ MOVING_AVG_WINDOW = 4
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CACHE_FILE = os.path.join(SCRIPT_DIR, "ae_power_cache.json")
+MONO_BERNSTEIN_BIC_TRAINER = os.path.join(
+    SCRIPT_DIR, "exp2_monotone_bernstein_model_bic.py"
+)
 
 PLOT_LABEL_MAP = {
     "MSG": "MSG",
@@ -136,17 +143,16 @@ def get_cached_ae_power(cache: dict, file_path: str) -> tuple[float | None, bool
     return float(p), True
 
 
-def fit_gpr_and_save(X_data: np.ndarray, y_data: np.ndarray, model_path: str, n_restarts: int = 10):
+def fit_residual_gp(x_data: np.ndarray, residual: np.ndarray, n_restarts: int = 10):
     kernel = ConstantKernel(1.0) * RBF(length_scale=1.0) + WhiteKernel(noise_level=1.0)
-    gpr = GaussianProcessRegressor(
+    gp = GaussianProcessRegressor(
         kernel=kernel,
         alpha=1e-10,
         n_restarts_optimizer=n_restarts,
-        normalize_y=True,
+        normalize_y=False,
     )
-    gpr.fit(X_data, y_data)
-    joblib.dump(gpr, model_path)
-    return gpr
+    gp.fit(np.asarray(x_data, dtype=float).reshape(-1, 1), np.asarray(residual, dtype=float).reshape(-1))
+    return gp
 
 
 def build_exp2_dataset(cache: dict) -> tuple[np.ndarray, bool]:
@@ -168,7 +174,6 @@ def build_exp2_dataset(cache: dict) -> tuple[np.ndarray, bool]:
 
         reagent = path_parts[-3]
         trial = path_parts[-2]
-
         d50 = get_d50(psd_file)
         if d50 is None:
             continue
@@ -176,13 +181,8 @@ def build_exp2_dataset(cache: dict) -> tuple[np.ndarray, bool]:
         match = re.search(r"(grind\d+min)", os.path.basename(psd_file))
         if not match:
             continue
-
         grind_key = match.group(1)
-        grind_match = re.search(r"grind(\d+)min", grind_key)
-        if not grind_match:
-            continue
 
-        grind_min = float(grind_match.group(1))
         ae_session_path = os.path.join(ae_base_path, reagent, trial)
         ae_files = sorted(glob.glob(os.path.join(ae_session_path, f"*{grind_key}*.csv")))
         if not ae_files:
@@ -194,70 +194,89 @@ def build_exp2_dataset(cache: dict) -> tuple[np.ndarray, bool]:
             cache_dirty = cache_dirty or updated
             if p is not None:
                 ae_power_timeseries.append(float(p))
-
         if len(ae_power_timeseries) < MOVING_AVG_WINDOW:
             continue
 
-        ae_power_mV2 = np.array(ae_power_timeseries, dtype=float) * AE_SCALE_TO_MV2
+        ae_power_mV2 = np.asarray(ae_power_timeseries, dtype=float) * AE_SCALE_TO_MV2
         smoothed = moving_average(ae_power_mV2, window_size=MOVING_AVG_WINDOW)
         if smoothed.size == 0:
             continue
 
         final_ae_power = float(smoothed[-1])
-        collected_data.append((float(d50), final_ae_power, grind_min, trial, reagent))
+        collected_data.append((float(d50), final_ae_power, trial, reagent))
 
     if not collected_data:
         return np.array([], dtype=object), cache_dirty
-
     return np.array(collected_data, dtype=object), cache_dirty
 
 
-def train_exp2_gpr_models(model_dir: str) -> None:
+def train_exp2_monotone_bernstein_bic_models(model_dir: str) -> None:
     os.makedirs(model_dir, exist_ok=True)
-    os.makedirs(DISCUSSION_DIR, exist_ok=True)
+    if not os.path.exists(MONO_BERNSTEIN_BIC_TRAINER):
+        raise FileNotFoundError(f"Trainer script not found: {MONO_BERNSTEIN_BIC_TRAINER}")
 
+    print("Training exp2 monotone Bernstein BIC models (ae2p + p2ae)...")
+    subprocess.run([sys.executable, MONO_BERNSTEIN_BIC_TRAINER], check=True)
+
+    default_model_dir = RESULTS_DIR
+    if norm_path(model_dir) == norm_path(default_model_dir):
+        return
+
+    for reagent in EXP2_TRAIN_REAGENTS:
+        for direction in ("ae2particle", "particle2ae"):
+            filename = f"monotone_bernstein_model_bic_{direction}_{reagent}_exp2.joblib"
+            src = os.path.join(default_model_dir, filename)
+            dst = os.path.join(model_dir, filename)
+            if os.path.exists(src):
+                shutil.copy2(src, dst)
+
+
+def load_bic_ae2p_mean_models(model_dir: str) -> dict[str, object]:
+    models = {}
+    for reagent in EXP2_TRAIN_REAGENTS:
+        model_path = os.path.join(model_dir, f"monotone_bernstein_model_bic_ae2particle_{reagent}_exp2.joblib")
+        reg, _extra = load_model(model_path)
+        models[reagent] = reg
+    return models
+
+
+def build_ae2p_residual_gp_models_from_bic(model_dir: str) -> dict[str, GaussianProcessRegressor]:
     cache = load_ae_power_cache(CACHE_FILE)
     data_array, cache_dirty = build_exp2_dataset(cache)
     if cache_dirty:
         save_ae_power_cache(CACHE_FILE, cache)
-
     if data_array.size == 0:
-        raise RuntimeError("No EXP2 matched data points found. Could not train GPR models.")
+        raise RuntimeError("No EXP2 matched data points found for AE2P residual GP fitting.")
 
-    dataset_path = os.path.join(DISCUSSION_DIR, "exp2_gpr_dataset_raw_discussion.csv")
-    pd.DataFrame(
-        data_array,
-        columns=["d50", "ae_power_mV2", "grind_min", "trial", "reagent"],
-    ).to_csv(dataset_path, index=False)
+    bic_mean_models = load_bic_ae2p_mean_models(model_dir)
+    residual_gp_models: dict[str, GaussianProcessRegressor] = {}
 
-    metrics_rows = []
-    for current_reagent in np.unique(data_array[:, 4]):
-        mask = data_array[:, 4] == current_reagent
+    for reagent in EXP2_TRAIN_REAGENTS:
+        mask = data_array[:, 3] == reagent
         reagent_data = data_array[mask]
-        d50_vals = np.array(reagent_data[:, 0], dtype=float)
-        ae_vals = np.array(reagent_data[:, 1], dtype=float)
+        if reagent_data.size == 0:
+            continue
+        d50_vals = np.asarray(reagent_data[:, 0], dtype=float)
+        ae_vals = np.asarray(reagent_data[:, 1], dtype=float)
+        y_mean = bic_mean_models[reagent].predict(ae_vals)
+        residual = d50_vals - np.asarray(y_mean, dtype=float)
+        residual_gp_models[reagent] = fit_residual_gp(ae_vals, residual)
 
-        direction = "ae2particle"
-        X_data = ae_vals.reshape(-1, 1)
-        y_data = d50_vals
+    return residual_gp_models
 
-        model_path = os.path.join(model_dir, f"gpr_model_{direction}_{current_reagent}_exp2.joblib")
-        model = fit_gpr_and_save(X_data, y_data, model_path)
-        metrics_rows.append(
-            {
-                "direction": direction,
-                "reagent": str(current_reagent),
-                "r_squared_train": float(model.score(X_data, y_data)),
-                "kernel_optimized": str(model.kernel_),
-                "model_path": model_path,
-            }
-        )
 
-    metrics_path = os.path.join(DISCUSSION_DIR, "exp2_gpr_metrics_both_directions_discussion.csv")
-    pd.DataFrame(metrics_rows).to_csv(metrics_path, index=False)
-    print(f"Saved discussion GPR models to: {model_dir}")
-    print(f"Saved training dataset to: {dataset_path}")
-    print(f"Saved model metrics to: {metrics_path}")
+def predict_ae2p_bic_mean_residual_sigma(
+    bic_mean_model,
+    residual_gp: GaussianProcessRegressor,
+    ae_value_mV2: float,
+) -> tuple[float | None, float | None]:
+    x = np.array([float(ae_value_mV2)], dtype=float)
+    try:
+        mu = bic_mean_model.predict(x)
+        _, std = residual_gp.predict(x.reshape(-1, 1), return_std=True)
+    except Exception:
+        return None, None
+    return safe_float(mu[0]), safe_float(std[0])
 
 
 def export_paper_plots_ae2p_compat(detail_df: pd.DataFrame) -> None:
@@ -382,19 +401,25 @@ def collect_exp3_materials() -> list[str]:
         if os.path.isdir(d)
     ]
     materials.sort(key=natural_keys)
-    return materials
+    return [m for m in materials if not m.endswith("_gpr")]
 
 
 def ensure_gpr_models(model_dir: str, force_retrain: bool = False) -> None:
     expected = []
     for reagent in EXP2_TRAIN_REAGENTS:
-        expected.append(os.path.join(model_dir, f"gpr_model_ae2particle_{reagent}_exp2.joblib"))
+        for direction in ("ae2particle", "particle2ae"):
+            expected.append(
+                os.path.join(
+                    model_dir,
+                    f"monotone_bernstein_model_bic_{direction}_{reagent}_exp2.joblib",
+                )
+            )
 
     missing = [p for p in expected if not os.path.exists(p)]
     if force_retrain or missing:
         if missing:
-            print("Missing discussion GPR model files were detected. Training EXP2 GPR models...")
-        train_exp2_gpr_models(model_dir)
+            print("Missing monotone Bernstein BIC model files were detected.")
+        train_exp2_monotone_bernstein_bic_models(model_dir)
 
 
 def build_exp3_gpr_detail(model_dir: str, output_csv: str) -> None:
@@ -404,15 +429,16 @@ def build_exp3_gpr_detail(model_dir: str, output_csv: str) -> None:
     cache = load_ae_power_cache(CACHE_FILE)
     cache_dirty = False
     rows = []
+    bic_mean_models = load_bic_ae2p_mean_models(model_dir)
+    residual_gp_models = build_ae2p_residual_gp_models_from_bic(model_dir)
 
     materials = collect_exp3_materials()
     for material in materials:
-        model_b_path = os.path.join(model_dir, f"gpr_model_ae2particle_{material}_exp2.joblib")
-        if not os.path.exists(model_b_path):
-            print(f"Warning: missing AE2P model for {material}, skipping.")
+        bic_mean_model = bic_mean_models.get(material)
+        residual_gp_model = residual_gp_models.get(material)
+        if bic_mean_model is None or residual_gp_model is None:
+            print(f"Warning: missing BIC mean/residual GP model for {material}, skipping.")
             continue
-
-        gpr_B = joblib.load(model_b_path)
 
         target_files_sample = glob.glob(os.path.join(psd_base_path, material, "1st", "*.csv"))
         targets = []
@@ -463,9 +489,11 @@ def build_exp3_gpr_detail(model_dir: str, output_csv: str) -> None:
                 d50_hat_sigma = None
                 ae_for_estimation = ae_smoothed_last if ae_smoothed_last is not None else ae_last
                 if ae_for_estimation is not None:
-                    y, s = gpr_B.predict(np.array([[ae_for_estimation]], dtype=float), return_std=True)
-                    d50_hat = float(y[0])
-                    d50_hat_sigma = float(s[0])
+                    d50_hat, d50_hat_sigma = predict_ae2p_bic_mean_residual_sigma(
+                        bic_mean_model,
+                        residual_gp_model,
+                        ae_for_estimation,
+                    )
 
                 estimation_error = None
                 estimation_error_percent = None
@@ -532,7 +560,10 @@ def ensure_detail_csv(input_csv: str, model_dir: str, force_retrain_models: bool
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Discussion AE2P error plot with automatic GPR model/detail generation."
+        description=(
+            "Discussion AE2P error plot using BIC-selected monotone Bernstein mean + residual GP uncertainty "
+            "with automatic detail generation."
+        )
     )
     parser.add_argument("--input-csv", type=str, default=INPUT_CSV_DEFAULT)
     parser.add_argument("--model-dir", type=str, default=DISCUSSION_MODEL_DIR)
