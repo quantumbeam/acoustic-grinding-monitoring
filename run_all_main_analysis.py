@@ -4,10 +4,10 @@ import sys
 
 
 SCRIPTS = [
-    "run_01_train_particle_size_ae_model.py",
-    "run_02_validate_autonomous_stopping.py",
-    "run_03_plot_frequency_spectra.py",
-    "run_04_plot_ae_power_trends.py",
+    "run_01_plot_frequency_spectra.py",
+    "run_02_plot_ae_power_trends.py",
+    "run_03_train_particle_size_ae_model.py",
+    "run_04_validate_autonomous_stopping.py",
     "run_05_plot_force_speed_dependence.py",
 ]
 

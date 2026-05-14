@@ -10,8 +10,8 @@ import pandas as pd
 from ae_fft import calculate_fft_power
 from bernstein import load_model
 
-RUN_01_OUTPUT_DIR = os.path.join("analysis_results", "run_01_train_particle_size_ae_model")
-RUN_OUTPUT_DIR = os.path.join("analysis_results", "run_02_validate_autonomous_stopping")
+RUN_03_OUTPUT_DIR = os.path.join("analysis_results", "run_03_train_particle_size_ae_model")
+RUN_OUTPUT_DIR = os.path.join("analysis_results", "run_04_validate_autonomous_stopping")
 
 
 def safe_float(x):
@@ -76,9 +76,9 @@ def save_ae_power_cache(cache_path, cache_data):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Evaluate autonomous size-control stopping trials using trained monotone Bernstein models."
+        description="Validate autonomous size-control stopping trials using trained monotone Bernstein models."
     )
-    parser.add_argument("--model-dir", type=str, default=RUN_01_OUTPUT_DIR)
+    parser.add_argument("--model-dir", type=str, default=RUN_03_OUTPUT_DIR)
     parser.add_argument("--output-dir", type=str, default=RUN_OUTPUT_DIR)
     parser.add_argument("--experiment", type=str, default="exp3")
     parser.add_argument("--ae-scale-to-mv2", type=float, default=1e6)
@@ -130,7 +130,7 @@ def main():
             print(f"      computed validation AE power for {computed_ae_count} files...", flush=True)
         return float(p)
 
-    print("--- Autonomous stopping evaluation with Bernstein models ---", flush=True)
+    print("--- Autonomous stopping validation with Bernstein models ---", flush=True)
 
     materials = [
         os.path.basename(d)

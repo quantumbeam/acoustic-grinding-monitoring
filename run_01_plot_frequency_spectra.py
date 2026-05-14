@@ -13,7 +13,7 @@ HEADER_LINES = 12
 SAMPLING_RATE_HZ = 2_000_000.0
 START_SAMPLE_INDEX = 200_013
 END_SAMPLE_INDEX = 1_200_012
-OUTPUT_DIR = os.path.join("analysis_results", "run_03_plot_frequency_spectra")
+OUTPUT_DIR = os.path.join("analysis_results", "run_01_plot_frequency_spectra")
 MATERIALS = ["NaCl", "Citricacid", "MSG"]
 OUTPUT_NAME_MAP = {
     "NaCl": "NaCl",

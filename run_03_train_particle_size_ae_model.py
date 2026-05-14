@@ -18,7 +18,7 @@ from bernstein import BernsteinMonotoneConfig, BernsteinMonotoneRegressor, save_
 
 plt.style.use(["science", "ieee", "no-latex"])
 EXPORT_DPI = 600
-RUN_OUTPUT_DIR = os.path.join("analysis_results", "run_01_train_particle_size_ae_model")
+RUN_OUTPUT_DIR = os.path.join("analysis_results", "run_03_train_particle_size_ae_model")
 
 
 def norm_path(path: str) -> str:

@@ -10,7 +10,7 @@ import numpy as np
 
 from ae_fft import calculate_fft_power
 
-RUN_OUTPUT_DIR = os.path.join("analysis_results", "run_04_plot_ae_power_trends")
+RUN_OUTPUT_DIR = os.path.join("analysis_results", "run_02_plot_ae_power_trends")
 
 
 def norm_path(path: str) -> str:
