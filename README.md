@@ -85,6 +85,7 @@ ae_fft.py
 bernstein.py
 ```
 
-## Manuscript Note
+## License
 
-`main.tex` is retained as a reference for identifying the paper-aligned analysis outputs. The LaTeX source is not intended to be built from this minimal analysis repository because journal template assets and bibliography files such as `figures/`, `head_foot/`, `rsc.bib`, and `rsc.bst` are not included here.
+This repository is released under the MIT License in [LICENSE](./LICENSE).
+
