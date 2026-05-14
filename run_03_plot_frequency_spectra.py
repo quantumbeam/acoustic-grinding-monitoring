@@ -18,7 +18,7 @@ MATERIALS = ["NaCl", "Citricacid", "MSG"]
 OUTPUT_NAME_MAP = {
     "NaCl": "NaCl",
     "Citricacid": "Citricacid",
-    "MSG": "Ajinomoto",
+    "MSG": "MSG",
 }
 
 
