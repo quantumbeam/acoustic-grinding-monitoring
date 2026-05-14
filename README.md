@@ -1,8 +1,6 @@
-# Acoustic Emission-Based Monitoring for Robotic Powder Grinding
+# Acoustic Grinding Analysis
 
-This repository contains the minimal analysis code used for the main-text results of the paper on acoustic-emission-based monitoring for size-controlled robotic powder grinding.
-
-The repository is intended for reproducing the main analysis outputs from the released data. Supplementary-only checks and generated result artifacts are not included in the minimal public code path.
+This repository contains the analysis scripts and minimal helpers used to regenerate the included outputs from the released data. 
 
 ## Data
 
@@ -23,7 +21,7 @@ data/
     exp3/
 ```
 
-The `exp2` and `exp3` directory names are dataset labels, not terminology used in the paper text. The executable scripts below use the paper-facing analysis names.
+The `exp2` and `exp3` directory names are dataset labels. The executable scripts below use matching analysis names.
 
 The `data` directory is intentionally ignored by Git. Generated analysis outputs are also ignored and are written to `analysis_results`.
 
@@ -37,7 +35,7 @@ uv sync
 
 ## Reproduce Main-Text Analysis Outputs
 
-Run the complete main-text analysis pipeline from the repository root:
+Run the complete analysis pipeline from the repository root:
 
 ```bash
 uv run python run_all_main_analysis.py
@@ -88,4 +86,3 @@ bernstein.py
 ## License
 
 This repository is released under the MIT License in [LICENSE](./LICENSE).
-
