@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 import sys
+from datetime import datetime
 from ae_fft import calculate_fft_power
 import scienceplots
 plt.style.use(['science', 'ieee', 'no-latex'])
@@ -50,8 +51,42 @@ def get_experiment_config(name):
 
 # --- グラフの体裁 ---
 # ラベル
-x_label = "Number of motions"
-y_label = r"Total spectral power($\mathrm{mV}^2$)"
+# Reviewer 1 (technical comment 3): the plotted quantity is the AE acquisition
+# number (one measurement per 24 grinding cycles), not the number of motions.
+# For the force experiment every series uses the same 0.5 s cycle period, so a
+# net-grinding-time axis is well defined (24 x 0.5 s = 12 s per acquisition).
+# For the speed experiment the cycle period differs between series
+# (12 / 24 / 36 s of net grinding per acquisition), so no single time axis can
+# be overlaid and the acquisition number is kept as the only x axis.
+GRINDING_CYCLES_PER_ACQUISITION = 24
+FORCE_CYCLE_PERIOD_S = 0.5
+FORCE_NET_GRINDING_S_PER_ACQUISITION = (
+    GRINDING_CYCLES_PER_ACQUISITION * FORCE_CYCLE_PERIOD_S
+)
+TIME_X_LABEL = "Grinding time (min)"
+ACQUISITION_X_LABEL = "AE acquisition number"
+ACQUISITION_TICK_STEP = 5
+
+
+def parse_timestamp(file_path):
+    m = re.search(r"(\d{8}_\d{6})", os.path.basename(file_path))
+    if not m:
+        return None
+    try:
+        return datetime.strptime(m.group(1), "%Y%m%d_%H%M%S")
+    except ValueError:
+        return None
+
+
+def elapsed_minutes(file_paths, net_grinding_s=FORCE_NET_GRINDING_S_PER_ACQUISITION):
+    """Elapsed process time (min) of each acquisition, from the file timestamps."""
+    stamps = [parse_timestamp(p) for p in file_paths]
+    if any(t is None for t in stamps):
+        return np.arange(1, len(file_paths) + 1) * net_grinding_s / 60.0
+    t0 = stamps[0]
+    offsets = np.array([(t - t0).total_seconds() for t in stamps])
+    return (offsets + net_grinding_s) / 60.0
+y_label = r"Total spectral power (a.u.)"
 
 # フォントサイズ
 font_size = 24
@@ -62,7 +97,8 @@ tick_font_size = 24
 legend_font_size = 18
 # ==========================================
 
-def plot_fft_power_for_multiple_dirs(directory_paths, output_plot_path, x_label, y_label,labels=None):
+def plot_fft_power_for_multiple_dirs(directory_paths, output_plot_path, x_label, y_label,labels=None,
+                                     use_time_axis=False):
     if labels is None:
         labels = [f"Data {i+1}" for i in range(len(directory_paths))]
     markers = ['o', 'x', '^', 's', 'D', 'v', '<', '>']
@@ -103,7 +139,13 @@ def plot_fft_power_for_multiple_dirs(directory_paths, output_plot_path, x_label,
             power_values = np.array(power_values)
             # 移動平均を計算
             power_values_move_ave = np.convolve(power_values, np.ones(moving_average_window)/moving_average_window, mode='valid')
-            time_values = np.arange(len(power_values_move_ave))+moving_average_window
+            if use_time_axis:
+                # Measured elapsed process time of each acquisition (Reviewer 1,
+                # technical comment 3). Valid moving-average points start at the
+                # window-th acquisition.
+                time_values = elapsed_minutes(csv_files)[moving_average_window - 1:]
+            else:
+                time_values = np.arange(len(power_values_move_ave))+moving_average_window
             # print(time_values)
             # plt.plot(time_values, power_values_move_ave*10**6, marker='o', linestyle='-', label=dir_name)
             plt.plot(time_values, power_values_move_ave*10**6, marker=markers[i], label=labels[i])
@@ -123,9 +165,12 @@ def plot_fft_power_for_multiple_dirs(directory_paths, output_plot_path, x_label,
         else:
             print(f"ディレクトリ '{directory_path}' で有効なFFTパワー値を計算できませんでした。")
 
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    plt.legend()
+    ax = plt.gca()
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    if use_time_axis:
+        ax.set_xlim(left=0.0)
+    ax.legend()
     plt.tight_layout()
 
     # プロットをファイルに保存
@@ -139,4 +184,15 @@ if __name__ == "__main__":
         output_file = os.path.join(png_output_dir, f"fft_power_trend_{name_for_file}.png")
 
         if dir_paths:
-            plot_fft_power_for_multiple_dirs(dir_paths, output_file, x_label, y_label, labels=labels)
+            # Both figures use the measured elapsed process time. For the
+            # speed experiment each series has its own timeline, because the
+            # cycle period (and hence the duration of a 24-cycle block) differs
+            # between series.
+            plot_fft_power_for_multiple_dirs(
+                dir_paths,
+                output_file,
+                TIME_X_LABEL,
+                y_label,
+                labels=labels,
+                use_time_axis=True,
+            )

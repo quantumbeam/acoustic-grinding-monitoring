@@ -571,11 +571,11 @@ def main():
                 x_data = size_vals
                 y_data = ae_vals
                 x_label = size_label
-                y_label = r"Total spectral power ($\mathrm{mV}^2$)"
+                y_label = r"Total spectral power (a.u.)"
             else:
                 x_data = ae_vals
                 y_data = size_vals
-                x_label = r"Total spectral power ($\mathrm{mV}^2$)"
+                x_label = r"Total spectral power (a.u.)"
                 y_label = size_label
 
             if args.constraint == "auto":

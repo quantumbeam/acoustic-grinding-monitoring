@@ -12,6 +12,37 @@ from ae_fft import calculate_fft_power
 
 RUN_OUTPUT_DIR = os.path.join("analysis_results", "run_02_plot_ae_power_trends")
 
+# Reviewer 1 (technical comment 3): plot the grinding time on the x axis.
+#
+# One AE measurement is recorded per block of 24 grinding cycles, immediately
+# before each scraping operation, and one cycle lasts 0.5 s. Acquisition k is
+# therefore reached after 24 x 0.5 s = 12 s of net grinding plus (k-1) full
+# grind+scrape blocks. The elapsed process time is taken from the acquisition
+# timestamps in the file names rather than from a nominal block duration, so
+# the axis is the measured elapsed time of that particular run (the nominal
+# trial durations of 3-25 min refer to this same elapsed process time).
+GRINDING_CYCLES_PER_ACQUISITION = 24
+GRINDING_CYCLE_PERIOD_S = 0.5
+NET_GRINDING_S_PER_ACQUISITION = GRINDING_CYCLES_PER_ACQUISITION * GRINDING_CYCLE_PERIOD_S
+X_LABEL = "Grinding time (min)"
+
+
+def elapsed_minutes(file_paths):
+    """Elapsed process time (min) of each acquisition, from the file timestamps.
+
+    t = 0 is the start of grinding, i.e. the first acquisition is placed one
+    net grinding block (12 s) after the start; later acquisitions keep their
+    measured spacing, which also covers the scraping operations between them.
+    """
+    stamps = [parse_timestamp(p) for p in file_paths]
+    if any(t is None for t in stamps):
+        # Fall back to the nominal block duration if a timestamp is missing.
+        return np.arange(1, len(file_paths) + 1) * NET_GRINDING_S_PER_ACQUISITION / 60.0
+    t0 = stamps[0]
+    offsets = np.array([(t - t0).total_seconds() for t in stamps])
+    return (offsets + NET_GRINDING_S_PER_ACQUISITION) / 60.0
+
+
 
 def norm_path(path: str) -> str:
     return os.path.normpath(os.path.abspath(path))
@@ -171,37 +202,46 @@ def main():
             print(f"No valid data for {reagent} {args.trial}.")
             continue
 
-        x_vals = np.arange(1, len(power_values) + 1)
+        times_min = elapsed_minutes(files_sorted)[: len(power_values)]
+        x_vals = times_min
         smoothed = moving_average(np.array(power_values), window_size=args.window)
-        smooth_x = np.arange(args.window, len(power_values) + 1)
-
-        plt.figure(figsize=(12, 8))
-        plt.plot(
-            x_vals,
-            power_values,
-            "o-",
-            color="black",
-            label="Original Data",
-        )
-        if len(smoothed):
-            plt.plot(
-                smooth_x,
-                smoothed,
-                "x--",
-                color="red",
-                label=f"{args.window}-point Moving Average",
-            )
-
-        plt.xlabel("Number of motions")
-        plt.ylabel(r"Total spectral power($\mathrm{mV}^2$)")
-        plt.legend(loc="upper right")
-        plt.tight_layout()
+        smooth_x = times_min[args.window - 1 :]
 
         base_name = f"ae_power_trend_{reagent}_{trial_name}_{args.grind_min}min"
-        out_png = os.path.join(args.out_dir, f"{base_name}.png")
-        plt.savefig(out_png, dpi=args.dpi)
-        plt.close()
-        print(f"Saved plot: {out_png}")
+
+        for yscale, suffix in (("linear", ""), ("log", "_logy")):
+            plt.figure(figsize=(12, 8))
+            plt.plot(
+                x_vals,
+                power_values,
+                "o-",
+                color="black",
+                label="Original Data",
+            )
+            if len(smoothed):
+                plt.plot(
+                    smooth_x,
+                    smoothed,
+                    "x--",
+                    color="red",
+                    label=f"{args.window}-point Moving Average",
+                )
+
+            ax = plt.gca()
+            ax.set_xlabel(X_LABEL)
+            ax.set_ylabel(r"Total spectral power (a.u.)")
+            ax.set_yscale(yscale)
+            ax.set_xlim(0.0, float(times_min[-1]) * 1.02)
+            ax.legend(loc="upper right")
+            plt.tight_layout()
+
+            out_png = os.path.join(args.out_dir, f"{base_name}{suffix}.png")
+            out_pdf = os.path.join(args.out_dir, f"{base_name}{suffix}.pdf")
+            plt.savefig(out_png, dpi=args.dpi)
+            plt.savefig(out_pdf)
+            plt.close()
+            print(f"Saved plot: {out_png}")
+            print(f"Saved plot: {out_pdf}")
 
 
 
